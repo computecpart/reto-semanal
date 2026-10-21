@@ -77,6 +77,7 @@ Auth aplicada por la Management API:
   (`{{ .ConfirmationURL }}`), cambio de correo y reautenticación.
 - Límites por IP ampliados para la red corporativa compartida:
   `rate_limit_verify=300`, `rate_limit_otp=150`, `rate_limit_token_refresh=900`.
+- **SMTP propio (Resend):** remitente `"Reto Semanal" <no-reply@piensads.app>`, `smtp.resend.com:465`, usuario `resend`, contraseña = clave de **solo envío** `RESEND_SMTP_KEY`. Dominio verificado en Resend (DKIM, SPF y MX en `send`, CNAME `rsend`, DMARC `p=none`, todo en Vercel DNS). `rate_limit_email_sent=100`/h. Plan gratis de Resend: **100 correos/día, 3000/mes**. Entrega verificada el 21/10/2026.
 - `site_url=https://piensads.app`. Redirect URLs: `https://piensads.app/auth/callback`,
   `https://piensads.app/auth/confirm` y sus equivalentes en `localhost:3000`.
 
@@ -107,7 +108,7 @@ puede conectarse la integración Git de Vercel.
 | Archivo (ignorado por git) | Contenido |
 | --- | --- |
 | `.env.local` | Variables públicas de Supabase + `VERCEL_OIDC_TOKEN` (lo añade la CLI) |
-| `.env.seed.local` | `SUPABASE_ACCESS_TOKEN` (scope: este proyecto, **caduca ~28/10/2026**), `SUPABASE_SECRET_KEY`, refs, `SUPABASE_ENVIRONMENT=production`, `SEED_SUPERADMIN_EMAIL`, `VERCEL_TOKEN` (**caduca ~28/10/2026**), `RESEND_API_KEY` (vacío) |
+| `.env.seed.local` | `SUPABASE_ACCESS_TOKEN` (scope: este proyecto, **caduca ~28/10/2026**), `SUPABASE_SECRET_KEY`, refs, `SUPABASE_ENVIRONMENT=production`, `SEED_SUPERADMIN_EMAIL`, `VERCEL_TOKEN` (**caduca ~28/10/2026**), `RESEND_API_KEY` (acceso completo, solo para administrar Resend), `RESEND_SMTP_KEY` (solo envío, la usa Supabase) |
 
 `.vercelignore` impide subir archivos `.env`. El token de Supabase se pegó una vez
 en un chat: revocarlo al terminar y crear otro cuando haga falta. Ambos tokens
@@ -115,12 +116,7 @@ deben renovarse durante las 8 semanas.
 
 ## 4. Pendientes bloqueantes
 
-1. **SMTP propio (bloquea el registro de usuarios reales).** El correo
-   integrado de Supabase solo llega a miembros del equipo del proyecto. Plan
-   acordado: **Resend** con el dominio `piensads.app` y remitente
-   `no-reply@piensads.app`. El responsable creó la cuenta y la API key, pero
-   `RESEND_API_KEY` en `.env.seed.local` sigue vacío (no se guardó el archivo).
-   Pasos en `docs/prompts/01b-cierre-produccion.md`.
+1. ~~SMTP propio~~ **Resuelto el 21/10/2026** (ver §3). Vigilar el límite de 100 correos/día de Resend el día de apertura; si se alcanza, el responsable decide si sube a un plan de pago.
 2. **Push a GitHub** (ver §3).
 3. **Contenido real:** campaña, reglas definitivas (premio, desempate,
    menores) y revisión de `/privacidad` (nombre del organizador y contacto).
@@ -285,7 +281,7 @@ recompensas, moderación ni panel de auditoría.
 
 ## 8. Riesgos abiertos
 
-- SMTP no configurado (bloqueante).
+- Límite de Resend gratis: 100 correos/día. Un registro masivo el mismo día podría agotarlo.
 - Sin Content-Security-Policy ni CAPTCHA en el registro.
 - Las imágenes del bucket son públicas por URL; no subir nada privado.
 - `npm run dev` local apunta a **producción**: no crear datos ficticios desde

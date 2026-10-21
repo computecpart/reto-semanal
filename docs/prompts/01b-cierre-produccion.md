@@ -3,8 +3,9 @@
 Actúa como Principal Full-Stack Engineer de este proyecto. Lee `CLAUDE.md`,
 `AGENTS.md`, `docs/HANDOFF.md` (§3, §4 y §9) y `docs/prompts/README.md`.
 
-Vercel, el dominio `piensads.app` y Supabase ya están configurados. Esta fase
-cierra lo único que bloquea a los usuarios reales: **el correo** (y el push).
+**Estado al 21/10/2026: las secciones 1 a 3 ya están HECHAS** (dominio verificado en Resend,
+DNS en Vercel, SMTP en Supabase y entrega comprobada). Solo verifica con `auth:get` que siguen
+activas y ejecuta la sección 4 (push). Se conservan como referencia por si hay que rehacerlas.
 No añadas funcionalidades.
 
 ## 1. Resend + dominio
