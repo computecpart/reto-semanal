@@ -340,6 +340,27 @@ function SectionForm({
         </div>
       );
     }
+    case "ranking_preview": {
+      const set = (patch: Partial<SectionOf<"ranking_preview">>) => onChange({ ...section, ...patch });
+      return (
+        <div className="space-y-4">
+          <p className="rounded-lg bg-sky-50 p-3 text-sm text-sky-900">
+            Solo aparece si en «Ranking y puntos» el ranking está visible y con audiencia pública.
+          </p>
+          <TextInput id={`${id}-heading`} label="Encabezado" max={80} onChange={(heading) => set({ heading })} value={section.heading} />
+          <TextArea id={`${id}-note`} label="Nota" max={240} onChange={(note) => set({ note })} value={section.note} />
+          <Field id={`${id}-limit`} label="Cuántos participantes mostrar">
+            <select className={fieldClassName} id={`${id}-limit`} onChange={(event) => set({ limit: Number(event.target.value) })} value={section.limit}>
+              {[3, 5, 10].map((value) => (
+                <option key={value} value={value}>
+                  Top {value}
+                </option>
+              ))}
+            </select>
+          </Field>
+        </div>
+      );
+    }
     case "cta": {
       const set = (patch: Partial<SectionOf<"cta">>) => onChange({ ...section, ...patch });
       return (

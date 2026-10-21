@@ -6,53 +6,66 @@ import { getAvatar } from "@/lib/avatars";
 import type { AppRole } from "@/lib/permissions/roles";
 import { isAdministrativeRole } from "@/lib/permissions/roles";
 
+import { NavLinks } from "./nav-links";
+
+const PARTICIPANT_NAV = [
+  { href: "/app/perfil", label: "Mi pasaporte" },
+  { href: "/app/puntos", label: "Puntos" },
+  { href: "/app/ranking", label: "Ranking" },
+] as const;
+
 export function AppHeader({
   alias,
   avatarId,
+  campaignName,
   role,
 }: {
   alias: string | null;
   avatarId: string | null;
+  campaignName: string;
   role: AppRole;
 }) {
   const avatar = getAvatar(avatarId);
 
   return (
-    <header className="border-b border-slate-200 bg-white/90 backdrop-blur">
-      <div className="mx-auto flex w-full max-w-4xl flex-wrap items-center justify-between gap-4 px-4 py-3 sm:px-6">
-        <Link className="text-base font-bold tracking-tight text-slate-950" href="/app/perfil">
-          Reto Semanal
+    <header className="border-b-4 border-[var(--color-ink)] bg-[var(--color-paper)]">
+      <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-4 sm:px-6">
+        <Link
+          className="font-display text-lg leading-tight focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--accent)] sm:text-xl"
+          href="/"
+        >
+          {campaignName}
         </Link>
 
-        <nav aria-label="Cuenta" className="flex flex-wrap items-center gap-3 text-sm">
+        <div className="flex items-center gap-3 text-sm">
           {isAdministrativeRole(role) ? (
-            <Link className="font-semibold text-sky-800 hover:underline" href="/admin">
+            <Link
+              className="border-2 border-[var(--color-ink)] bg-[var(--color-ink)] px-3 py-1.5 font-bold text-white hover:opacity-90"
+              href="/admin"
+            >
               Administración
             </Link>
           ) : null}
-
-          <span className="flex items-center gap-2 font-semibold text-slate-700">
-            {avatar ? (
-              <Image
-                alt=""
-                className="rounded-md [image-rendering:pixelated]"
-                height={28}
-                src={avatar.src}
-                unoptimized
-                width={28}
-              />
-            ) : null}
-            {alias ?? "Participante"}
+          <span className="hidden items-center gap-2 font-bold sm:flex">
+            {avatar ? <Image alt="" className="pixelated" height={28} src={avatar.src} unoptimized width={28} /> : null}
+            {alias ? `@${alias}` : "Participante"}
           </span>
-
           <form action={signOutAction}>
             <button
-              className="rounded-lg border border-slate-300 px-3 py-1.5 font-semibold text-slate-700 transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700"
+              className="border-2 border-[var(--color-ink)] bg-white px-3 py-1.5 font-bold hover:bg-[var(--accent-soft)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
               type="submit"
             >
-              Cerrar sesión
+              Salir
             </button>
           </form>
+        </div>
+
+        <nav aria-label="Secciones" className="-mx-1 flex w-full gap-2 overflow-x-auto pb-1">
+          <NavLinks
+            activeClassName="bg-[var(--accent)] text-[var(--accent-contrast)] shadow-[3px_3px_0_0_var(--color-ink)]"
+            className="whitespace-nowrap border-2 border-[var(--color-ink)] bg-white px-3 py-1.5 text-sm font-bold uppercase tracking-wide"
+            items={PARTICIPANT_NAV}
+          />
         </nav>
       </div>
     </header>

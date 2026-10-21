@@ -28,7 +28,7 @@ import { INITIAL_PROFILE_FORM_STATE } from "@/lib/profile/form-state";
 type FormAction = (state: ActionState, formData: FormData) => Promise<ActionState>;
 
 // Submitting through a transition keeps typed values after a failed attempt.
-function useTransitionForm(action: FormAction) {
+export function useTransitionForm(action: FormAction) {
   const [state, formAction, pending] = useActionState(action, INITIAL_PROFILE_FORM_STATE);
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -40,7 +40,7 @@ function useTransitionForm(action: FormAction) {
   return { onSubmit, pending, state };
 }
 
-function Status({ state }: { state: ActionState }) {
+export function Status({ state }: { state: ActionState }) {
   return (
     <FormStatus tone={state.status === "success" ? "success" : "error"}>
       {state.status === "idle" ? undefined : state.message}

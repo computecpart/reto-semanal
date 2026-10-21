@@ -176,3 +176,59 @@ describe("migraciones de autenticación y perfil", () => {
     }
   });
 });
+
+describe("migración de identidad, puntos y ranking", () => {
+  it("el ledger de puntos es de solo inserción y sin escritura para clientes", () => {
+    expect(sql).toMatch(/before update or delete on public\.point_events/);
+    expect(sql).toMatch(/before truncate on public\.point_events/);
+    expect(sql).toContain("revoke all on table public.point_events from public, anon, authenticated;");
+    expect(sql).not.toMatch(/grant (?:insert|update|delete|all)[^;]*public\.point_events/i);
+  });
+
+  it("cada actividad puntúa una sola vez y cada movimiento se revierte una sola vez", () => {
+    expect(sql).toMatch(/create unique index point_events_source_once[\s\S]*?\(campaign_id, user_id, kind, source_type, source_id\)/);
+    expect(sql).toMatch(/create unique index point_events_reversed_once[\s\S]*?\(reverses_event_id\)/);
+  });
+
+  it("award_points es interna y valida campaña vigente y participante habilitado", () => {
+    const body = functionBody("private.award_points");
+
+    expect(body).toContain("private.participant_can_earn(p_user_id)");
+    expect(body).toContain("private.is_competitor(p_user_id)");
+    expect(body).toContain("pg_catalog.statement_timestamp() < campaigns.ends_at");
+    expect(body).toContain("do nothing");
+    expect(sql).toMatch(/revoke all on function private\.award_points\([^)]*\)\s*from public, anon, authenticated;/);
+  });
+
+  it("el ranking público nunca devuelve datos privados", () => {
+    const body = functionBody("public.get_ranking");
+
+    for (const column of ["birth_date", "department", "phone", "age_declaration", "email"]) {
+      expect(body).not.toContain(column);
+    }
+
+    expect(body).toContain("pg_catalog.right(profiles.passport_code, 4)");
+    // The full code is never selected; only its last four characters.
+    expect(body.replaceAll("pg_catalog.right(profiles.passport_code, 4)", "")).not.toContain("passport_code");
+  });
+
+  it("los desempates siguen la regla 7: puntos, aciertos y eventos", () => {
+    expect(functionBody("private.campaign_standings")).toContain(
+      "order by totals.points desc, totals.correct_answers desc, totals.events_completed desc",
+    );
+  });
+
+  it("los ajustes y reversiones de puntos quedan auditados", () => {
+    expect(functionBody("public.admin_adjust_points")).toContain("'points.adjust'");
+    expect(functionBody("public.admin_reverse_point_event")).toContain("'points.reverse'");
+    expect(functionBody("public.admin_update_ranking_settings")).toContain("'ranking.settings'");
+  });
+
+  it("el alta exige teléfono válido y crea el estado del participante", () => {
+    const handler = functionBody("private.handle_new_user");
+
+    expect(handler).toContain("'^\\+503[267][0-9]{7}$'");
+    expect(handler).toContain("insert into private.participant_states");
+    expect(handler).toContain("'passport_code'");
+  });
+});

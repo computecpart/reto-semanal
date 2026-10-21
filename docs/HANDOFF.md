@@ -4,41 +4,29 @@ Contexto completo para continuar el desarrollo en otra sesión o cuenta de Claud
 Code. Actualizado: **21 de octubre de 2026, fin de la Fase 2**. Léelo entero antes
 de tocar código.
 
-## 0. ESTADO AL CIERRE DE LA CUENTA ANTERIOR (21/10/2026) — LEER PRIMERO
+## 0. ESTADO ACTUAL (21/10/2026, Fase 3 completa y desplegada)
 
-**En el repo pero NO aplicado ni desplegado** (producción sigue en Fase 2):
-
-1. `supabase/migrations/20261021100000_identity_points_ranking.sql` (sin aplicar):
-   teléfono obligatorio en el alta (`+503[267]XXXXXXX`), `marketing_consent_at`,
-   `passport_code` (identificador MSI Passport `XXXX-XXXX`), `private.participant_states`,
-   ledger `public.point_events` (inmutable, idempotente, con estadísticas de desempate
-   `correct_answers` / `counts_as_event`), `private.award_points`, configuración del ranking en
-   `campaigns`, `get_ranking` (RANK por puntos → aciertos → eventos), `get_my_points`,
-   `get_ranking_settings`, `update_my_contact` y RPC admin (`admin_update_ranking_settings`,
-   `admin_adjust_points`, `admin_reverse_point_event`, `admin_get_standings`,
-   `admin_recent_point_events`). Reemplaza `handle_new_user` (exige `phone`).
-2. **Aplicar migración y desplegar JUNTOS**: el registro desplegado no envía teléfono y la
-   migración lo exige. Secuencia: `npm run check` → `db push --dry-run` → `db push` → deploy.
-3. Hecho en código: autoguardado del borrador del editor de portada (causa del bug de la imagen
-   perdida: se cambió de pestaña sin guardar), campo teléfono + consentimiento comercial en
-   registro, kit visual pixel del participante (`components/auth/form-ui.tsx`), `AuthShell`
-   con el tema de la campaña, kit sobrio del admin (`components/admin/admin-ui.tsx`),
-   `getSiteBranding()` cacheado, privacidad con Digit@l Solutions.
-4. **Pendiente de la Fase 3 (sin UI todavía)**: formulario de contacto en `/app/perfil`
-   (`updateContactAction` ya existe), `/app/puntos`, `/app/ranking`, `/admin/ranking`,
-   sección de portada `ranking_preview`, navegación del participante, tests SQL de la migración.
-5. **Rediseño pedido**: `/app/perfil` y cabecera del participante con la UX pixel de la portada
-   (tarjeta tipo pasaporte con `passport_code`, puntos y posición); admin con barra lateral y
-   aspecto profesional.
-6. **Contenido de campaña a cargar** (la campaña actual `a89d3a8e-…` está en borrador con datos
-   de prueba). Nombre «MSI Passport — The Dragon Journey», lema «El despertar de un Dragón»,
-   inicio 23/10/2026 08:00, cierre 11/12/2026 23:59 (hora SV), premio «Equipo MSI» por rifa
-   aleatoria verificable entre elegibles; Top 5 es reconocimiento aparte. Tema sugerido carmesí
-   y oscuro. La imagen subida ya existe en Storage:
-   `campaigns/a89d3a8e-9af6-4797-b249-36660e31d01a/8e25c10a-53bf-4a5c-b9ac-6b5d660cedb9.jpg`.
-   Reglas oficiales (publicar como versión 2, importante): ver `docs/campaign/msi-passport-reglas.md`.
-   Organizador: Digit@l Solutions, soporte@digitalsolutions.com.sv. Las misiones presenciales
-   serán **códigos/misiones validadas por el staff** (no QR obligatorio).
+- **Producción al día** con el repo: migraciones hasta `20261021100000` aplicadas; despliegue en Vercel
+  con la Fase 3. `npm run check` en verde con 195 tests.
+- **Campaña publicada:** «MSI Passport — The Dragon Journey» (`a89d3a8e-…`, slug `msi-passport`),
+  23/10/2026 08:00 → 11/12/2026 23:59 hora SV, premio «Equipo MSI» por rifa, tema carmesí/oscuro,
+  reglas v2 (importante) = `docs/campaign/msi-passport-reglas.md`, ranking visible y público
+  (alias + identificador parcial, Top 5). Cargada con las RPC admin auditadas a nombre del superadmin.
+- **Fase 3 entregada:** teléfono obligatorio en el alta, consentimiento comercial, `passport_code`,
+  estado del participante, ledger `point_events` inmutable e idempotente, `private.award_points`
+  (punto único de puntuación automática para las Fases 4 y 5), ranking con desempates de la regla 7,
+  `/app/puntos`, `/app/ranking`, `/admin/ranking` (configuración, ajuste manual auditado,
+  reversión con movimiento compensatorio), sección de portada `ranking_preview`.
+- **UX:** participante y acceso con estilo pixel y el tema de la campaña (`AuthShell`, `AppHeader`,
+  `components/auth/form-ui.tsx`: `PixelCard`, `SectionTitle`…); perfil como «pasaporte»; admin con
+  barra lateral (`components/admin/admin-shell.tsx`) y kit sobrio `components/admin/admin-ui.tsx`;
+  editor de portada con autoguardado.
+- **Misiones presenciales hoy:** el staff las registra en `/admin/ranking` → «Ajuste manual»
+  (descripción visible + motivo auditado). La Fase 5 las convierte en códigos canjeables.
+- **Siguiente:** Fase 4 (`docs/prompts/04-cuestionarios.md`): trivias con `award_points(kind=quiz,
+  correct_answers=N, counts_as_event=true)`; luego `get_ranking_settings.provisional` debe pasar a
+  true si hay respuestas abiertas pendientes. Pendiente aparte: herramienta de rifa (regla 8/11).
+- Los usuarios existentes deben aceptar las reglas v2 al entrar a `/app` (comportamiento esperado).
 
 ## 1. Qué es y calendario
 
@@ -60,7 +48,7 @@ Responsable: Luis Escarate (cuenta `computecpart@gmail.com`, superadmin de la ap
 ## 2. Estado funcional verificado
 
 Fases completas y desplegadas en **https://piensads.app**: 0 (foundation),
-1 (auth, roles, perfil) y 2 (campañas, portada por secciones, reglas
+1 (auth, roles, perfil), 3 (puntos y ranking) y 2 (campañas, portada por secciones, reglas
 versionadas, auditoría base, sistema visual). `npm run check` en verde con 176
 tests.
 

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { LandingPage } from "@/components/landing/landing-page";
 import { getPublicLanding, type PublicCampaign } from "@/lib/campaign/queries";
 import { DEFAULT_THEME, type LandingContent } from "@/lib/landing/schema";
+import { getRanking } from "@/lib/points/queries";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -60,5 +61,8 @@ export default async function HomePage() {
     );
   }
 
-  return <LandingPage campaign={data.campaign} content={data.landing} signedIn={signedIn} />;
+  const needsRanking = data.landing.sections.some((section) => section.type === "ranking_preview" && section.visible);
+  const ranking = needsRanking ? await getRanking(10).catch(() => []) : [];
+
+  return <LandingPage campaign={data.campaign} content={data.landing} ranking={ranking} signedIn={signedIn} />;
 }

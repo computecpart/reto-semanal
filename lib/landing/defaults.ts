@@ -73,6 +73,14 @@ export function createSection(type: SectionType): LandingSection {
         target: "registro",
         type,
       };
+    case "ranking_preview":
+      return {
+        ...base,
+        heading: "Top del ranking",
+        limit: 5,
+        note: "Se muestra solo si el ranking es público.",
+        type,
+      };
   }
 }
 

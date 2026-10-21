@@ -2,21 +2,6 @@ import Link from "next/link";
 
 import { CAMPAIGN_STATUS_LABELS, type CampaignStatus } from "@/lib/campaign/status";
 
-export function AdminNav() {
-  return (
-    <nav aria-label="Administración" className="border-b border-slate-200 bg-white">
-      <div className="mx-auto flex w-full max-w-6xl gap-5 overflow-x-auto px-4 py-2 text-sm font-semibold sm:px-6">
-        <Link className="whitespace-nowrap py-1 text-slate-700 hover:text-slate-950" href="/admin">
-          Panel
-        </Link>
-        <Link className="whitespace-nowrap py-1 text-slate-700 hover:text-slate-950" href="/admin/campana">
-          Campañas
-        </Link>
-      </div>
-    </nav>
-  );
-}
-
 const STATUS_STYLES: Readonly<Record<CampaignStatus, string>> = {
   archived: "bg-slate-200 text-slate-700",
   closed: "bg-amber-100 text-amber-900",

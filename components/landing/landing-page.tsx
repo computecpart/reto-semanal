@@ -4,7 +4,9 @@ import type { ReactNode } from "react";
 
 import { LegalLinks } from "@/components/legal/legal-page";
 import { SafeMarkdown } from "@/components/markdown/safe-markdown";
+import { RankingTable } from "@/components/points/ranking-table";
 import type { PublicCampaign } from "@/lib/campaign/queries";
+import type { RankingRow } from "@/lib/points/queries";
 import { landingAssetUrl } from "@/lib/landing/assets";
 import type { CtaTarget, LandingContent, LandingSection, SectionOf } from "@/lib/landing/schema";
 import { themeStyle } from "@/lib/landing/theme";
@@ -13,6 +15,7 @@ import { OPERATIONAL_TIME_ZONE } from "@/lib/time-zone";
 interface RenderContext {
   campaign: PublicCampaign;
   dark: boolean;
+  ranking: readonly RankingRow[];
   signedIn: boolean;
 }
 
@@ -312,6 +315,24 @@ function CtaSection({ context, section }: { context: RenderContext; section: Sec
   );
 }
 
+// Rows arrive already filtered by get_ranking (visibility and audience).
+function RankingPreviewSection({ context, section }: { context: RenderContext; section: SectionOf<"ranking_preview"> }) {
+  const rows = context.ranking.slice(0, section.limit);
+
+  if (rows.length === 0) {
+    return null;
+  }
+
+  return (
+    <SectionShell heading={section.heading} id={section.id}>
+      <div className="max-w-3xl">
+        <RankingTable dark={context.dark} highlightTop={section.limit} rows={rows} />
+        {section.note ? <p className="mt-4 text-sm opacity-75">{section.note}</p> : null}
+      </div>
+    </SectionShell>
+  );
+}
+
 function renderSection(section: LandingSection, context: RenderContext) {
   switch (section.type) {
     case "hero":
@@ -330,26 +351,31 @@ function renderSection(section: LandingSection, context: RenderContext) {
       return <FaqSection context={context} section={section} />;
     case "cta":
       return <CtaSection context={context} section={section} />;
+    case "ranking_preview":
+      return <RankingPreviewSection context={context} section={section} />;
   }
 }
 
 export function LandingPage({
   campaign,
   content,
+  ranking = [],
   signedIn,
 }: {
   campaign: PublicCampaign;
   content: LandingContent;
+  ranking?: readonly RankingRow[];
   signedIn: boolean;
 }) {
   const dark = content.theme.surface === "oscuro";
-  const context: RenderContext = { campaign, dark, signedIn };
+  const context: RenderContext = { campaign, dark, ranking, signedIn };
   const logoUrl = landingAssetUrl(content.theme.logo?.path);
 
   return (
     <div
       className={dark ? "min-h-screen bg-[#0b1020] text-white [--frame:#e8ecff]" : "min-h-screen bg-[var(--color-paper)] text-[var(--color-ink)]"}
-      style={themeStyle(content.theme)}
+      // On dark surfaces the darker "strong" shade lacks contrast; use the accent.
+      style={{ ...themeStyle(content.theme), ...(dark ? { "--accent-strong": "var(--accent)" } : {}) }}
     >
       <header className={`border-b-4 ${dark ? "border-[#e8ecff]" : "border-[var(--color-ink)]"}`}>
         <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-4 py-4 sm:px-6">

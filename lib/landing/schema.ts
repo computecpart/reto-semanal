@@ -123,6 +123,14 @@ export const ctaSectionSchema = z.object({
   target: z.enum(CTA_TARGETS),
 });
 
+export const rankingPreviewSectionSchema = z.object({
+  ...sectionBase,
+  type: z.literal("ranking_preview"),
+  heading: text(80, 1),
+  note: text(240),
+  limit: z.number().int().min(3, "Mínimo 3.").max(10, "Máximo 10."),
+});
+
 export const sectionSchema = z.discriminatedUnion("type", [
   heroSectionSchema,
   prizeSectionSchema,
@@ -132,6 +140,7 @@ export const sectionSchema = z.discriminatedUnion("type", [
   imageBannerSectionSchema,
   faqSectionSchema,
   ctaSectionSchema,
+  rankingPreviewSectionSchema,
 ]);
 
 export type LandingSection = z.infer<typeof sectionSchema>;
@@ -147,6 +156,7 @@ export const SECTION_TYPES = [
   "image_banner",
   "faq",
   "cta",
+  "ranking_preview",
 ] as const satisfies readonly SectionType[];
 
 export const SECTION_LABELS: Readonly<Record<SectionType, string>> = {
@@ -156,6 +166,7 @@ export const SECTION_LABELS: Readonly<Record<SectionType, string>> = {
   hero: "Portada principal (hero)",
   image_banner: "Imagen destacada",
   prize: "Premio",
+  ranking_preview: "Top del ranking",
   rich_text: "Texto libre",
   steps: "Cómo participar",
 };
