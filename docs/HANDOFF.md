@@ -199,13 +199,20 @@ Al cierre de la sesión del 21/10/2026:
 | Elemento | Estado |
 | --- | --- |
 | Supabase producción | Listo (migraciones, Auth, plantillas, superadmin) |
-| `site_url` / Redirect URLs | Solo `localhost:3000`; **actualizar al dominio real** |
-| SMTP propio | **Pendiente (bloqueante)** |
-| Vercel | **Pendiente**: proyecto, variables Production y despliegue |
-| Dominio | **Pendiente**: el responsable tiene un dominio gratuito por un año (aún sin nombre ni configuración) |
-| Git | Commit local `Fases 0 y 1`; **sin push** a `origin` |
+| `site_url` / Redirect URLs | `https://piensads.app` + `/auth/callback`, `/auth/confirm` (y localhost) |
+| Vercel | Proyecto `reto-semanal` (equipo `computecpart`, `prj_8ZdQpJI9D86r8pbuD0REpfqsdGIS`), Node 24, región `iad1`. Variables públicas de Supabase **solo en Production**. Desplegado con `vercel deploy --prod` desde local (sin integración Git) |
+| Dominio | **`https://piensads.app`** (registrado en Vercel, DNS de Vercel, vence 21/10/2027, renovación automática OFF). `www` y `http` redirigen con 308 |
+| Protección | Previews y `*.vercel.app` con Vercel Authentication; solo el dominio propio es público |
+| Costes | Supabase Pro $25 con Spend Cap ON; Vercel Pro $20 con presupuesto on-demand de $1 (activar «Pause production deployments») |
+| SMTP propio | **Pendiente (bloqueante)**. Plan: Resend con dominio `piensads.app` y remitente `no-reply@piensads.app` |
+| Git | Commits locales; **sin push** a `origin` (no autorizado todavía) |
 
-Para completar lo pendiente, ejecutar `docs/prompts/01b-despliegue-produccion.md`.
+Verificado en el dominio: rutas públicas 200, `/admin` y `/app` redirigen a login, cabeceras de
+seguridad (HSTS, X-Frame-Options, nosniff, Referrer y Permissions Policy) y ningún secreto en el
+JavaScript del cliente.
+
+Redesplegar: `npx vercel deploy --prod --scope computecpart --token <VERCEL_TOKEN>` (token en
+`.env.seed.local`, nunca impreso). `.vercelignore` impide subir archivos `.env`.
 
 ## 9. Comandos
 

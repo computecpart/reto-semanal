@@ -1,0 +1,11 @@
+# Never upload local secrets or tooling state to Vercel.
+.env
+.env.*
+!.env.example
+!.env.seed.example
+supabase/.temp
+supabase/.branches
+.next
+node_modules
+coverage
+*.tsbuildinfo
