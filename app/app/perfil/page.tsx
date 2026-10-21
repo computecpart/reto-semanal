@@ -9,7 +9,7 @@ import { ProfileEditForm } from "@/components/profile/profile-edit-form";
 import { requireSessionPage } from "@/lib/auth/guards";
 import { getAvatar } from "@/lib/avatars";
 import { isAdministrativeRole } from "@/lib/permissions/roles";
-import { getMyParticipantStatus, getMyPoints } from "@/lib/points/queries";
+import { getMyPoints } from "@/lib/points/queries";
 import { getMyProfile } from "@/lib/profile/my-profile";
 import { OPERATIONAL_TIME_ZONE } from "@/lib/time-zone";
 import { formatSalvadorPhone, getOperationalDate } from "@/lib/validation/profile";
@@ -23,13 +23,6 @@ const ROLE_LABELS = {
   participant: "Participante",
   superadmin: "Superadministrador",
 } as const;
-
-const STATUS_NOTICES: Readonly<Record<string, string>> = {
-  archived: "Tu cuenta está archivada. Contacta al equipo organizador si crees que es un error.",
-  disqualified:
-    "Tu cuenta fue descalificada de la competencia. Contacta al equipo organizador para más información.",
-  suspended: "Tu cuenta está suspendida temporalmente: no puedes sumar puntos por ahora.",
-};
 
 function formatCivilDate(value: string): string {
   const [year, month, day] = value.split("-");
@@ -48,11 +41,10 @@ interface ProfilePageProps {
 
 export default async function ProfilePage({ searchParams }: ProfilePageProps) {
   const { role, user } = await requireSessionPage("/app/perfil");
-  const [profile, params, points, status] = await Promise.all([
+  const [profile, params, points] = await Promise.all([
     getMyProfile(user.id),
     searchParams,
     getMyPoints().catch(() => null),
-    getMyParticipantStatus(),
   ]);
   const accessDenied = params.acceso === "denegado";
 
@@ -78,12 +70,10 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
 
   const avatar = getAvatar(profile.avatar_id);
   const competes = !isAdministrativeRole(role);
-  const statusNotice = status ? STATUS_NOTICES[status] : undefined;
 
   return (
     <div className="space-y-8">
       {accessDenied ? <FormStatus>No tienes permiso para acceder al área de administración.</FormStatus> : null}
-      {statusNotice ? <FormStatus>{statusNotice}</FormStatus> : null}
       {!profile.phone ? (
         <FormStatus tone="info">
           Agrega tu teléfono en «Datos de contacto»: lo necesitamos para contactarte si ganas.

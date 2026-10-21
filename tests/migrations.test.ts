@@ -116,7 +116,8 @@ describe("migraciones de autenticación y perfil", () => {
     expect(adminFunctions.length).toBeGreaterThanOrEqual(7);
 
     for (const name of adminFunctions) {
-      expect(functionBody(name), name).toContain("private.require_role('admin', 'superadmin')");
+      // Admin tools accept admin+superadmin; sensitive ones only superadmin.
+      expect(functionBody(name), name).toMatch(/private\.require_role\('(?:admin', ')?superadmin'\)/);
       expect(sql, name).toMatch(new RegExp(`revoke all on function ${name.replace(".", "\\.")}\\([^)]*\\) from public, anon;`));
     }
   });

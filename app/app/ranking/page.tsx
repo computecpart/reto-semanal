@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { FormStatus, PixelCard } from "@/components/auth/form-ui";
 import { RankingTable } from "@/components/points/ranking-table";
 import { requireSessionPage } from "@/lib/auth/guards";
+import { getDisqualifiedParticipants } from "@/lib/moderation/queries";
 import { getRanking, getRankingSettings } from "@/lib/points/queries";
 
 export const metadata: Metadata = {
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 
 export default async function RankingPage() {
   await requireSessionPage("/app/ranking");
-  const [rows, settings] = await Promise.all([getRanking(), getRankingSettings()]);
+  const [rows, settings, disqualified] = await Promise.all([getRanking(), getRankingSettings(), getDisqualifiedParticipants()]);
   const highlightTop = settings?.highlight_top ?? 5;
   const me = rows.find((row) => row.is_current_user);
 
@@ -49,6 +50,20 @@ export default async function RankingPage() {
           <RankingTable highlightTop={highlightTop} rows={rows} />
         </>
       )}
+
+      {disqualified.length > 0 ? (
+        <PixelCard>
+          <h2 className="font-display text-2xl">Descalificados</h2>
+          <p className="mt-1 text-sm text-slate-600">No participan en la clasificación ni en la rifa.</p>
+          <ul className="mt-4 flex flex-wrap gap-2 text-sm">
+            {disqualified.map((item) => (
+              <li className="border-2 border-slate-300 px-3 py-1" key={item.alias}>
+                @{item.alias} <span className="text-xs text-slate-500">{item.passport_hint}</span>
+              </li>
+            ))}
+          </ul>
+        </PixelCard>
+      ) : null}
     </div>
   );
 }

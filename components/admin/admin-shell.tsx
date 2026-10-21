@@ -14,7 +14,16 @@ const ADMIN_NAV = [
   { href: "/admin/revisiones", label: "Revisiones" },
   { href: "/admin/misiones", label: "Misiones" },
   { href: "/admin/ranking", label: "Ranking y puntos" },
-] as const;
+  { href: "/admin/participantes", label: "Participantes" },
+  { href: "/admin/alias", label: "Alias" },
+  { href: "/admin/auditoria", label: "Auditoría" },
+];
+
+// Hidden from admins; the RPCs enforce superadmin regardless.
+const SUPERADMIN_NAV = [
+  { href: "/admin/administradores", label: "Administradores" },
+  { href: "/admin/rifa", label: "Rifa" },
+];
 
 const ROLE_LABELS: Readonly<Record<AppRole, string>> = {
   admin: "Administrador",
@@ -53,7 +62,7 @@ export function AdminShell({
             activeClassName="bg-slate-800 text-white"
             className="whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold text-slate-300 hover:bg-slate-900 hover:text-white"
             exact={["/admin"]}
-            items={ADMIN_NAV}
+            items={role === "superadmin" ? [...ADMIN_NAV, ...SUPERADMIN_NAV] : ADMIN_NAV}
           />
         </nav>
 

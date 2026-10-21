@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { ActionForm } from "@/components/admin/action-form";
 import { PointAdjustmentForm, RankingSettingsForm, ReverseEventForm } from "@/components/admin/ranking-forms";
 import { requireAdminPage } from "@/lib/auth/guards";
 import { getAdminCampaigns } from "@/lib/campaign/queries";
+import { setShowDisqualifiedAction } from "@/lib/moderation/actions";
 import { formatPoints, POINT_KIND_LABELS } from "@/lib/points/config";
+import { getRankingSettings } from "@/lib/points/queries";
 import { getAdminRankingConfig, getAdminRecentEvents, getAdminStandings } from "@/lib/points/queries";
 import { OPERATIONAL_TIME_ZONE } from "@/lib/time-zone";
 
@@ -44,10 +47,11 @@ export default async function AdminRankingPage() {
     );
   }
 
-  const [config, standings, events] = await Promise.all([
+  const [config, standings, events, publicSettings] = await Promise.all([
     getAdminRankingConfig(campaign.id),
     getAdminStandings(campaign.id),
     getAdminRecentEvents(campaign.id),
+    getRankingSettings(),
   ]);
 
   return (
@@ -73,6 +77,15 @@ export default async function AdminRankingPage() {
               visible={config.ranking_visible}
             />
           ) : null}
+          <div className="mt-6 border-t border-slate-200 pt-4">
+            <ActionForm action={setShowDisqualifiedAction} submitLabel="Guardar">
+              <input name="campaignId" type="hidden" value={campaign.id} />
+              <label className="flex items-center gap-2 text-sm">
+                <input defaultChecked={Boolean((publicSettings as { show_disqualified?: boolean } | null)?.show_disqualified)} name="show" type="checkbox" />
+                Mostrar participantes descalificados en una sección aparte (sin motivo)
+              </label>
+            </ActionForm>
+          </div>
         </section>
 
         <section className={card}>

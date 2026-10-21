@@ -4,10 +4,10 @@ Contexto completo para continuar el desarrollo en otra sesión o cuenta de Claud
 Code. Actualizado: **21 de octubre de 2026, fin de la Fase 2**. Léelo entero antes
 de tocar código.
 
-## 0. ESTADO ACTUAL (22/10/2026, Fases 3, 4 y 5 completas y desplegadas)
+## 0. ESTADO ACTUAL (22/10/2026, Fases 3 a 6 completas y desplegadas)
 
 - **Producción al día** con el repo: migraciones hasta `20261021100000` aplicadas; despliegue en Vercel
-  con la Fase 3. `npm run check` en verde con 218 tests.
+  con la Fase 3. `npm run check` en verde con 227 tests.
 - **Campaña publicada:** «MSI Passport — The Dragon Journey» (`a89d3a8e-…`, slug `msi-passport`),
   23/10/2026 08:00 → 11/12/2026 23:59 hora SV, premio «Equipo MSI» por rifa, tema carmesí/oscuro,
   reglas v2 (importante) = `docs/campaign/msi-passport-reglas.md`, ranking visible y público
@@ -44,8 +44,21 @@ de tocar código.
   `/admin/misiones`, `/admin/misiones/[id]` (código, QR, regenerar, canjes), `/[id]/presentar` (pantalla
   completa), `/[id]/canjes` (CSV con protección contra fórmulas). Puntos: `award_points(kind=mission)`.
   Verificado en producción con transacción revertida. **No implementado:** logo dentro del QR / bucket `branding`.
-- **Siguiente:** Fase 6 (`docs/prompts/06-moderacion-admin.md`) + **herramienta de rifa** (reglas 8 y 11:
-  sorteo aleatorio y verificable entre participantes elegibles, independiente de los puntos).
+- **Fase 5 completada con logo:** QR con logo del tema de la portada (corrección H, logo ≤ 5 % del área,
+  tipo validado por bytes mágicos e incrustado en el SVG; `lib/missions/qr.ts`, `lib/missions/image.ts`).
+- **Fase 6 entregada (22/10):** migraciones `20261022030000_moderation_raffle` y `20261022040000_raffle_count_fix`.
+  `/admin/participantes` (búsqueda, filtros, paginación en servidor, cambio de estado con motivo; jerarquía
+  validada en el RPC), exportación CSV solo superadmin y auditada, `/admin/alias` (activar/desactivar términos,
+  revisión de alias en conflicto sin renombrar), `/admin/administradores` y `/admin/rifa` (solo superadmin;
+  siempre queda ≥ 1 superadmin), `/admin/auditoria` (solo lectura, antes/después; incluye el bootstrap),
+  sección opcional de descalificados en el ranking (sin motivo) y aviso de estado en `/app`.
+  **Rifa verificable**: lista ordenada de pasaportes elegibles + huella SHA-256 publicada antes, semilla pública,
+  sorteo sin reemplazo e inmutable (`private.raffle_draws`); réplica independiente en `lib/moderation/raffle.ts`,
+  procedimiento en `docs/campaign/rifa-verificable.md`. Todo verificado en producción con transacción revertida.
+- **Pendiente:** MFA (TOTP) para cuentas administrativas (solo se recomienda en la UI); decisión sobre si los
+  menores son elegibles para la rifa (hoy sí lo son).
+- **Siguiente:** Fase 7 (`docs/prompts/07-qa-pulido.md`): QA integral, accesibilidad, revisión visual a 360 px,
+  documentación (README_PRODUCTION, SECURITY, DATABASE).
 - Los usuarios existentes deben aceptar las reglas v2 al entrar a `/app` (comportamiento esperado).
 
 ## 1. Qué es y calendario
