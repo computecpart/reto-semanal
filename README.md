@@ -1,5 +1,7 @@
 # Reto Semanal
 
+> Operación: [README_PRODUCTION.md](README_PRODUCTION.md) · Entorno local: [README_DEMO.md](README_DEMO.md) · [SECURITY.md](SECURITY.md) · [DATABASE.md](DATABASE.md) · Estado y traspaso: [docs/HANDOFF.md](docs/HANDOFF.md)
+
 Plataforma empresarial de gamificación para aproximadamente 100 participantes
 durante una campaña de ocho semanas.
 

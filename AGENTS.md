@@ -48,6 +48,7 @@ Estas reglas aplican a todo el repositorio y deben respetarse en cada cambio fut
 - Mantener los roles canónicos: `participant`, `admin` y `superadmin`.
 - Validar en este orden: `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`.
 - Revisar `git diff --check` y el estado de Git antes de entregar.
+- Pruebas con datos: solo en Supabase local (`npx supabase start`, `npm run seed:demo`, `npm run test:db`); nunca contra producción.
 
 
 <!-- BEGIN:nextjs-agent-rules -->
