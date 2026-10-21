@@ -73,6 +73,13 @@ export function createSection(type: SectionType): LandingSection {
         target: "registro",
         type,
       };
+    case "upcoming_activities":
+      return {
+        ...base,
+        heading: "Próximas trivias",
+        note: "Inicia sesión para participar cuando abran.",
+        type,
+      };
     case "ranking_preview":
       return {
         ...base,

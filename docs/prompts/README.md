@@ -4,13 +4,13 @@ Ejecuta **una fase por sesión**, en este orden, y detente al terminar cada una.
 Claude Code carga `CLAUDE.md`, que incluye `AGENTS.md` y `docs/HANDOFF.md`.
 Este último contiene el estado real, la infraestructura y las convenciones.
 
-Fases 0, 1, 2 y 3 completas y desplegadas en https://piensads.app. Siguiente: 04.
+Fases 0 a 4 completas y desplegadas en https://piensads.app. Siguiente: 05 (misiones/códigos).
 
 | Archivo | Fase | Depende de |
 | --- | --- | --- |
 | `01b-cierre-produccion.md` | **Completado** (SMTP y push). Solo como referencia | — |
 | `03-puntos-ranking.md` | **Completada** (referencia) | 2 |
-| `04-cuestionarios.md` | Motor de cuestionarios y revisiones | 3 |
+| `04-cuestionarios.md` | **Completada** (referencia; imagen por cuestionario pendiente) | 3 |
 | `05-recompensas-qr.md` | Códigos manuales y QR | 3 |
 | `06-moderacion-admin.md` | Moderación, administradores, panel de auditoría | 3 (mejor tras 4 y 5) |
 | `07-qa-pulido.md` | QA, accesibilidad, seed local, documentación | 3–6 |

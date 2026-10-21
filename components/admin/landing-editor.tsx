@@ -340,6 +340,18 @@ function SectionForm({
         </div>
       );
     }
+    case "upcoming_activities": {
+      const set = (patch: Partial<SectionOf<"upcoming_activities">>) => onChange({ ...section, ...patch });
+      return (
+        <div className="space-y-4">
+          <p className="rounded-lg bg-sky-50 p-3 text-sm text-sky-900">
+            Muestra automáticamente las trivias programadas (solo título y fechas). Se oculta si no hay ninguna.
+          </p>
+          <TextInput id={`${id}-heading`} label="Encabezado" max={80} onChange={(heading) => set({ heading })} value={section.heading} />
+          <TextArea id={`${id}-note`} label="Nota" max={240} onChange={(note) => set({ note })} value={section.note} />
+        </div>
+      );
+    }
     case "ranking_preview": {
       const set = (patch: Partial<SectionOf<"ranking_preview">>) => onChange({ ...section, ...patch });
       return (

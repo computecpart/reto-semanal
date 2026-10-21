@@ -7,6 +7,7 @@ import { SafeMarkdown } from "@/components/markdown/safe-markdown";
 import { RankingTable } from "@/components/points/ranking-table";
 import type { PublicCampaign } from "@/lib/campaign/queries";
 import type { RankingRow } from "@/lib/points/queries";
+import type { PublicQuiz } from "@/lib/quiz/queries";
 import { landingAssetUrl } from "@/lib/landing/assets";
 import type { CtaTarget, LandingContent, LandingSection, SectionOf } from "@/lib/landing/schema";
 import { themeStyle } from "@/lib/landing/theme";
@@ -15,6 +16,7 @@ import { OPERATIONAL_TIME_ZONE } from "@/lib/time-zone";
 interface RenderContext {
   campaign: PublicCampaign;
   dark: boolean;
+  quizzes: readonly PublicQuiz[];
   ranking: readonly RankingRow[];
   signedIn: boolean;
 }
@@ -333,6 +335,33 @@ function RankingPreviewSection({ context, section }: { context: RenderContext; s
   );
 }
 
+function UpcomingActivitiesSection({ context, section }: { context: RenderContext; section: SectionOf<"upcoming_activities"> }) {
+  if (context.quizzes.length === 0) {
+    return null;
+  }
+
+  return (
+    <SectionShell heading={section.heading} id={section.id}>
+      <ul className="grid gap-4 sm:grid-cols-2">
+        {context.quizzes.map((quiz) => (
+          <li key={quiz.title + quiz.opens_at}>
+            <Card dark={context.dark}>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-strong)]">
+                {quiz.phase === "active" ? "Abierta ahora" : "Próximamente"}
+              </p>
+              <p className="mt-2 text-lg font-bold">{quiz.title}</p>
+              <p className="mt-1 text-sm opacity-80 first-letter:uppercase">
+                {quiz.phase === "active" ? `Cierra ${formatInstant(quiz.closes_at)}` : `Abre ${formatInstant(quiz.opens_at)}`}
+              </p>
+            </Card>
+          </li>
+        ))}
+      </ul>
+      {section.note ? <p className="mt-4 text-sm opacity-75">{section.note}</p> : null}
+    </SectionShell>
+  );
+}
+
 function renderSection(section: LandingSection, context: RenderContext) {
   switch (section.type) {
     case "hero":
@@ -353,22 +382,26 @@ function renderSection(section: LandingSection, context: RenderContext) {
       return <CtaSection context={context} section={section} />;
     case "ranking_preview":
       return <RankingPreviewSection context={context} section={section} />;
+    case "upcoming_activities":
+      return <UpcomingActivitiesSection context={context} section={section} />;
   }
 }
 
 export function LandingPage({
   campaign,
   content,
+  quizzes = [],
   ranking = [],
   signedIn,
 }: {
   campaign: PublicCampaign;
   content: LandingContent;
+  quizzes?: readonly PublicQuiz[];
   ranking?: readonly RankingRow[];
   signedIn: boolean;
 }) {
   const dark = content.theme.surface === "oscuro";
-  const context: RenderContext = { campaign, dark, ranking, signedIn };
+  const context: RenderContext = { campaign, dark, quizzes, ranking, signedIn };
   const logoUrl = landingAssetUrl(content.theme.logo?.path);
 
   return (

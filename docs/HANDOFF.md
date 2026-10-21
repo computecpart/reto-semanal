@@ -4,10 +4,10 @@ Contexto completo para continuar el desarrollo en otra sesión o cuenta de Claud
 Code. Actualizado: **21 de octubre de 2026, fin de la Fase 2**. Léelo entero antes
 de tocar código.
 
-## 0. ESTADO ACTUAL (21/10/2026, Fase 3 completa y desplegada)
+## 0. ESTADO ACTUAL (22/10/2026, Fases 3 y 4 completas y desplegadas)
 
 - **Producción al día** con el repo: migraciones hasta `20261021100000` aplicadas; despliegue en Vercel
-  con la Fase 3. `npm run check` en verde con 195 tests.
+  con la Fase 3. `npm run check` en verde con 208 tests.
 - **Campaña publicada:** «MSI Passport — The Dragon Journey» (`a89d3a8e-…`, slug `msi-passport`),
   23/10/2026 08:00 → 11/12/2026 23:59 hora SV, premio «Equipo MSI» por rifa, tema carmesí/oscuro,
   reglas v2 (importante) = `docs/campaign/msi-passport-reglas.md`, ranking visible y público
@@ -23,9 +23,21 @@ de tocar código.
   editor de portada con autoguardado.
 - **Misiones presenciales hoy:** el staff las registra en `/admin/ranking` → «Ajuste manual»
   (descripción visible + motivo auditado). La Fase 5 las convierte en códigos canjeables.
-- **Siguiente:** Fase 4 (`docs/prompts/04-cuestionarios.md`): trivias con `award_points(kind=quiz,
-  correct_answers=N, counts_as_event=true)`; luego `get_ranking_settings.provisional` debe pasar a
-  true si hay respuestas abiertas pendientes. Pendiente aparte: herramienta de rifa (regla 8/11).
+- **Fase 4 entregada (22/10):** migraciones `20261022000000_quizzes` y `20261022010000_quiz_guard_fix`.
+  Trivias con claves en `private.quiz_answer_keys`, intento único (`unique(quiz_id,user_id)`), plazo del
+  servidor (`least(closes_at, started_at+duración)`), autoguardado, envío idempotente, finalización perezosa
+  de intentos vencidos, bono de velocidad lineal × acierto MC (`private.speed_bonus`, espejo TS en
+  `lib/quiz/schema.ts`), bloqueo por trigger tras el primer intento (solo título, descripción, cierre y
+  visibilidad editables; «Duplicar»), revisiones de respuestas abiertas con corrección compensatoria y ranking
+  provisional. Rutas: `/app/cuestionarios`, `/app/cuestionarios/[id]`, `/admin/cuestionarios` (`/nuevo`,
+  `/[id]`, `/[id]/vista-previa`), `/admin/revisiones`. Sección de portada `upcoming_activities`.
+  Flujo completo verificado en producción dentro de una transacción revertida.
+- **Limitaciones conocidas:** `award_points` exige la campaña dentro de `starts_at…ends_at`, así que las
+  revisiones de respuestas abiertas deben hacerse **antes del cierre** de la campaña. Imagen por cuestionario
+  (bucket `quiz-images`) no implementada. Los admins no pueden responder trivias (usan la vista previa).
+- **Siguiente:** Fase 5 (`docs/prompts/05-recompensas-qr.md`) como **misiones/códigos** validados por el staff
+  (Diana prefirió códigos/misiones extra al QR obligatorio); usar `award_points(kind=mission, counts_as_event=true)`.
+  Pendiente aparte: herramienta de rifa (reglas 8 y 11).
 - Los usuarios existentes deben aceptar las reglas v2 al entrar a `/app` (comportamiento esperado).
 
 ## 1. Qué es y calendario

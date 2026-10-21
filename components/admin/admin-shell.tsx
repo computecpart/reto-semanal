@@ -10,6 +10,8 @@ import type { AppRole } from "@/lib/permissions/roles";
 const ADMIN_NAV = [
   { href: "/admin", label: "Panel" },
   { href: "/admin/campana", label: "Campañas" },
+  { href: "/admin/cuestionarios", label: "Cuestionarios" },
+  { href: "/admin/revisiones", label: "Revisiones" },
   { href: "/admin/ranking", label: "Ranking y puntos" },
 ] as const;
 

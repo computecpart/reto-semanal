@@ -4,6 +4,7 @@ import { LandingPage } from "@/components/landing/landing-page";
 import { getPublicLanding, type PublicCampaign } from "@/lib/campaign/queries";
 import { DEFAULT_THEME, type LandingContent } from "@/lib/landing/schema";
 import { getRanking } from "@/lib/points/queries";
+import { getPublicQuizzes } from "@/lib/quiz/queries";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -62,7 +63,13 @@ export default async function HomePage() {
   }
 
   const needsRanking = data.landing.sections.some((section) => section.type === "ranking_preview" && section.visible);
-  const ranking = needsRanking ? await getRanking(10).catch(() => []) : [];
+  const needsQuizzes = data.landing.sections.some((section) => section.type === "upcoming_activities" && section.visible);
+  const [ranking, quizzes] = await Promise.all([
+    needsRanking ? getRanking(10).catch(() => []) : [],
+    needsQuizzes ? getPublicQuizzes().catch(() => []) : [],
+  ]);
 
-  return <LandingPage campaign={data.campaign} content={data.landing} ranking={ranking} signedIn={signedIn} />;
+  return (
+    <LandingPage campaign={data.campaign} content={data.landing} quizzes={quizzes} ranking={ranking} signedIn={signedIn} />
+  );
 }
