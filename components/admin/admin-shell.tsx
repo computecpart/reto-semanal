@@ -12,6 +12,7 @@ const ADMIN_NAV = [
   { href: "/admin/campana", label: "Campañas" },
   { href: "/admin/cuestionarios", label: "Cuestionarios" },
   { href: "/admin/revisiones", label: "Revisiones" },
+  { href: "/admin/misiones", label: "Misiones" },
   { href: "/admin/ranking", label: "Ranking y puntos" },
 ] as const;
 

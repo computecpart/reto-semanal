@@ -3,6 +3,7 @@ import "server-only";
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
+import { getSafePostLoginPath } from "@/lib/auth/safe-redirect";
 import { SUPABASE_COOKIE_OPTIONS } from "@/lib/supabase/cookie-options";
 import { getPublicSupabaseEnv } from "@/lib/validation/env";
 
@@ -45,9 +46,16 @@ export async function updateSession(request: NextRequest) {
   // server. Refreshed auth cookies must survive the redirect response.
   if (!data?.claims.sub && PROTECTED_PATH.test(pathname)) {
     const loginUrl = request.nextUrl.clone();
+    const code = request.nextUrl.searchParams.get("c");
+    // The login page re-validates this against the closed allowlist.
+    const next = ADMIN_PATH.test(pathname)
+      ? "/admin"
+      : pathname === "/app/canjear" && code
+        ? getSafePostLoginPath(`/app/canjear?c=${code}`)
+        : "/app/perfil";
     loginUrl.pathname = "/login";
     loginUrl.search = "";
-    loginUrl.searchParams.set("next", ADMIN_PATH.test(pathname) ? "/admin" : "/app/perfil");
+    loginUrl.searchParams.set("next", next);
 
     const redirectResponse = NextResponse.redirect(loginUrl);
     response.cookies.getAll().forEach((cookie) => {

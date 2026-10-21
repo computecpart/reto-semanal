@@ -11,6 +11,7 @@ import { NavLinks } from "./nav-links";
 const PARTICIPANT_NAV = [
   { href: "/app/perfil", label: "Mi pasaporte" },
   { href: "/app/cuestionarios", label: "Trivias" },
+  { href: "/app/canjear", label: "Canjear" },
   { href: "/app/puntos", label: "Puntos" },
   { href: "/app/ranking", label: "Ranking" },
 ] as const;

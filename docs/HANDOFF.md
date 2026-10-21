@@ -4,10 +4,10 @@ Contexto completo para continuar el desarrollo en otra sesión o cuenta de Claud
 Code. Actualizado: **21 de octubre de 2026, fin de la Fase 2**. Léelo entero antes
 de tocar código.
 
-## 0. ESTADO ACTUAL (22/10/2026, Fases 3 y 4 completas y desplegadas)
+## 0. ESTADO ACTUAL (22/10/2026, Fases 3, 4 y 5 completas y desplegadas)
 
 - **Producción al día** con el repo: migraciones hasta `20261021100000` aplicadas; despliegue en Vercel
-  con la Fase 3. `npm run check` en verde con 208 tests.
+  con la Fase 3. `npm run check` en verde con 218 tests.
 - **Campaña publicada:** «MSI Passport — The Dragon Journey» (`a89d3a8e-…`, slug `msi-passport`),
   23/10/2026 08:00 → 11/12/2026 23:59 hora SV, premio «Equipo MSI» por rifa, tema carmesí/oscuro,
   reglas v2 (importante) = `docs/campaign/msi-passport-reglas.md`, ranking visible y público
@@ -21,8 +21,7 @@ de tocar código.
   `components/auth/form-ui.tsx`: `PixelCard`, `SectionTitle`…); perfil como «pasaporte»; admin con
   barra lateral (`components/admin/admin-shell.tsx`) y kit sobrio `components/admin/admin-ui.tsx`;
   editor de portada con autoguardado.
-- **Misiones presenciales hoy:** el staff las registra en `/admin/ranking` → «Ajuste manual»
-  (descripción visible + motivo auditado). La Fase 5 las convierte en códigos canjeables.
+- **Misiones presenciales:** en `/admin/misiones` (código/QR). El «Ajuste manual» de `/admin/ranking` queda para correcciones.
 - **Fase 4 entregada (22/10):** migraciones `20261022000000_quizzes` y `20261022010000_quiz_guard_fix`.
   Trivias con claves en `private.quiz_answer_keys`, intento único (`unique(quiz_id,user_id)`), plazo del
   servidor (`least(closes_at, started_at+duración)`), autoguardado, envío idempotente, finalización perezosa
@@ -35,9 +34,18 @@ de tocar código.
 - **Limitaciones conocidas:** `award_points` exige la campaña dentro de `starts_at…ends_at`, así que las
   revisiones de respuestas abiertas deben hacerse **antes del cierre** de la campaña. Imagen por cuestionario
   (bucket `quiz-images`) no implementada. Los admins no pueden responder trivias (usan la vista previa).
-- **Siguiente:** Fase 5 (`docs/prompts/05-recompensas-qr.md`) como **misiones/códigos** validados por el staff
-  (Diana prefirió códigos/misiones extra al QR obligatorio); usar `award_points(kind=mission, counts_as_event=true)`.
-  Pendiente aparte: herramienta de rifa (reglas 8 y 11).
+- **Fase 5 entregada (22/10):** migración `20261022020000_missions`. Misiones con código `XXXX-XXXX`
+  (alfabeto sin ambigüedades, muestreo por rechazo) en `private.reward_codes`; QR = enlace propio
+  `/app/canjear?c=CODIGO` generado en servidor (`qrcode@1.5.4`, PNG/SVG); abrir el enlace nunca canjea
+  (vista previa + «Confirmar canje»); `unique(user_id, reward_id)` para código y QR; límite de 10 fallos /
+  10 min (las RPC devuelven `{ok:false}` en vez de lanzar para que el registro persista); escáner con
+  `BarcodeDetector` (sin librería; si no existe, se usa la cámara del teléfono o el código) que solo acepta
+  enlaces propios; login conserva el código vía `getSafePostLoginPath`. Rutas: `/app/canjear`,
+  `/admin/misiones`, `/admin/misiones/[id]` (código, QR, regenerar, canjes), `/[id]/presentar` (pantalla
+  completa), `/[id]/canjes` (CSV con protección contra fórmulas). Puntos: `award_points(kind=mission)`.
+  Verificado en producción con transacción revertida. **No implementado:** logo dentro del QR / bucket `branding`.
+- **Siguiente:** Fase 6 (`docs/prompts/06-moderacion-admin.md`) + **herramienta de rifa** (reglas 8 y 11:
+  sorteo aleatorio y verificable entre participantes elegibles, independiente de los puntos).
 - Los usuarios existentes deben aceptar las reglas v2 al entrar a `/app` (comportamiento esperado).
 
 ## 1. Qué es y calendario
