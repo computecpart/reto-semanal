@@ -3,7 +3,8 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import { requireAdminPage } from "@/lib/auth/guards";
-import { qrPngDataUrl } from "@/lib/missions/qr";
+import { getSiteBranding } from "@/lib/campaign/queries";
+import { qrPngDataUrl, qrSvgWithLogoDataUrl } from "@/lib/missions/qr";
 import { getAdminMission, getSiteOrigin } from "@/lib/missions/queries";
 import { formatCode, redeemUrl } from "@/lib/missions/schema";
 import { OPERATIONAL_TIME_ZONE } from "@/lib/time-zone";
@@ -24,7 +25,10 @@ export default async function PresentMissionPage({ params }: { params: Promise<{
     notFound();
   }
 
-  const png = await qrPngDataUrl(redeemUrl(await getSiteOrigin(), mission.code), 1024);
+  const url = redeemUrl(await getSiteOrigin(), mission.code);
+  const branding = await getSiteBranding();
+  // Prefer the branded QR; fall back to the plain one when there is no logo.
+  const png = (await qrSvgWithLogoDataUrl(url, branding.theme.logo?.path)) ?? (await qrPngDataUrl(url, 1024));
 
   return (
     <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-6 overflow-auto bg-[#0b1020] p-6 text-center text-white">

@@ -5,7 +5,8 @@ import { notFound } from "next/navigation";
 
 import { MissionForm, RegenerateCodeForm } from "@/components/admin/mission-forms";
 import { requireAdminPage } from "@/lib/auth/guards";
-import { qrPngDataUrl, qrSvgDataUrl } from "@/lib/missions/qr";
+import { getSiteBranding } from "@/lib/campaign/queries";
+import { qrPngDataUrl, qrSvgDataUrl, qrSvgWithLogoDataUrl } from "@/lib/missions/qr";
 import { getAdminMission, getSiteOrigin } from "@/lib/missions/queries";
 import { formatCode, redeemUrl } from "@/lib/missions/schema";
 import { OPERATIONAL_TIME_ZONE } from "@/lib/time-zone";
@@ -28,7 +29,10 @@ export default async function AdminMissionPage({ params }: { params: Promise<{ i
   }
 
   const url = mission.code ? redeemUrl(await getSiteOrigin(), mission.code) : null;
-  const [png, svg] = url ? await Promise.all([qrPngDataUrl(url), qrSvgDataUrl(url)]) : [null, null];
+  const branding = await getSiteBranding();
+  const [png, svg, svgLogo] = url
+    ? await Promise.all([qrPngDataUrl(url), qrSvgDataUrl(url), qrSvgWithLogoDataUrl(url, branding.theme.logo?.path)])
+    : [null, null, null];
   const fileName = `mision-${mission.code ? formatCode(mission.code) : mission.id}`;
 
   return (
@@ -58,6 +62,11 @@ export default async function AdminMissionPage({ params }: { params: Promise<{ i
                 <a className={button} download={`${fileName}.svg`} href={svg}>
                   SVG
                 </a>
+                {svgLogo ? (
+                  <a className={button} download={`${fileName}-logo.svg`} href={svgLogo}>
+                    SVG con logo
+                  </a>
+                ) : null}
                 <Link className={button} href={`/admin/misiones/${mission.id}/presentar`} target="_blank">
                   Presentar
                 </Link>

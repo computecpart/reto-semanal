@@ -83,3 +83,14 @@ describe("seguridad de las misiones", () => {
     expect(body("public.admin_regenerate_reward_code")).toContain("'reward.code_regenerate'");
   });
 });
+
+describe("logo del QR", () => {
+  it("identifica el tipo por bytes mágicos, no por la extensión", async () => {
+    const { detectImageMime } = await import("@/lib/missions/image");
+
+    expect(detectImageMime(new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))).toBe("image/png");
+    expect(detectImageMime(new Uint8Array([0xff, 0xd8, 0xff, 0xe0]))).toBe("image/jpeg");
+    expect(detectImageMime(new TextEncoder().encode("RIFF0000WEBPVP8 "))).toBe("image/webp");
+    expect(detectImageMime(new TextEncoder().encode("<svg onload=alert(1)>"))).toBeNull();
+  });
+});
