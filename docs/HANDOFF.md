@@ -194,7 +194,18 @@ versionado de reglas.
 
 ## 8. Estado de despliegue
 
-(Se completa al final de la sesión del 21/10; ver la sección siguiente.)
+Al cierre de la sesión del 21/10/2026:
+
+| Elemento | Estado |
+| --- | --- |
+| Supabase producción | Listo (migraciones, Auth, plantillas, superadmin) |
+| `site_url` / Redirect URLs | Solo `localhost:3000`; **actualizar al dominio real** |
+| SMTP propio | **Pendiente (bloqueante)** |
+| Vercel | **Pendiente**: proyecto, variables Production y despliegue |
+| Dominio | **Pendiente**: el responsable tiene un dominio gratuito por un año (aún sin nombre ni configuración) |
+| Git | Commit local `Fases 0 y 1`; **sin push** a `origin` |
+
+Para completar lo pendiente, ejecutar `docs/prompts/01b-despliegue-produccion.md`.
 
 ## 9. Comandos
 
