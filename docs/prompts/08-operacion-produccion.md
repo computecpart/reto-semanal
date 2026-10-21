@@ -7,6 +7,12 @@ Producción ya está en uso. Esta fase es una **auditoría de solo lectura** má
 documentación operativa. No cambies la configuración remota ni despliegues sin
 autorización explícita. Propón los cambios y espera.
 
+## 0. Estado de partida
+
+Producción en https://piensads.app desde el 23/10/2026. Infraestructura y costes en HANDOFF §3: Supabase Pro con
+Spend Cap y Vercel Pro con presupuesto de $1 y pausa. Cualquier recomendación que implique coste extra (PITR,
+cómputo, add-ons, plan de pago de Resend) debe presentarse con su precio y esperar la decisión del responsable.
+
 ## 1. Comprobaciones
 
 **Supabase**

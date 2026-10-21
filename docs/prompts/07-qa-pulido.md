@@ -5,6 +5,14 @@ Actúa como Principal Full-Stack Engineer de este proyecto. Lee `CLAUDE.md`,
 
 Fase de integración y calidad. **No añadas funcionalidades grandes.**
 
+## 0. Estado de partida
+
+- Sistema visual pixel ya definido (HANDOFF §5): revísalo pantalla por pantalla, no lo reinventes.
+- La portada ya es un constructor por secciones. Verifica cada tipo de sección con y sin imagen, con tema claro y
+  oscuro, a 360 px.
+- Las tablas inmutables y las RPC admin ya tienen invariantes en `tests/migrations.test.ts`. Amplíalas, no las
+  dupliques.
+
 ## 1. Seed de demostración (solo local)
 
 - `npm run seed:demo`. Se niega a ejecutarse si la URL no es local: reutiliza

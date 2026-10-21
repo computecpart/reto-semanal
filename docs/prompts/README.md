@@ -1,58 +1,74 @@
 # Prompts de las fases siguientes
 
 Ejecuta **una fase por sesión**, en este orden, y detente al terminar cada una.
-Antes de cada fase, Claude Code carga `CLAUDE.md`, que incluye `AGENTS.md` y
-`docs/HANDOFF.md`.
+Claude Code carga `CLAUDE.md`, que incluye `AGENTS.md` y `docs/HANDOFF.md`.
+Este último contiene el estado real, la infraestructura y las convenciones.
+
+Fases 0, 1 y 2 completas y desplegadas en https://piensads.app.
 
 | Archivo | Fase | Depende de |
 | --- | --- | --- |
-| `01b-despliegue-produccion.md` | Cerrar despliegue, dominio y SMTP (si quedó pendiente) | 0, 1 |
-| `02-campana-landing-reglas.md` | Campañas, portada, reglas versionadas, auditoría base, sistema visual | 1 |
+| `01b-cierre-produccion.md` | SMTP con Resend + push a GitHub (bloqueante para usuarios reales) | — |
 | `03-puntos-ranking.md` | Ledger de puntos, estado del participante, ranking | 2 |
 | `04-cuestionarios.md` | Motor de cuestionarios y revisiones | 3 |
 | `05-recompensas-qr.md` | Códigos manuales y QR | 3 |
 | `06-moderacion-admin.md` | Moderación, administradores, panel de auditoría | 3 (mejor tras 4 y 5) |
-| `07-qa-pulido.md` | QA, accesibilidad, seed local, documentación | 2–6 |
-| `08-operacion-produccion.md` | Endurecimiento y operación de la campaña | 7 |
+| `07-qa-pulido.md` | QA, accesibilidad, seed local, documentación | 3–6 |
+| `08-operacion-produccion.md` | Endurecimiento y manual de operación | 7 |
 
-Cambios respecto al plan original:
+Decisiones de diseño respecto al plan original:
 
-- **Los puntos van antes que cuestionarios y recompensas.** Ambos módulos
-  otorgan puntos, así que necesitan el ledger.
-- **La auditoría general nace en la Fase 2**, porque los cambios de campaña y de
-  reglas ya deben quedar registrados. El panel de consulta llega en la Fase 6.
-- **El estado del participante** (`active`, `suspended`, `disqualified`,
-  `archived`) se crea en la Fase 3, porque el ranking y los canjes dependen de
-  él. La interfaz de moderación llega en la Fase 6.
-- **El seed demo solo se ejecuta contra Supabase local.** El único proyecto
-  remoto es producción.
+- **Los puntos van antes que cuestionarios y recompensas**, porque ambos otorgan
+  puntos y necesitan el ledger.
+- **La auditoría ya existe** (`private.audit_log` y `private.write_audit`). El
+  panel de consulta llega en la Fase 6.
+- **El estado del participante** se crea en la Fase 3, porque ranking y canjes
+  dependen de él. La interfaz de moderación llega en la Fase 6.
+- **El seed demo solo se ejecuta contra Supabase local.**
 
-Si el calendario aprieta (apertura el viernes y primera actividad el sábado),
-el orden mínimo es: `01b` → `02` → `03` → la fase de la actividad del sábado
-(`04` si es cuestionario, `05` si es código/QR en vivo).
+Si el calendario aprieta (apertura el viernes 23 y primera actividad el sábado
+24): `01b` → `03` → la fase de la actividad del sábado (`04` si es cuestionario,
+`05` si es código o QR en vivo).
 
 ## Reglas comunes a todas las fases
 
-1. **Producción está viva.** Hay usuarios reales. Todo cambio de esquema es una
-   migración nueva, aditiva y compatible con los datos y el código ya desplegados.
-2. **Migraciones:** escribir → `npm run check` → `npx supabase db push --dry-run`
-   → mostrar el SQL y la lista al responsable → **esperar autorización** →
-   `npx supabase db push` → verificar con `node scripts/supabase-mgmt.mjs query`.
-3. **Despliegue:** solo con autorización explícita, después de aplicar las
-   migraciones de las que depende el código.
-4. **Módulos incompletos** se ocultan con configuración (p. ej. estado de
-   campaña o un ajuste de visibilidad), nunca con código a medio terminar
-   expuesto.
-5. **Nunca** imprimir secretos, desactivar RLS, conceder escritura directa sobre
-   tablas a `anon`/`authenticated`, ni crear datos ficticios en producción.
-6. Respetar las convenciones de `docs/HANDOFF.md` §4: RPC `security definer`
-   con `search_path = ''`, guardas de servidor, mapeo de errores por lista
-   blanca, formularios con `startTransition`, fechas operativas y tests de
-   invariantes SQL.
+1. **Producción está viva.** Todo cambio de esquema es una migración nueva,
+   aditiva y compatible con los datos y el código ya desplegados. Nunca editar
+   una migración aplicada.
+2. **Migraciones:**
+   1. escribir la migración;
+   2. `npm run check`;
+   3. `npx supabase db push --dry-run`;
+   4. mostrar al responsable la lista y el SQL relevante;
+   5. **esperar autorización**;
+   6. `npx supabase db push`;
+   7. verificar con `node scripts/supabase-mgmt.mjs query` (solo lectura) y con
+      la clave pública.
+3. **Despliegue** (comando en HANDOFF §9): solo con autorización y siempre
+   **después** de aplicar las migraciones de las que depende el código. Tras
+   desplegar, prueba de humo en `https://piensads.app`.
+4. **Módulos incompletos** se ocultan por configuración, nunca con código a
+   medio terminar expuesto.
+5. **Nunca:**
+   - imprimir secretos;
+   - desactivar RLS;
+   - conceder `INSERT`, `UPDATE` o `DELETE` sobre tablas a `anon` o
+     `authenticated`;
+   - crear datos ficticios en producción;
+   - llamar RPCs que escriben suplantando a un usuario real.
+6. **Reutilizar lo que existe** (HANDOFF §5):
+   - `private.require_role`, `private.write_audit`,
+     `private.current_campaign_id` y `public.is_admin`;
+   - las guardas `requireAdminPage` y `requireSessionPage`;
+   - el mapeo de errores por lista blanca;
+   - `useTransitionForm` (extráelo a `lib/forms` cuando lo uses en otro
+     dominio), `CampaignTabs` y `AdminNav`;
+   - el sistema visual pixel (`font-display`, `pixel-frame`, `pixel-button`) y
+     el renderer de la portada.
 7. Cada fase amplía `tests/migrations.test.ts` con las invariantes de sus tablas
-   y RPCs.
-8. Al terminar, actualizar `docs/HANDOFF.md` (estado, modelo de datos, riesgos)
-   y `README.md`.
-9. **Entrega:** resumen breve; lista PASS/FAIL/NOT RUN de lint, typecheck,
-   tests, build, dry-run y verificación remota; instrucciones manuales si las
-   hay. Después, **DETENTE**.
+   y RPCs, y añade sus tests unitarios.
+8. Al terminar, actualizar `docs/HANDOFF.md` (estado, rutas, modelo de datos,
+   riesgos) y `README.md`, y hacer commit (sin push salvo autorización).
+9. **Entrega:** resumen breve; PASS/FAIL/NOT RUN de lint, typecheck, tests,
+   build, dry-run, migración remota, despliegue y prueba de humo; acciones
+   manuales pendientes. Después, **DETENTE**.

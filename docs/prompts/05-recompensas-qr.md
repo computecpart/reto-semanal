@@ -6,6 +6,22 @@ Requiere la Fase 3: los puntos se otorgan **solo** con `private.award_points`.
 
 Implementa **exclusivamente** recompensas canjeables por código o QR.
 
+## 0. Integración con lo existente
+
+- **Puntos:** solo con `private.award_points(kind = reward, source_type = reward, source_id = reward_id)`.
+  Su índice de idempotencia más `unique(user_id, reward_id)` impiden el doble canje.
+- **Admin:** cada RPC con `require_role` + `write_audit` (`reward.create`, `reward.code_regenerate`…);
+  cada página con `requireAdminPage()`.
+- **Navegación:** «Canjear» en `components/app/app-header.tsx`; «Recompensas» en `components/admin/admin-nav.tsx`.
+- **Ruta de retorno:** `lib/auth/safe-redirect.ts` solo acepta `/admin` y `/app/perfil`. Amplíalo para
+  `/app/canjear?c=CODIGO`, validando el código con el alfabeto y la longitud exactos.
+- **La vista de presentación** `/admin/recompensas/[id]/presentar` hereda el layout del admin. Si necesitas
+  pantalla completa sin cabecera, crea una ruta fuera de `/admin` (como `/vista-previa`), protegida con
+  `requireAdminPage()`, y añádela a `PROTECTED_PATH` y `ADMIN_PATH` en `lib/supabase/proxy.ts`.
+- **Logo del QR:** reutiliza el logo del tema de la portada (`landing-assets`) o crea un bucket `branding` con el
+  mismo patrón.
+- **Coste:** generar el QR en servidor con `qrcode` no usa Image Optimization de Vercel. Mantén `unoptimized`.
+
 ## 1. Modelo
 
 - `public.rewards` (por `campaign_id`): `name`, `description`, `points` (> 0),

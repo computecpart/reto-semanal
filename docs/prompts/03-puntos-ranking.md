@@ -1,99 +1,127 @@
 # PROMPT 3 — Ledger de puntos, estado del participante y ranking
 
 Actúa como Principal Full-Stack Engineer de este proyecto. Lee `CLAUDE.md`,
-`AGENTS.md`, `docs/HANDOFF.md` y `docs/prompts/README.md`. Producción está viva.
+`AGENTS.md`, `docs/HANDOFF.md` y `docs/prompts/README.md` (reglas comunes).
+Producción está viva.
 
 Implementa **exclusivamente** la economía de puntos, el estado del participante
 y la clasificación. Sin cuestionarios ni QR. Esta fase crea la infraestructura
 que usarán las Fases 4 y 5.
 
-## 1. Estado del participante (mínimo)
+## 1. Estado del participante
 
-- `private.participant_states`: `user_id` (PK), `status` (`active`,
-  `suspended`, `disqualified`, `archived`), `changed_at`, `changed_by` y
-  `reason`. Rellena `active` para todos los usuarios existentes y crea la fila
-  al registrarse (amplía el trigger de alta con `create or replace`).
-- Helper `private.participant_can_earn(user_id)`: solo `active` puede ganar
-  puntos.
-- Helper `private.is_competitor(user_id)`: rol `participant`. **Admins y
-  superadmins no compiten** ni aparecen en el ranking. Confirma esta decisión
-  con el responsable.
-- La interfaz de moderación es de la Fase 6. Aquí basta el modelo y su uso.
+- `private.participant_states`: `user_id` (PK, referencia a `auth.users`),
+  `status` (`active`, `suspended`, `disqualified`, `archived`), `changed_at`,
+  `changed_by` y `reason`.
+- En la migración: una fila `active` para todos los usuarios existentes.
+- Amplía `private.handle_new_user` con `create or replace`, copiando el cuerpo
+  **completo** vigente de `20261021000000`, para que inserte el estado
+  `active` al registrarse.
+- `private.participant_can_earn(user_id)`: devuelve verdadero solo si el estado
+  es `active`.
+- `private.is_competitor(user_id)`: solo el rol `participant` compite. **Admins y
+  superadmins no compiten ni aparecen en el ranking.** Confirma esta decisión
+  con el responsable antes de cerrar la fase.
+- RPC `get_my_participant_status()` para que `/app` muestre avisos. La
+  interfaz de moderación es de la Fase 6.
 
-## 2. Ledger `point_events` (fuente única de verdad)
+## 2. Ledger `public.point_events` (fuente única de verdad)
 
-- `public.point_events` con:
-  - `id bigint identity`, `campaign_id`, `user_id`;
-  - `amount int` (distinto de 0, con un límite razonable en valor absoluto);
-  - `kind` (`quiz`, `quiz_speed_bonus`, `open_review`, `reward`, `adjustment`,
-    `correction`), `source_type`, `source_id`;
-  - `description` (visible para el participante), `reason` (interna);
-  - `actor_id`, `reverses_event_id` (referencia a `point_events`);
+- Columnas:
+  - `id bigint identity`;
+  - `campaign_id` (referencia a `campaigns`) y `user_id`;
+  - `amount int`: distinto de 0 y `abs(amount) <= 100000`;
+  - `kind`: enum `point_event_kind` con `quiz`, `quiz_speed_bonus`,
+    `open_review`, `reward`, `adjustment` y `correction`;
+  - `source_type text` y `source_id text`;
+  - `description text` (visible, ≤ 200) y `reason text` (interna);
+  - `actor_id`;
+  - `reverses_event_id` (referencia a `point_events`);
   - `created_at default now()`.
-- **Solo inserción:** un trigger rechaza `UPDATE` y `DELETE` para todos los
-  roles.
-- **Idempotencia:** índice único parcial
-  `(campaign_id, user_id, kind, source_type, source_id)` cuando `source_id` no es
-  nulo. Así un cuestionario o una recompensa nunca puntúan dos veces, aunque
-  lleguen dos requests simultáneas.
-- `private.award_points(...)`: función interna que valida que la campaña esté
-  publicada y que el participante pueda ganar puntos, e inserta con
-  `on conflict do nothing`, devolviendo si insertó. Sin `execute` para clientes.
-  Las Fases 4 y 5 la llaman dentro de su transacción.
-- Los clientes nunca reciben `INSERT`, `UPDATE` ni `DELETE`. Lectura con RLS
-  limitada a los eventos propios. No existe ningún `total_points` editable.
+- **Solo inserción:** usa el trigger `private.forbid_mutation` (ya existe) para
+  `UPDATE` y `DELETE`, y uno de `TRUNCATE`.
+- **Idempotencia:**
+  - índice único parcial `(campaign_id, user_id, kind, source_type, source_id)`
+    cuando `source_id` no es nulo;
+  - índice único sobre `reverses_event_id`, porque un evento solo se revierte
+    una vez.
+- `private.award_points(p_campaign_id, p_user_id, p_amount, p_kind,
+  p_source_type, p_source_id, p_description)`:
+  - función interna, sin `execute` para clientes;
+  - valida que la campaña esté `published` y que se cumplan
+    `participant_can_earn` e `is_competitor`;
+  - inserta con `on conflict do nothing` y devuelve `boolean` (insertó o no);
+  - las Fases 4 y 5 la llaman dentro de su propia transacción.
+- RLS: lectura de los eventos propios para `authenticated`. Lectura completa
+  para admins con `public.is_admin()`. Sin grants de escritura.
 
 ## 3. Ajustes administrativos
 
-- RPC `admin_adjust_points(user_id, campaign_id, amount, reason)`: motivo
-  obligatorio (≥ 10 caracteres), `require_role(admin, superadmin)`, auditoría en
-  la misma transacción.
-- RPC `admin_reverse_point_event(event_id, reason)`: crea un evento
-  `correction` con el importe opuesto y `reverses_event_id`. Un evento solo se
-  puede revertir una vez (índice único). Nunca se borra nada.
+- `admin_adjust_points(p_user_id, p_campaign_id, p_amount, p_reason)`:
+  - `require_role('admin', 'superadmin')`;
+  - motivo obligatorio (≥ 10 caracteres);
+  - un admin solo ajusta a `participant`;
+  - inserta `kind = adjustment` (sin pasar por `award_points`, para permitir
+    negativos y sin `source_id`);
+  - `write_audit('points.adjust', ...)`.
+- `admin_reverse_point_event(p_event_id, p_reason)`:
+  - crea `kind = correction` con el importe opuesto y `reverses_event_id`;
+  - el índice impide revertir dos veces;
+  - auditoría `points.reverse`.
 
-## 4. Participante
+## 4. Ranking
 
-- `/app/puntos`: total, movimientos (fecha en la zona operativa, descripción e
-  importe con signo) y estado vacío claro.
-- `/app/ranking`: posición, avatar, identidad según la configuración y puntos.
-  Resalta al usuario actual y muestra su posición aunque esté fuera del top
-  visible.
+- Configuración por campaña (migración aditiva en `public.campaigns`):
+  - `ranking_visible boolean default false`;
+  - `ranking_audience` (`public`, `authenticated` o `hidden`, por defecto
+    `authenticated`);
+  - `ranking_identity` (`alias`, `name` o `alias_name`, por defecto `alias`).
+- RPC `get_ranking(p_limit int default 100)` (`security definer`, `anon` y
+  `authenticated`) sobre `private.current_campaign_id()`:
+  - aplica la audiencia en servidor: con `hidden`, o `authenticated` sin sesión,
+    devuelve 0 filas;
+  - devuelve **solo** `position`, `avatar_id`, `display_alias`, `display_name`,
+    `points` e `is_current_user`. Nunca correo, nacimiento, edad ni
+    departamento;
+  - `position = RANK()` sobre `sum(amount)` descendente, de modo que los empates
+    comparten posición (1, 1, 3). No desempatar automáticamente;
+  - excluye a quienes no compiten y a los `disqualified`. Los `suspended`
+    aparecen.
+- RPC `get_my_points()`: total y movimientos propios de la campaña actual.
+- `is_ranking_provisional()`: devuelve `false` por ahora; la Fase 4 lo amplía.
 
-## 5. Ranking
+## 5. Interfaz
 
-- RPC `get_ranking(campaign_id)` (`security definer`): calcula desde
-  `point_events` y devuelve **solo** `position`, `avatar_id`, `display_alias`,
-  `display_name`, `points` e `is_current_user`. Nunca correo, fecha de
-  nacimiento, edad ni departamento.
-- **Empates:** usa `RANK()` (1, 1, 3), sin desempatar automáticamente. Muestra
-  «Empate» en la interfaz. El criterio oficial de desempate lo publica el
-  organizador en las reglas.
-- Excluye a quienes no compiten. Los `disqualified` quedan fuera (la Fase 6
-  añadirá la sección opcional). Los `suspended` siguen apareciendo, pero no
-  ganan puntos.
-- **Configuración por campaña** (columnas nuevas o tabla de ajustes):
-  `ranking_visible`, audiencia (`public`, `authenticated`, `hidden`) e identidad
-  (`alias`, `name`, `alias_name`). El RPC aplica la audiencia en servidor: si es
-  `authenticated` y no hay sesión, no devuelve filas.
-- `is_ranking_provisional(campaign_id)`: por ahora devuelve `false`; la Fase 4
-  lo ampliará con las revisiones pendientes. Con `true`, la interfaz muestra
-  «Clasificación provisional».
-- `/admin/ranking`: configuración y vista previa. Toda mutación queda auditada.
-- **Portada:** muestra un top 10 solo si la audiencia es `public` y el ranking
-  está visible.
+- `/app/puntos`: total grande, movimientos (fecha en hora de El Salvador,
+  descripción e importe con signo y color) y estado vacío.
+- `/app/ranking`: tabla con posición, avatar, identidad y puntos. Resalta tu
+  fila y añade un bloque fijo «Tu posición» si estás fuera del top. Muestra
+  «Empate» y «Clasificación provisional» cuando corresponda. Estilo pixel del
+  participante.
+- **Navegación del participante:** añade «Perfil», «Puntos» y «Ranking» en
+  `components/app/app-header.tsx`.
+- `/admin/ranking`: configuración, vista previa, ajuste de puntos por
+  participante (búsqueda por alias) y reversión de un evento. Añade el enlace
+  en `components/admin/admin-nav.tsx`.
+- **Portada:** nuevo tipo de sección `ranking_preview` (encabezado + top N de 3
+  a 10). Sigue los pasos de «Para añadir un tipo de sección» en HANDOFF §5.
+  Solo se muestra si `ranking_visible` y la audiencia es `public`.
 
 ## 6. Pruebas
 
 - Invariantes SQL:
-  - `point_events` sin grants de escritura y con trigger de solo inserción;
-  - índice de idempotencia;
-  - `get_ranking` no selecciona columnas privadas.
-- Unitarias: formateo, empates y la identidad mostrada según la configuración.
-- **Integración** (recomendada): Supabase local con `supabase start` (Docker)
-  para comprobar que el ranking coincide exactamente con
-  `sum(point_events)`, la idempotencia con llamadas paralelas y que un
-  participant no puede insertar eventos. Nunca contra producción. Si Docker no
-  está disponible, márcalo como NOT RUN.
+  - `point_events` con RLS, sin grants de escritura, solo inserción y con el
+    índice de idempotencia;
+  - `award_points` sin `execute` para clientes;
+  - las RPC admin con `require_role` y `write_audit`;
+  - `get_ranking` sin columnas privadas.
+- Unitarias: formateo, representación de empates, identidad según la
+  configuración y signo de los importes.
+- **Integración** (recomendada) en Supabase local con `supabase start`, si hay
+  Docker:
+  - el ranking coincide con `sum(point_events)`;
+  - N llamadas paralelas a `award_points` con el mismo origen generan 1 evento;
+  - un participant no puede insertar eventos.
+  Nunca contra producción. Sin Docker, NOT RUN.
 
 Actualiza el handoff y el README, entrega el resumen y **DETENTE**.

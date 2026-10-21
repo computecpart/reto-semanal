@@ -12,7 +12,13 @@ durante una campaña de ocho semanas.
   recuperación de contraseña, `/app/perfil`, `/admin` protegido y bootstrap del
   primer superadmin.
 
-No se han implementado cuestionarios, códigos QR, recompensas, puntos ni ranking.
+- **Fase 2 — Campañas y portada:** campañas con estados, portada compuesta por
+  secciones editable desde el admin (borrador, vista previa, publicación e
+  historial), reglas versionadas con aceptación registrada, auditoría inmutable y
+  sistema visual pixel-art.
+
+Producción: **https://piensads.app**. Aún no existen puntos, ranking,
+cuestionarios, recompensas QR ni moderación.
 
 **Estado de infraestructura, convenciones y siguientes fases:** ver
 [`docs/HANDOFF.md`](docs/HANDOFF.md) y [`docs/prompts/`](docs/prompts/README.md).
@@ -38,6 +44,9 @@ solo admite versiones menores que 6.1.
 | `/auth/confirm` | Público | Alternativa: enlace de confirmación de registro (si la plantilla aún no envía el código) |
 | `/reset-password` | Sesión de recuperación | Nueva contraseña |
 | `/reglas`, `/privacidad` | Público | Textos legales (borradores a revisar por el organizador) |
+| `/aceptar-reglas` | Sesión | Aceptar una versión importante de las reglas |
+| `/admin/campana/...` | admin/superadmin | Datos, estado, editor de portada y reglas |
+| `/vista-previa/portada/[id]` | admin/superadmin | Vista previa del borrador |
 | `/app/perfil` | Sesión | Ver, editar o completar el perfil |
 | `/admin` | `admin` o `superadmin` | Un `participant` es redirigido con acceso denegado |
 

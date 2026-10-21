@@ -2,9 +2,21 @@
 
 Actúa como Principal Full-Stack Engineer de este proyecto. Lee `CLAUDE.md`,
 `AGENTS.md`, `docs/HANDOFF.md` y `docs/prompts/README.md`. Producción está viva.
-Reutiliza `private.participant_states` (Fase 3) y `private.audit_log` (Fase 2).
+Reutiliza `private.participant_states` (Fase 3) y `private.audit_log` (Fase 2, ya existe).
 
 Implementa **exclusivamente** las herramientas administrativas restantes.
+
+## 0. Integración con lo existente
+
+- `private.participant_states` (Fase 3) ya existe: aquí se añade su gestión.
+- `private.audit_log` (Fase 2) ya registra todo: aquí se añade el panel de consulta. Los registros de
+  `private.role_audit_log` (bootstrap) también deben verse.
+- `private.blocked_alias_terms` (Fase 1) es la lista de alias prohibidos. `private.alias_is_allowed` ya la consulta.
+- Añade «Participantes», «Administradores» (solo superadmin) y «Auditoría» en `components/admin/admin-nav.tsx`.
+  Oculta los enlaces que el rol no puede usar, aunque la autoridad siga en el RPC.
+- `lib/permissions/users.ts` (`canManageTarget`, `canManageAdministrativeRoles`) refleja la jerarquía en
+  TypeScript. Mantenlo sincronizado con el SQL mediante un test, como `tests/campaign.test.ts` hace con las
+  transiciones.
 
 ## 1. Participantes (`/admin/participantes`)
 

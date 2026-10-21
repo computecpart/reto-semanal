@@ -6,6 +6,20 @@ Requiere la Fase 3: los puntos se otorgan **solo** con `private.award_points`.
 
 Implementa **exclusivamente** el sistema de cuestionarios. Sin QR.
 
+## 0. Integración con lo existente
+
+- **Puntos:** solo con `private.award_points` (Fase 3), dentro de la misma transacción del RPC.
+- **Admin:** cada RPC empieza con `private.require_role` y termina con `private.write_audit`
+  (`quiz.create`, `quiz.publish`, `quiz.close`, `review.decide`…). Cada página llama a `requireAdminPage()`.
+- **Participante:** solo `private.participant_can_earn` puede iniciar intentos. Campaña: `private.current_campaign_id()`.
+- **Navegación:** añade «Cuestionarios» en `components/app/app-header.tsx` y en `components/admin/admin-nav.tsx`.
+- **Portada:** nuevo tipo de sección `upcoming_activities` con los próximos cuestionarios publicados; solo título y
+  apertura, nunca preguntas. Sigue HANDOFF §5 «Para añadir un tipo de sección».
+- **Imágenes:** bucket nuevo `quiz-images` con el mismo patrón que `landing-assets` (políticas con `public.is_admin()`,
+  solo raster, rutas validadas por regex, `next/image` con `unoptimized`).
+- **Formularios:** `useTransitionForm` (extráelo a `lib/forms`).
+- **Ruta protegida nueva:** ninguna fuera de `/app` y `/admin`; ya están en el proxy.
+
 ## 1. Modelo
 
 - `public.quizzes` (por `campaign_id`):
