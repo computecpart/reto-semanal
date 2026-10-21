@@ -1,15 +1,27 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-pixel), var(--font-inter), ui-sans-serif, sans-serif;
+
+  --color-ink: #0b1020;
+  --color-paper: #f7f5ef;
+}
+
 :root {
   color-scheme: light;
-  font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
+
+  /* Landing accent; overridden per campaign theme from a closed palette. */
+  --accent: #2f5bea;
+  --accent-strong: #1d3fb8;
+  --accent-soft: #dfe7ff;
+  --accent-contrast: #ffffff;
 }
 
 body {
   margin: 0;
   min-width: 320px;
+  font-family: var(--font-sans);
 }
 
 ::selection {
@@ -17,3 +29,57 @@ body {
   color: #0f172a;
 }
 
+/*
+ * Pixel-art primitives: stepped borders and hard offset shadows built with
+ * box-shadow, so they stay crisp at any size without images.
+ */
+@utility pixel-frame {
+  border: 3px solid var(--frame, var(--color-ink));
+  box-shadow:
+    6px 6px 0 0 var(--frame, var(--color-ink));
+}
+
+@utility pixel-frame-sm {
+  border: 2px solid var(--frame, var(--color-ink));
+  box-shadow:
+    3px 3px 0 0 var(--frame, var(--color-ink));
+}
+
+@utility pixel-button {
+  border: 3px solid var(--frame, var(--color-ink));
+  box-shadow: 4px 4px 0 0 var(--frame, var(--color-ink));
+  transition:
+    transform 80ms steps(2),
+    box-shadow 80ms steps(2);
+
+  &:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 5px 5px 0 0 var(--frame, var(--color-ink));
+  }
+
+  &:active {
+    transform: translate(3px, 3px);
+    box-shadow: 1px 1px 0 0 var(--frame, var(--color-ink));
+  }
+}
+
+@utility pixel-grid {
+  background-image:
+    linear-gradient(to right, rgb(11 16 32 / 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(11 16 32 / 0.06) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+@utility pixelated {
+  image-rendering: pixelated;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

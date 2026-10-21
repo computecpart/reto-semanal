@@ -1,13 +1,42 @@
 import type { Metadata } from "next";
 
 import { LegalPage } from "@/components/legal/legal-page";
+import { SafeMarkdown } from "@/components/markdown/safe-markdown";
+import { getCurrentRules } from "@/lib/campaign/queries";
+import { OPERATIONAL_TIME_ZONE } from "@/lib/time-zone";
 
 export const metadata: Metadata = {
   title: "Reglas de participación | Reto Semanal",
 };
 
-// Static until campaign rules become editable and versioned in the database.
-export default function RulesPage() {
+export const dynamic = "force-dynamic";
+
+function formatDate(value: string): string {
+  return new Intl.DateTimeFormat("es-SV", {
+    dateStyle: "long",
+    timeZone: OPERATIONAL_TIME_ZONE,
+  }).format(new Date(value));
+}
+
+export default async function RulesPage() {
+  const rules = await getCurrentRules();
+
+  if (rules) {
+    return (
+      <LegalPage
+        title={`Reglas de participación · ${rules.campaign_name}`}
+        updatedAt={`${formatDate(rules.published_at)} · versión ${rules.version}`}
+      >
+        <SafeMarkdown>{rules.content_md}</SafeMarkdown>
+      </LegalPage>
+    );
+  }
+
+  return <FallbackRules />;
+}
+
+// Generic text shown until the organizer publishes versioned campaign rules.
+function FallbackRules() {
   return (
     <LegalPage title="Reglas de participación" updatedAt="21 de octubre de 2026">
       <p>

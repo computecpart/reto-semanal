@@ -1,7 +1,21 @@
 import type { Metadata } from "next";
+import { Inter, Pixelify_Sans } from "next/font/google";
 import type { ReactNode } from "react";
 
 import "./globals.css";
+
+// Pixel display font is reserved for titles; body copy stays highly legible.
+const pixel = Pixelify_Sans({
+  display: "swap",
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-pixel",
+});
+
+const inter = Inter({
+  display: "swap",
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-inter",
+});
 
 export const metadata: Metadata = {
   description:
@@ -11,9 +25,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="es">
+    <html className={`${pixel.variable} ${inter.variable}`} lang="es">
       <body>{children}</body>
     </html>
   );
 }
-

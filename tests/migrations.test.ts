@@ -96,6 +96,80 @@ describe("migraciones de autenticación y perfil", () => {
     expect(departments).toEqual([...EL_SALVADOR_DEPARTMENTS]);
   });
 
+  it("nunca concede escritura directa sobre tablas públicas a los clientes", () => {
+    const writeGrants = [
+      ...sql.matchAll(/grant (?:insert|update|delete|truncate|all)[^;]* on table public\.[^;]*;/gi),
+    ].map((match) => match[0]);
+
+    // The foundation's display_name grant is revoked by the next migration.
+    expect(writeGrants).toEqual(["grant update (display_name) on table public.profiles to authenticated;"]);
+    expect(sql.indexOf("revoke update (display_name) on table public.profiles from authenticated;")).toBeGreaterThan(
+      sql.indexOf(writeGrants[0] ?? ""),
+    );
+  });
+
+  it("todas las RPC administrativas exigen rol y quedan restringidas", () => {
+    const adminFunctions = [...sql.matchAll(/create (?:or replace )?function (public\.admin_\w+)\(/g)].map(
+      (match) => match[1] as string,
+    );
+
+    expect(adminFunctions.length).toBeGreaterThanOrEqual(7);
+
+    for (const name of adminFunctions) {
+      expect(functionBody(name), name).toContain("private.require_role('admin', 'superadmin')");
+      expect(sql, name).toMatch(new RegExp(`revoke all on function ${name.replace(".", "\\.")}\\([^)]*\\) from public, anon;`));
+    }
+  });
+
+  it("las mutaciones administrativas de campaña quedan auditadas", () => {
+    for (const name of [
+      "public.admin_create_campaign",
+      "public.admin_update_campaign",
+      "public.admin_set_campaign_status",
+      "public.admin_publish_landing",
+      "public.admin_restore_landing_version",
+      "public.admin_publish_rules",
+    ]) {
+      expect(functionBody(name), name).toContain("private.write_audit(");
+    }
+  });
+
+  it("la auditoría, el historial de portada y las reglas publicadas son inmutables", () => {
+    expect(sql).toMatch(/before update or delete on private\.audit_log/);
+    expect(sql).toMatch(/before truncate on private\.audit_log/);
+    expect(sql).toMatch(/before update or delete on public\.landing_page_versions/);
+    expect(sql).toMatch(/before update or delete on public\.campaign_rules_versions/);
+  });
+
+  it("la portada pública nunca expone el borrador", () => {
+    const body = functionBody("public.get_public_landing");
+
+    expect(body).toContain("landing.published");
+    expect(body).not.toMatch(/\bdraft\b/);
+  });
+
+  it("el bucket de imágenes solo acepta formatos raster y escritura de admins", () => {
+    expect(sql).toContain("array['image/png', 'image/jpeg', 'image/webp']");
+    expect(sql).not.toMatch(/image\/svg/);
+
+    const storagePolicies = [...sql.matchAll(/create policy "landing_assets_\w+"[\s\S]*?;/g)].map(
+      (match) => match[0],
+    );
+
+    expect(storagePolicies).toHaveLength(4);
+
+    for (const policy of storagePolicies) {
+      expect(policy).toContain("public.is_admin()");
+    }
+  });
+
+  it("el alta registra la aceptación de las reglas vigentes sin tocar el rol", () => {
+    const handler = functionBody("private.handle_new_user");
+
+    expect(handler).toContain("insert into public.rules_acceptances");
+    expect(handler).toContain("'participant'::public.app_role");
+  });
+
   it("reserva en PostgreSQL todos los términos administrativos", () => {
     for (const term of RESERVED_ALIAS_TERMS) {
       expect(sql).toContain(`('${term}', 'reserved')`);

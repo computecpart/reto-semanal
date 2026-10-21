@@ -60,5 +60,5 @@ export async function updateSession(request: NextRequest) {
   return response;
 }
 
-const PROTECTED_PATH = /^\/(?:app|admin)(?:\/|$)/;
-const ADMIN_PATH = /^\/admin(?:\/|$)/;
+const PROTECTED_PATH = /^\/(?:app|admin|vista-previa|aceptar-reglas)(?:\/|$)/;
+const ADMIN_PATH = /^\/(?:admin|vista-previa)(?:\/|$)/;
