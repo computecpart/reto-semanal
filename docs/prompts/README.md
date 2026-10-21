@@ -8,7 +8,7 @@ Fases 0, 1 y 2 completas y desplegadas en https://piensads.app.
 
 | Archivo | Fase | Depende de |
 | --- | --- | --- |
-| `01b-cierre-produccion.md` | Solo queda el push a GitHub (SMTP con Resend ya resuelto) | — |
+| `01b-cierre-produccion.md` | **Completado** (SMTP y push). Solo como referencia | — |
 | `03-puntos-ranking.md` | Ledger de puntos, estado del participante, ranking | 2 |
 | `04-cuestionarios.md` | Motor de cuestionarios y revisiones | 3 |
 | `05-recompensas-qr.md` | Códigos manuales y QR | 3 |

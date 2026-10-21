@@ -98,10 +98,8 @@ Optimization; no hace falta `remotePatterns`.
 
 ### GitHub
 
-`origin = https://github.com/computecpart/reto-semanal.git`. **El push no se ha
-hecho**: el responsable lo autorizó, pero el sistema de permisos de la sesión lo
-bloqueó. Debe ejecutarlo el responsable con `git push -u origin main`. Después
-puede conectarse la integración Git de Vercel.
+`origin = https://github.com/computecpart/reto-semanal.git` (rama `main`, al día desde el 21/10/2026).
+Este equipo usa **siempre la cuenta GitHub `computecpart`**: el repo tiene `credential.https://github.com.username=computecpart` y la sesión está en Git Credential Manager. **No usar** la cuenta `programacionds03-dev`. `.claude/settings.local.json` (no versionado) permite `git push` sin confirmación. Integración Git de Vercel: no conectada (despliegue por CLI).
 
 ### Secretos (nunca imprimir ni pegar en el chat)
 
@@ -117,7 +115,6 @@ deben renovarse durante las 8 semanas.
 ## 4. Pendientes bloqueantes
 
 1. ~~SMTP propio~~ **Resuelto el 21/10/2026** (ver §3). Vigilar el límite de 100 correos/día de Resend el día de apertura; si se alcanza, el responsable decide si sube a un plan de pago.
-2. **Push a GitHub** (ver §3).
 3. **Contenido real:** campaña, reglas definitivas (premio, desempate,
    menores) y revisión de `/privacidad` (nombre del organizador y contacto).
 
