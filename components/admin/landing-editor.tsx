@@ -4,9 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 
-import { FormStatus, fieldClassName, labelClassName } from "@/components/auth/form-ui";
+import { FormStatus, fieldClassName, labelClassName } from "@/components/admin/admin-ui";
 import {
   publishLandingAction,
   restoreLandingVersionAction,
@@ -34,6 +34,9 @@ import { ACCENT_PALETTES } from "@/lib/landing/theme";
 import { createClient } from "@/lib/supabase/client";
 
 type Notice = { message: string; tone: "error" | "info" | "success" } | null;
+type AutosaveState = "idle" | "saving" | "saved" | "invalid" | "error";
+
+const AUTOSAVE_DELAY_MS = 800;
 type ImageValue = { alt: string; path: string } | null;
 
 const buttonClassName =
@@ -413,18 +416,65 @@ export function LandingEditor({
   const [dirty, setDirty] = useState(false);
   const [notice, setNotice] = useState<Notice>(null);
   const [pending, startTransition] = useTransition();
+  const [autosave, setAutosave] = useState<AutosaveState>("idle");
+  // Incremented on every local edit so a slow autosave never marks newer
+  // edits as saved.
+  const revision = useRef(0);
 
+  // Drafts save themselves (Shopify-style): an uploaded image or edit is never
+  // lost by switching tabs. Publishing stays an explicit action.
   useEffect(() => {
     if (!dirty) {
       return;
     }
 
-    const warn = (event: BeforeUnloadEvent) => event.preventDefault();
-    window.addEventListener("beforeunload", warn);
-    return () => window.removeEventListener("beforeunload", warn);
+    const savedRevision = revision.current;
+    const timer = window.setTimeout(() => {
+      if (!landingContentSchema.safeParse(content).success) {
+        setAutosave("invalid");
+        return;
+      }
+
+      setAutosave("saving");
+      void saveLandingDraftAction(campaignId, content).then((result) => {
+        if (result.status !== "success") {
+          setAutosave("error");
+        } else if (revision.current === savedRevision) {
+          setDirty(false);
+          setAutosave("saved");
+        }
+      });
+    }, AUTOSAVE_DELAY_MS);
+
+    return () => window.clearTimeout(timer);
+  }, [campaignId, content, dirty]);
+
+  // Warn before leaving with unsaved edits: full unloads and in-app links.
+  useEffect(() => {
+    if (!dirty) {
+      return;
+    }
+
+    const warnUnload = (event: BeforeUnloadEvent) => event.preventDefault();
+    const warnLink = (event: MouseEvent) => {
+      const anchor = (event.target as Element | null)?.closest?.("a[href]");
+
+      if (anchor instanceof HTMLAnchorElement && anchor.target !== "_blank" && !window.confirm("Hay cambios que aún no se guardaron. ¿Salir de todas formas?")) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    };
+
+    window.addEventListener("beforeunload", warnUnload);
+    document.addEventListener("click", warnLink, true);
+    return () => {
+      window.removeEventListener("beforeunload", warnUnload);
+      document.removeEventListener("click", warnLink, true);
+    };
   }, [dirty]);
 
   function update(next: LandingContent) {
+    revision.current += 1;
     setContent(next);
     setDirty(true);
   }
@@ -511,7 +561,17 @@ export function LandingEditor({
     <div className="space-y-6">
       <div className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-sm backdrop-blur">
         <p className="text-sm text-slate-600">
-          {dirty ? <strong className="text-amber-700">Cambios sin guardar</strong> : "Borrador guardado"}
+          {dirty ? (
+            <strong className={autosave === "invalid" || autosave === "error" ? "text-red-700" : "text-amber-700"}>
+              {autosave === "invalid"
+                ? "Sin guardar: corrige los campos incompletos"
+                : autosave === "error"
+                  ? "No se pudo guardar automáticamente"
+                  : "Guardando…"}
+            </strong>
+          ) : (
+            "Borrador guardado automáticamente"
+          )}
           {" · "}Publicada: {publishedVersion > 0 ? `versión ${publishedVersion}` : "nunca"}
         </p>
         <div className="flex flex-wrap gap-2">

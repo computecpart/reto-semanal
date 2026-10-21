@@ -64,6 +64,8 @@ export function RegistrationForm({ operationalDate }: { operationalDate: string 
       email: value(formData, "email"),
       firstName: value(formData, "firstName"),
       lastName: value(formData, "lastName"),
+      marketingConsent: formData.get("marketingConsent") === "on",
+      phone: value(formData, "phone"),
       password: value(formData, "password"),
     };
 
@@ -110,6 +112,8 @@ export function RegistrationForm({ operationalDate }: { operationalDate: string 
           department: data.department,
           first_name: data.firstName,
           last_name: data.lastName,
+          marketing_consent: data.marketingConsent,
+          phone: data.phone,
         },
         emailRedirectTo: `${window.location.origin}/auth/confirm`,
       },
@@ -159,6 +163,29 @@ export function RegistrationForm({ operationalDate }: { operationalDate: string 
           type="email"
         />
         <FieldError id="email-error">{errors.email}</FieldError>
+      </div>
+
+      <div>
+        <label className={labelClassName} htmlFor="phone">
+          Teléfono
+        </label>
+        <input
+          aria-describedby="phone-help phone-error"
+          aria-invalid={Boolean(errors.phone)}
+          autoComplete="tel-national"
+          className={fieldClassName}
+          id="phone"
+          inputMode="tel"
+          maxLength={20}
+          name="phone"
+          placeholder="7123-4567"
+          required
+          type="tel"
+        />
+        <p className="mt-1.5 text-xs leading-5 text-slate-500" id="phone-help">
+          Número de El Salvador. Solo se usa para contactarte si ganas.
+        </p>
+        <FieldError id="phone-error">{errors.phone}</FieldError>
       </div>
 
       <fieldset className="grid gap-5 sm:grid-cols-2">
@@ -257,13 +284,18 @@ export function RegistrationForm({ operationalDate }: { operationalDate: string 
 
       <ConsentFields errors={errors} />
 
+      <label className="flex items-start gap-3 text-sm leading-6 text-slate-700">
+        <input className="mt-1 size-4 shrink-0 accent-[var(--accent)]" name="marketingConsent" type="checkbox" />
+        <span>(Opcional) Acepto recibir comunicaciones comerciales de los organizadores.</span>
+      </label>
+
       <SubmitButton pending={pending} pendingLabel="Creando cuenta…" type="submit">
         Crear cuenta
       </SubmitButton>
 
       <p className="text-center text-sm text-slate-600">
         ¿Ya tienes una cuenta?{" "}
-        <Link className="font-semibold text-sky-800 hover:underline" href="/login">
+        <Link className="font-bold text-[var(--accent-strong)] underline-offset-4 hover:underline" href="/login">
           Inicia sesión
         </Link>
       </p>

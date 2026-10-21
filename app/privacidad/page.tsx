@@ -10,14 +10,14 @@ export default function PrivacyPage() {
   return (
     <LegalPage title="Política de privacidad" updatedAt="21 de octubre de 2026">
       <p>
-        Esta política explica qué datos recoge Reto Semanal, para qué los usa y quién puede
-        verlos.
+        Esta política explica qué datos recoge la plataforma, para qué los usa y quién puede
+        verlos. Responsable: <strong>Digit@l Solutions</strong> (soporte@digitalsolutions.com.sv).
       </p>
 
       <h2>1. Datos que recogemos</h2>
       <ul>
         <li>Nombre, apellido y alias.</li>
-        <li>Correo electrónico.</li>
+        <li>Correo electrónico y teléfono.</li>
         <li>Fecha de nacimiento y declaración de mayoría o minoría de edad.</li>
         <li>Departamento de El Salvador.</li>
         <li>El avatar elegido entre los avatares oficiales. No recogemos fotografías.</li>
@@ -47,6 +47,7 @@ export default function PrivacyPage() {
         </li>
         <li>El equipo administrador de la campaña accede a tus datos para gestionarla.</li>
         <li>No vendemos ni cedemos tus datos con fines publicitarios.</li>
+        <li>Las comunicaciones comerciales solo se envían con tu consentimiento separado.</li>
       </ul>
 
       <h2>4. Dónde se guardan</h2>
@@ -71,8 +72,8 @@ export default function PrivacyPage() {
       <h2>7. Tus derechos</h2>
       <p>
         Puedes consultar y corregir tus datos editables desde tu perfil. Para solicitar acceso,
-        rectificación de otros datos o la eliminación de tu cuenta, contacta al equipo
-        organizador por el canal oficial de la campaña.
+        rectificación de otros datos o la eliminación de tu cuenta, escribe a{" "}
+        <a className="font-semibold underline" href="mailto:soporte@digitalsolutions.com.sv">soporte@digitalsolutions.com.sv</a>.
       </p>
     </LegalPage>
   );

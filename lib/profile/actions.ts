@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { getAuthContext } from "@/lib/auth/get-auth-context";
 import { createClient } from "@/lib/supabase/server";
 import {
+  contactUpdateSchema,
   createProfileCompletionSchema,
   getOperationalDate,
   profileUpdateSchema,
@@ -128,4 +129,40 @@ export async function completeProfileAction(
   revalidatePath("/app", "layout");
 
   return { fieldErrors: {}, message: "Perfil completado.", status: "success" };
+}
+
+export async function updateContactAction(
+  _previousState: ProfileFormState,
+  formData: FormData,
+): Promise<ProfileFormState> {
+  if (!(await getAuthContext())) {
+    return SESSION_EXPIRED;
+  }
+
+  const parsed = contactUpdateSchema.safeParse({
+    marketingConsent: formData.get("marketingConsent") === "on",
+    phone: text(formData, "phone"),
+  });
+
+  if (!parsed.success) {
+    return {
+      fieldErrors: collectFieldErrors(parsed.error.issues),
+      message: "Revisa los campos marcados.",
+      status: "error",
+    };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("update_my_contact", {
+    p_marketing_consent: parsed.data.marketingConsent,
+    p_phone: parsed.data.phone,
+  });
+
+  if (error) {
+    return { fieldErrors: {}, message: getProfileRpcErrorMessage(error), status: "error" };
+  }
+
+  revalidatePath("/app", "layout");
+
+  return { fieldErrors: {}, message: "Datos de contacto actualizados.", status: "success" };
 }

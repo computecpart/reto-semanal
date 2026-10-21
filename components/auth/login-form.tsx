@@ -104,7 +104,7 @@ export function LoginForm({
           <label className={labelClassName} htmlFor="password">
             Contraseña
           </label>
-          <Link className="text-sm font-semibold text-sky-800 hover:underline" href="/forgot-password">
+          <Link className="text-sm font-bold text-[var(--accent-strong)] underline-offset-4 hover:underline" href="/forgot-password">
             ¿La olvidaste?
           </Link>
         </div>

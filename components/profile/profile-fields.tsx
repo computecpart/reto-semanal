@@ -29,10 +29,10 @@ export function AvatarPicker({
               type="radio"
               value={avatar.id}
             />
-            <span className="flex min-h-28 flex-col items-center justify-center gap-2 rounded-2xl border-2 border-slate-200 bg-slate-50 p-3 text-center text-xs font-semibold text-slate-700 transition hover:border-sky-300 peer-checked:border-sky-700 peer-checked:bg-sky-50 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-sky-700">
+            <span className="flex min-h-28 flex-col items-center justify-center gap-2 border-2 border-slate-300 bg-white p-3 text-center text-xs font-bold text-slate-700 transition hover:border-[var(--color-ink)] peer-checked:border-[var(--color-ink)] peer-checked:bg-[var(--accent-soft)] peer-checked:shadow-[4px_4px_0_0_var(--accent)] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--accent)]">
               <Image
                 alt=""
-                className="rounded-lg [image-rendering:pixelated]"
+                className="pixelated"
                 height={64}
                 src={avatar.src}
                 unoptimized
@@ -161,7 +161,7 @@ export function NameAndAliasFields({
 }
 
 export function ConsentFields({ errors }: { errors: Partial<Record<string, string>> }) {
-  const linkClassName = "font-semibold text-sky-800 underline hover:text-sky-950";
+  const linkClassName = "font-bold text-[var(--accent-strong)] underline underline-offset-2";
 
   // New tab so reading the documents never discards a half-filled form.
   return (
@@ -170,7 +170,7 @@ export function ConsentFields({ errors }: { errors: Partial<Record<string, strin
 
       <div>
         <label className="flex items-start gap-3 text-sm leading-6 text-slate-700">
-          <input className="mt-1 size-4 accent-sky-700" name="acceptedRules" type="checkbox" />
+          <input className="mt-1 size-4 shrink-0 accent-[var(--accent)]" name="acceptedRules" type="checkbox" />
           <span>
             Acepto las{" "}
             <Link className={linkClassName} href="/reglas" rel="noopener" target="_blank">
@@ -184,7 +184,7 @@ export function ConsentFields({ errors }: { errors: Partial<Record<string, strin
 
       <div>
         <label className="flex items-start gap-3 text-sm leading-6 text-slate-700">
-          <input className="mt-1 size-4 accent-sky-700" name="acceptedPrivacy" type="checkbox" />
+          <input className="mt-1 size-4 shrink-0 accent-[var(--accent)]" name="acceptedPrivacy" type="checkbox" />
           <span>
             Acepto la{" "}
             <Link className={linkClassName} href="/privacidad" rel="noopener" target="_blank">

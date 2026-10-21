@@ -12,6 +12,7 @@ const DATABASE_MESSAGES = new Set([
   "Debe aceptar las reglas y la política de privacidad.",
   "El perfil obligatorio está incompleto.",
   "Los datos históricos del registro no se pueden modificar.",
+  "El teléfono no es válido.",
 ]);
 
 export interface DatabaseErrorLike {

@@ -28,6 +28,8 @@ const validRegistration = {
   email: "  Persona@Ejemplo.COM ",
   firstName: "  José   María ",
   lastName: "Núñez",
+  marketingConsent: false,
+  phone: "7123-4567",
   password: "contraseña-segura",
 };
 
@@ -224,5 +226,21 @@ describe("edición de perfil", () => {
 
     expect(schema.safeParse(base).success).toBe(true);
     expect(schema.safeParse({ ...base, birthDate: "2015-01-01" }).success).toBe(false);
+  });
+});
+
+describe("teléfono de El Salvador", () => {
+  it.each([
+    ["7123-4567", "+50371234567"],
+    ["+503 2222 3333", "+50322223333"],
+    ["503 6123 4567", "+50361234567"],
+  ])("normaliza %s", async (input, expected) => {
+    const { normalizeSalvadorPhone } = await import("@/lib/validation/profile");
+    expect(normalizeSalvadorPhone(input)).toBe(expected);
+  });
+
+  it.each(["1234-5678", "7123456", "+1 555 123 4567", ""])("rechaza %s", async (input) => {
+    const { normalizeSalvadorPhone } = await import("@/lib/validation/profile");
+    expect(normalizeSalvadorPhone(input)).toBeNull();
   });
 });

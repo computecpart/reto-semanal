@@ -9,7 +9,7 @@ import {
   SubmitButton,
   fieldClassName,
   labelClassName,
-} from "@/components/auth/form-ui";
+} from "@/components/admin/admin-ui";
 import {
   type ActionState,
   createCampaignAction,

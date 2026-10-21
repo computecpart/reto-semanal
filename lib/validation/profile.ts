@@ -252,6 +252,35 @@ export const personNameSchema = z
       .regex(PERSON_NAME_PATTERN, "El nombre contiene caracteres no permitidos."),
   );
 
+/**
+ * El Salvador numbers: 8 digits starting with 2 (landline) or 6/7 (mobile).
+ * Accepts spaces, dashes, parentheses and an optional +503/503 prefix.
+ */
+export function normalizeSalvadorPhone(value: string): string | null {
+  const digits = value.replace(/[\s().-]/g, "").replace(/^\+?503(?=\d{8}$)/, "");
+
+  return /^[267]\d{7}$/.test(digits) ? `+503${digits}` : null;
+}
+
+export function formatSalvadorPhone(value: string | null | undefined): string {
+  const match = /^\+503(\d{4})(\d{4})$/.exec(value ?? "");
+  return match ? `+503 ${match[1]}-${match[2]}` : "";
+}
+
+export const phoneSchema = z.string().transform((value, context) => {
+  const phone = normalizeSalvadorPhone(value);
+
+  if (!phone) {
+    context.addIssue({
+      code: "custom",
+      message: "Escribe un teléfono de El Salvador de 8 dígitos (p. ej. 7123-4567).",
+    });
+    return z.NEVER;
+  }
+
+  return phone;
+});
+
 export const emailSchema = z
   .string()
   .trim()
@@ -376,6 +405,8 @@ export function createRegistrationSchema(operationalDate: string) {
       ageDeclaration: ageDeclarationSchema,
       birthDate: birthDateSchema,
       confirmPassword: z.string(),
+      marketingConsent: z.boolean(),
+      phone: phoneSchema,
       email: emailSchema,
       password: passwordSchema,
     })
@@ -428,6 +459,11 @@ export type ProfileCompletionData = z.output<
  * disciplinary status, birth date and consents are deliberately absent.
  */
 export const profileUpdateSchema = z.strictObject(editableProfileFields);
+
+export const contactUpdateSchema = z.strictObject({
+  marketingConsent: z.boolean(),
+  phone: phoneSchema,
+});
 
 export type ProfileUpdateData = z.output<typeof profileUpdateSchema>;
 

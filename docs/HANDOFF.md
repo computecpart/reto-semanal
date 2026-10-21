@@ -4,6 +4,42 @@ Contexto completo para continuar el desarrollo en otra sesión o cuenta de Claud
 Code. Actualizado: **21 de octubre de 2026, fin de la Fase 2**. Léelo entero antes
 de tocar código.
 
+## 0. ESTADO AL CIERRE DE LA CUENTA ANTERIOR (21/10/2026) — LEER PRIMERO
+
+**En el repo pero NO aplicado ni desplegado** (producción sigue en Fase 2):
+
+1. `supabase/migrations/20261021100000_identity_points_ranking.sql` (sin aplicar):
+   teléfono obligatorio en el alta (`+503[267]XXXXXXX`), `marketing_consent_at`,
+   `passport_code` (identificador MSI Passport `XXXX-XXXX`), `private.participant_states`,
+   ledger `public.point_events` (inmutable, idempotente, con estadísticas de desempate
+   `correct_answers` / `counts_as_event`), `private.award_points`, configuración del ranking en
+   `campaigns`, `get_ranking` (RANK por puntos → aciertos → eventos), `get_my_points`,
+   `get_ranking_settings`, `update_my_contact` y RPC admin (`admin_update_ranking_settings`,
+   `admin_adjust_points`, `admin_reverse_point_event`, `admin_get_standings`,
+   `admin_recent_point_events`). Reemplaza `handle_new_user` (exige `phone`).
+2. **Aplicar migración y desplegar JUNTOS**: el registro desplegado no envía teléfono y la
+   migración lo exige. Secuencia: `npm run check` → `db push --dry-run` → `db push` → deploy.
+3. Hecho en código: autoguardado del borrador del editor de portada (causa del bug de la imagen
+   perdida: se cambió de pestaña sin guardar), campo teléfono + consentimiento comercial en
+   registro, kit visual pixel del participante (`components/auth/form-ui.tsx`), `AuthShell`
+   con el tema de la campaña, kit sobrio del admin (`components/admin/admin-ui.tsx`),
+   `getSiteBranding()` cacheado, privacidad con Digit@l Solutions.
+4. **Pendiente de la Fase 3 (sin UI todavía)**: formulario de contacto en `/app/perfil`
+   (`updateContactAction` ya existe), `/app/puntos`, `/app/ranking`, `/admin/ranking`,
+   sección de portada `ranking_preview`, navegación del participante, tests SQL de la migración.
+5. **Rediseño pedido**: `/app/perfil` y cabecera del participante con la UX pixel de la portada
+   (tarjeta tipo pasaporte con `passport_code`, puntos y posición); admin con barra lateral y
+   aspecto profesional.
+6. **Contenido de campaña a cargar** (la campaña actual `a89d3a8e-…` está en borrador con datos
+   de prueba). Nombre «MSI Passport — The Dragon Journey», lema «El despertar de un Dragón»,
+   inicio 23/10/2026 08:00, cierre 11/12/2026 23:59 (hora SV), premio «Equipo MSI» por rifa
+   aleatoria verificable entre elegibles; Top 5 es reconocimiento aparte. Tema sugerido carmesí
+   y oscuro. La imagen subida ya existe en Storage:
+   `campaigns/a89d3a8e-9af6-4797-b249-36660e31d01a/8e25c10a-53bf-4a5c-b9ac-6b5d660cedb9.jpg`.
+   Reglas oficiales (publicar como versión 2, importante): ver `docs/campaign/msi-passport-reglas.md`.
+   Organizador: Digit@l Solutions, soporte@digitalsolutions.com.sv. Las misiones presenciales
+   serán **códigos/misiones validadas por el staff** (no QR obligatorio).
+
 ## 1. Qué es y calendario
 
 Plataforma de gamificación para una campaña empresarial de ~8 semanas con ~100

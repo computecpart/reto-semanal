@@ -68,7 +68,7 @@ export function ForgotPasswordForm({ callbackError = false }: { callbackError?: 
           Revisa también la carpeta de correo no deseado. El enlace es de un solo uso y puede expirar.
         </p>
         <Link
-          className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-sky-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-sky-800"
+          className="pixel-button inline-flex min-h-12 w-full items-center justify-center bg-[var(--accent)] px-5 py-3 text-sm font-bold uppercase tracking-wide text-[var(--accent-contrast)]"
           href="/login"
         >
           Volver al inicio de sesión
@@ -106,7 +106,7 @@ export function ForgotPasswordForm({ callbackError = false }: { callbackError?: 
       </SubmitButton>
 
       <p className="text-center text-sm text-slate-600">
-        <Link className="font-semibold text-sky-800 hover:underline" href="/login">
+        <Link className="font-bold text-[var(--accent-strong)] underline-offset-4 hover:underline" href="/login">
           Volver al inicio de sesión
         </Link>
       </p>

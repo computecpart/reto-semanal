@@ -230,10 +230,10 @@ export function VerifyEmailForm({ linkError = false }: { linkError?: boolean }) 
         Verificar correo
       </SubmitButton>
 
-      <div className="rounded-xl bg-slate-50 p-4 text-center text-sm text-slate-600">
+      <div className="border-2 border-dashed border-slate-300 bg-[var(--color-paper)] p-4 text-center text-sm text-slate-600">
         <p>¿No recibiste el correo?</p>
         <button
-          className="mt-2 font-semibold text-sky-800 hover:underline disabled:cursor-not-allowed disabled:text-slate-500 disabled:no-underline"
+          className="mt-2 font-bold text-[var(--accent-strong)] underline-offset-4 hover:underline disabled:cursor-not-allowed disabled:text-slate-500 disabled:no-underline"
           disabled={remainingSeconds > 0 || pendingAction !== null}
           onClick={handleResend}
           type="button"
@@ -247,7 +247,7 @@ export function VerifyEmailForm({ linkError = false }: { linkError?: boolean }) 
       </div>
 
       <p className="text-center text-sm text-slate-600">
-        <Link className="font-semibold text-sky-800 hover:underline" href="/login">
+        <Link className="font-bold text-[var(--accent-strong)] underline-offset-4 hover:underline" href="/login">
           Volver al inicio de sesión
         </Link>
       </p>

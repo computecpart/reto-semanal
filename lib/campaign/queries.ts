@@ -1,6 +1,13 @@
 import "server-only";
 
-import { readLandingContent, type LandingContent } from "@/lib/landing/schema";
+import { cache } from "react";
+
+import {
+  DEFAULT_THEME,
+  readLandingContent,
+  type LandingContent,
+  type LandingTheme,
+} from "@/lib/landing/schema";
 import { createClient } from "@/lib/supabase/server";
 
 import { isCampaignStatus, type CampaignStatus } from "./status";
@@ -21,7 +28,7 @@ export interface PublicLanding {
   rulesVersion: number | null;
 }
 
-export async function getPublicLanding(): Promise<PublicLanding | null> {
+async function loadPublicLanding(): Promise<PublicLanding | null> {
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("get_public_landing");
 
@@ -43,6 +50,24 @@ export async function getPublicLanding(): Promise<PublicLanding | null> {
     campaign: raw.campaign,
     landing: raw.landing ? readLandingContent(raw.landing) : null,
     rulesVersion: raw.rules_version ?? null,
+  };
+}
+
+// Deduplicated per request: the header, page and metadata share one RPC call.
+export const getPublicLanding = cache(loadPublicLanding);
+
+export interface SiteBranding {
+  name: string;
+  theme: LandingTheme;
+}
+
+/** Campaign name and theme for every participant-facing shell. */
+export async function getSiteBranding(): Promise<SiteBranding> {
+  const data = await getPublicLanding().catch(() => null);
+
+  return {
+    name: data?.campaign.name ?? "Reto Semanal",
+    theme: data?.landing?.theme ?? DEFAULT_THEME,
   };
 }
 
