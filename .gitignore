@@ -1,0 +1,40 @@
+# Dependencies
+/node_modules/
+
+# Next.js
+/.next/
+/out/
+/build/
+
+# Tests and tooling
+/coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment files: examples are the only tracked env files.
+.env
+.env.local
+.env.*.local
+.env.seed
+.env.seed.local
+.env*
+!.env.example
+!.env.seed.example
+
+# Editors and operating systems
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Vercel
+.vercel/
+
+
+# Supabase CLI local state
+/supabase/.temp/
+/supabase/.branches/
