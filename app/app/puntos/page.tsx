@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 
 import { PixelCard, SectionTitle } from "@/components/auth/form-ui";
+import { PixelBarChart, PixelMeter } from "@/components/dashboard/pixel-charts";
 import { requireSessionPage } from "@/lib/auth/guards";
+import { getPublicLanding } from "@/lib/campaign/queries";
+import { campaignProgress, pointsBreakdown, pointsByWeek } from "@/lib/dashboard/stats";
 import { formatPoints, POINT_KIND_LABELS } from "@/lib/points/config";
 import { getMyPoints } from "@/lib/points/queries";
 import { OPERATIONAL_TIME_ZONE } from "@/lib/time-zone";
@@ -18,7 +21,13 @@ const dateFormat = new Intl.DateTimeFormat("es-SV", {
 
 export default async function PointsPage() {
   await requireSessionPage("/app/puntos");
-  const points = await getMyPoints();
+  const [points, landing] = await Promise.all([getMyPoints(), getPublicLanding().catch(() => null)]);
+  const campaign = landing?.campaign;
+  const progress = campaign ? campaignProgress(new Date(), campaign.starts_at, campaign.ends_at) : null;
+  const weekly = campaign?.starts_at && progress ? pointsByWeek(points.events, campaign.starts_at, progress.weeks) : [];
+  const breakdown = pointsBreakdown(points.events);
+  const breakdownMax = Math.max(breakdown.quizzes, breakdown.speed, breakdown.missions, 1);
+  const best = weekly.reduce((max, value) => Math.max(max, value), 0);
 
   return (
     <div className="space-y-8">
@@ -32,6 +41,33 @@ export default async function PointsPage() {
         </div>
         <p className="font-score text-2xl">{points.standing ? `Posición #${points.standing}` : "Sin posición aún"}</p>
       </section>
+
+      {points.events.length > 0 ? (
+        <div className="grid gap-6 lg:grid-cols-[1.5fr_1fr]">
+          {weekly.length > 0 ? (
+            <PixelCard>
+              <SectionTitle description={best > 0 ? `Tu mejor semana: ${best} pts.` : undefined}>Puntos por semana</SectionTitle>
+              <PixelBarChart
+                current={progress?.phase === "active" ? progress.week - 1 : -1}
+                labels={weekly.map((_, index) => `S${index + 1}`)}
+                summary={weekly.map((value, index) => `Semana ${index + 1}: ${value} puntos`).join(". ")}
+                values={weekly}
+              />
+            </PixelCard>
+          ) : null}
+          <PixelCard>
+            <SectionTitle>De dónde vienen</SectionTitle>
+            <div className="space-y-4">
+              <PixelMeter color="var(--accent)" label="Trivias" max={breakdownMax} value={breakdown.quizzes} />
+              <PixelMeter color="#f2a516" label="Bonos de velocidad" max={breakdownMax} value={breakdown.speed} />
+              <PixelMeter color="var(--color-ink)" label="Misiones" max={breakdownMax} value={breakdown.missions} />
+              {breakdown.adjustments !== 0 ? (
+                <p className="text-xs text-slate-500">Ajustes del equipo organizador: {breakdown.adjustments} pts.</p>
+              ) : null}
+            </div>
+          </PixelCard>
+        </div>
+      ) : null}
 
       <PixelCard>
         <SectionTitle description="Cada movimiento es oficial e inmutable. Las correcciones aparecen como un movimiento aparte.">

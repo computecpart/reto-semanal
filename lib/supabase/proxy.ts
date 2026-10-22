@@ -52,7 +52,7 @@ export async function updateSession(request: NextRequest) {
       ? "/admin"
       : pathname === "/app/canjear" && code
         ? getSafePostLoginPath(`/app/canjear?c=${code}`)
-        : "/app/perfil";
+        : "/app";
     loginUrl.pathname = "/login";
     loginUrl.search = "";
     loginUrl.searchParams.set("next", next);

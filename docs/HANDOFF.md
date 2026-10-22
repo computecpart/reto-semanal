@@ -87,6 +87,11 @@ de tocar código.
   menú de cuenta `components/app/account-menu.tsx` (consola admin si aplica, portada, reglas, privacidad, cerrar sesión).
   Páginas legales con el tema de la campaña. La puerta de reglas ya no muestra números de versión ni «cambiaron».
   Contador editable: `hero.countdownAt` (fecha propia o fechas de campaña) y `hero.countdownLabel`; oculta «00 días».
+- **Panel del jugador (22/10):** `/app` es la pantalla de inicio tras el login (antes `/app/perfil`): tarjeta con puntos,
+  posición, misiones y siguiente meta; progreso por semanas; accesos rápidos; módulo de trivias; gráficos pixel
+  (`components/dashboard/pixel-charts.tsx`) de puntos por semana y por origen; Top 5 y actividad reciente. Cálculos puros y
+  probados en `lib/dashboard/stats.ts`. Navegación: Inicio, Trivias, Canjear, Ranking, Puntos y Pasaporte (en móvil 5
+  pestañas; Puntos va en el menú de cuenta). `/app/puntos` muestra los gráficos y `/app/ranking` la siguiente meta. Sin migraciones.
 - Los usuarios existentes deben aceptar las reglas v3 al entrar a `/app` (comportamiento esperado).
 
 ## 1. Qué es y calendario

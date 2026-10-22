@@ -44,8 +44,8 @@ describe("códigos de misión", () => {
 
   it("el login solo vuelve a un enlace de canje bien formado", () => {
     expect(getSafePostLoginPath("/app/canjear?c=7F38-Z6DM")).toBe("/app/canjear?c=7F38-Z6DM");
-    expect(getSafePostLoginPath("/app/canjear?c=7F38-Z6DM&x=//evil")).toBe("/app/perfil");
-    expect(getSafePostLoginPath("//evil.example")).toBe("/app/perfil");
+    expect(getSafePostLoginPath("/app/canjear?c=7F38-Z6DM&x=//evil")).toBe("/app");
+    expect(getSafePostLoginPath("//evil.example")).toBe("/app");
     expect(getSafePostLoginPath("/app/ranking")).toBe("/app/ranking");
   });
 });

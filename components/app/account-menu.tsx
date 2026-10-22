@@ -7,7 +7,9 @@ import { useEffect, useId, useState } from "react";
 import { signOutAction } from "@/lib/auth/actions";
 
 const LINKS = [
+  { href: "/app", label: "Inicio" },
   { href: "/app/perfil", label: "Mi pasaporte" },
+  { href: "/app/puntos", label: "Mis puntos" },
   { href: "/", label: "Portada de la campaña" },
   { href: "/reglas", label: "Reglas de participación" },
   { href: "/privacidad", label: "Política de privacidad" },

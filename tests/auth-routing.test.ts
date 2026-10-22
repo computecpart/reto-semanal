@@ -24,7 +24,7 @@ describe("acceso a /admin", () => {
 });
 
 describe("redirección posterior al login", () => {
-  it.each(["/admin", "/app/perfil"])("permite la ruta interna %s", (path) => {
+  it.each(["/admin", "/app", "/app/perfil"])("permite la ruta interna %s", (path) => {
     expect(getSafePostLoginPath(path)).toBe(path);
   });
 
@@ -36,8 +36,8 @@ describe("redirección posterior al login", () => {
     "javascript:alert(1)",
     ["/admin"],
     undefined,
-  ])("usa el perfil ante el destino no permitido %s", (path) => {
-    expect(getSafePostLoginPath(path)).toBe("/app/perfil");
+  ])("usa el panel de inicio ante el destino no permitido %s", (path) => {
+    expect(getSafePostLoginPath(path)).toBe("/app");
   });
 });
 

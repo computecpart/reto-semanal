@@ -71,8 +71,8 @@ export function MobileMenu({ links, signedIn }: { links: readonly SiteNavLink[];
           </ul>
           <div className="mt-4 grid gap-3">
             {signedIn ? (
-              <Link className={`${button} bg-[var(--accent)] text-[var(--accent-contrast)]`} href="/app/perfil" onClick={close}>
-                Mi pasaporte
+              <Link className={`${button} bg-[var(--accent)] text-[var(--accent-contrast)]`} href="/app" onClick={close}>
+                Mi panel
               </Link>
             ) : (
               <>

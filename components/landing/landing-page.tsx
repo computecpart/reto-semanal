@@ -42,7 +42,7 @@ function ctaHref(target: CtaTarget, signedIn: boolean): string {
     return "/reglas";
   }
 
-  return signedIn ? "/app/perfil" : target === "login" ? "/login" : "/registro";
+  return signedIn ? "/app" : target === "login" ? "/login" : "/registro";
 }
 
 function formatInstant(value: string | null): string | null {

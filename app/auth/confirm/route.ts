@@ -28,6 +28,6 @@ export async function GET(request: NextRequest) {
   );
 
   return noStoreRedirect(
-    new URL(error ? "/login?verified=1" : "/app/perfil", request.url),
+    new URL(error ? "/login?verified=1" : "/app", request.url),
   );
 }

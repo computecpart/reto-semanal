@@ -129,7 +129,7 @@ export function VerifyEmailForm({ linkError = false }: { linkError?: boolean }) 
 
     // A verified OTP creates the session; the profile page renders server-side.
     forgetVerificationEmail();
-    router.replace("/app/perfil");
+    router.replace("/app");
     router.refresh();
   }
 

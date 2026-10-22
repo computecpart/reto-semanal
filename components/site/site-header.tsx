@@ -81,8 +81,8 @@ export function SiteHeaderView({
         <div className="flex shrink-0 items-center gap-2">
           <div className="hidden items-center gap-2 lg:flex">
             {signedIn ? (
-              <Link className={ctaLink} href="/app/perfil">
-                Mi pasaporte
+              <Link className={ctaLink} href="/app">
+                Mi panel
               </Link>
             ) : (
               <>

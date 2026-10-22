@@ -296,5 +296,5 @@ export async function acceptRulesAction(_previous: ActionState): Promise<ActionS
   }
 
   revalidatePath("/app", "layout");
-  redirect("/app/perfil");
+  redirect("/app");
 }

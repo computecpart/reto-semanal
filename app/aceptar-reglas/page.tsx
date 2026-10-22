@@ -16,7 +16,7 @@ export default async function AcceptRulesPage() {
   const [status, rules] = await Promise.all([getMyRulesStatus(), getCurrentRules()]);
 
   if (!status.required || !rules) {
-    redirect("/app/perfil");
+    redirect("/app");
   }
 
   return (

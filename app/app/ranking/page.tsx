@@ -4,6 +4,7 @@ import { FormStatus, PixelCard } from "@/components/auth/form-ui";
 import { RankingTable } from "@/components/points/ranking-table";
 import { requireSessionPage } from "@/lib/auth/guards";
 import { getDisqualifiedParticipants } from "@/lib/moderation/queries";
+import { nextGoal } from "@/lib/dashboard/stats";
 import { getRanking, getRankingSettings } from "@/lib/points/queries";
 
 export const metadata: Metadata = {
@@ -15,6 +16,14 @@ export default async function RankingPage() {
   const [rows, settings, disqualified] = await Promise.all([getRanking(), getRankingSettings(), getDisqualifiedParticipants()]);
   const highlightTop = settings?.highlight_top ?? 5;
   const me = rows.find((row) => row.is_current_user);
+  const goal = me ? nextGoal(rows, { points: me.points, standing: me.standing }, highlightTop || 5) : null;
+  const goalMessage = !goal
+    ? null
+    : goal.kind === "lead"
+      ? `¡Vas en primer lugar! Le llevas ${goal.margin} pts al segundo.`
+      : goal.kind === "top"
+        ? `Te faltan ${goal.missing} pts para entrar al Top ${goal.top}.`
+        : `Te faltan ${goal.missing} pts para alcanzar el puesto #${goal.target}.`;
 
   return (
     <div className="space-y-8">
@@ -28,6 +37,13 @@ export default async function RankingPage() {
           {highlightTop > 0 ? ` Los ${highlightTop} primeros forman el Top ${highlightTop}.` : ""}
         </p>
       </header>
+
+      {goalMessage ? (
+        <p className="pixel-frame-sm inline-flex items-center gap-3 bg-white px-4 py-3 font-semibold">
+          <span aria-hidden="true" className="size-3 bg-[var(--accent)]" />
+          {goalMessage}
+        </p>
+      ) : null}
 
       {settings?.provisional ? (
         <FormStatus tone="info">Clasificación provisional: hay respuestas pendientes de revisión.</FormStatus>
