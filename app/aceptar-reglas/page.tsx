@@ -20,15 +20,14 @@ export default async function AcceptRulesPage() {
   }
 
   return (
-    <LegalPage title="Las reglas cambiaron" updatedAt={`Versión ${rules.version}`}>
-      <p className="font-semibold">
-        Para seguir participando en {rules.campaign_name}, lee y acepta la versión vigente de las
-        reglas.
+    <LegalPage eyebrow={rules.campaign_name} title="Reglas de la campaña">
+      <p className="font-semibold text-[var(--color-ink)]">
+        Antes de empezar tu aventura, lee las reglas oficiales. Al aceptarlas quedas listo para sumar puntos.
       </p>
-      <div className="max-h-[50vh] overflow-y-auto rounded-xl border border-slate-200 p-5">
+      <div className="max-h-[50vh] overflow-y-auto border-2 border-slate-200 p-4 sm:p-5">
         <SafeMarkdown>{rules.content_md}</SafeMarkdown>
       </div>
-      <AcceptRulesForm version={rules.version} />
+      <AcceptRulesForm />
     </LegalPage>
   );
 }

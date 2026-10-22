@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <LegalPage title="Política de privacidad" updatedAt="21 de octubre de 2026">
+    <LegalPage title="Política de privacidad" updatedAt="Última actualización: 21 de octubre de 2026">
       <p>
         Esta política explica qué datos recoge la plataforma, para qué los usa y quién puede
         verlos. Responsable: <strong>Digit@l Solutions</strong> (soporte@digitalsolutions.com.sv).

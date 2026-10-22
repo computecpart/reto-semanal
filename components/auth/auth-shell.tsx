@@ -1,7 +1,7 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { LegalLinks } from "@/components/legal/legal-page";
+import { SiteHeader } from "@/components/site/site-header";
 import { getSiteBranding } from "@/lib/campaign/queries";
 import { themeStyle } from "@/lib/landing/theme";
 
@@ -29,24 +29,7 @@ export async function AuthShell({
       className="flex min-h-screen flex-col bg-[var(--color-paper)] text-[var(--color-ink)]"
       style={themeStyle(branding.theme)}
     >
-      <header className="border-b-4 border-[var(--color-ink)] bg-[var(--color-paper)]">
-        <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
-          <Link
-            className="min-w-0 font-display text-base leading-tight focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--accent)] sm:text-xl"
-            href="/"
-          >
-            {branding.name}
-          </Link>
-          <nav aria-label="Cuenta" className="flex shrink-0 items-center gap-3 text-sm font-semibold sm:gap-4">
-            <Link className="inline-flex min-h-10 items-center underline-offset-4 hover:underline" href="/login">
-              Iniciar sesión
-            </Link>
-            <Link className="inline-flex min-h-10 items-center border-2 border-[var(--color-ink)] bg-[var(--accent)] px-3 text-[var(--accent-contrast)] shadow-[2px_2px_0_0_var(--color-ink)] hover:opacity-90" href="/registro">
-              Registrarse
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="pixel-grid flex-1 px-4 py-6 sm:px-6 sm:py-14">
         <div className={`mx-auto w-full ${wide ? "max-w-3xl" : "max-w-xl"}`}>

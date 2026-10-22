@@ -1,11 +1,10 @@
-import Image from "next/image";
 import Link from "next/link";
 
-import { signOutAction } from "@/lib/auth/actions";
 import { getAvatar } from "@/lib/avatars";
 import type { AppRole } from "@/lib/permissions/roles";
 import { isAdministrativeRole } from "@/lib/permissions/roles";
 
+import { AccountMenu } from "./account-menu";
 import { NavLinks } from "./nav-links";
 import { PixelIcon } from "./pixel-icons";
 
@@ -40,34 +39,7 @@ export function AppHeader({
             <span className="line-clamp-2">{campaignName}</span>
           </Link>
 
-          <div className="flex shrink-0 items-center gap-2 text-sm sm:gap-3">
-            {isAdministrativeRole(role) ? (
-              <Link
-                className={`inline-flex min-h-10 items-center border-2 border-[var(--color-ink)] bg-[var(--color-ink)] px-3 font-bold text-white hover:opacity-90 ${focusRing}`}
-                href="/admin"
-              >
-                Admin
-              </Link>
-            ) : null}
-            <Link
-              aria-label={alias ? `Mi pasaporte, @${alias}` : "Mi pasaporte"}
-              className={`flex min-h-10 items-center gap-2 font-bold ${focusRing}`}
-              href="/app/perfil"
-            >
-              {avatar ? (
-                <Image alt="" className="pixelated border-2 border-[var(--color-ink)] bg-white" height={36} src={avatar.src} unoptimized width={36} />
-              ) : null}
-              <span className="hidden max-w-40 truncate md:inline">{alias ? `@${alias}` : "Participante"}</span>
-            </Link>
-            <form action={signOutAction}>
-              <button
-                className={`inline-flex min-h-10 items-center border-2 border-[var(--color-ink)] bg-white px-3 font-bold hover:bg-[var(--accent-soft)] ${focusRing}`}
-                type="submit"
-              >
-                Salir
-              </button>
-            </form>
-          </div>
+          <AccountMenu alias={alias} avatarSrc={avatar?.src ?? null} isAdmin={isAdministrativeRole(role)} />
         </div>
 
         <nav aria-label="Secciones" className="mx-auto hidden w-full max-w-5xl gap-2 px-6 pb-4 sm:flex">

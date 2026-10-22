@@ -19,18 +19,45 @@ const UNITS = [
   { label: "seg", seconds: 1 },
 ] as const;
 
-export function Countdown({ endsAt, startsAt }: { endsAt: string | null; startsAt: string | null }) {
+const toSeconds = (value: string | null) => (value ? Date.parse(value) / 1000 : null);
+
+/**
+ * Counts down to `customAt` when the admin set one; otherwise to the campaign
+ * start and, once started, to its end. Disappears when the target passes.
+ */
+export function Countdown({
+  customAt,
+  endsAt,
+  label,
+  startsAt,
+}: {
+  customAt: string | null;
+  endsAt: string | null;
+  label: string;
+  startsAt: string | null;
+}) {
   const now = useSyncExternalStore(subscribe, getNow, getServerNow);
-  const start = startsAt ? Date.parse(startsAt) / 1000 : null;
-  const end = endsAt ? Date.parse(endsAt) / 1000 : null;
 
   if (now === null) {
     // Same footprint as the final markup to avoid a layout jump on hydration.
     return <div aria-hidden="true" className="h-[5.5rem]" />;
   }
 
-  const upcoming = start !== null && now < start;
-  const target = upcoming ? start : end !== null && now < end ? end : null;
+  const custom = toSeconds(customAt);
+  const start = toSeconds(startsAt);
+  const end = toSeconds(endsAt);
+  let target: number | null = null;
+  let fallbackLabel = "Faltan";
+
+  if (custom !== null) {
+    target = now < custom ? custom : null;
+  } else if (start !== null && now < start) {
+    target = start;
+    fallbackLabel = "La aventura empieza en";
+  } else if (end !== null && now < end) {
+    target = end;
+    fallbackLabel = "La campaña termina en";
+  }
 
   if (target === null) {
     return null;
@@ -41,13 +68,11 @@ export function Countdown({ endsAt, startsAt }: { endsAt: string | null; startsA
     const larger = UNITS[index - 1];
     const span = larger ? remaining % larger.seconds : remaining;
     return { ...unit, value: Math.floor(span / unit.seconds) };
-  });
+  }).filter((unit) => unit.label !== "días" || unit.value > 0);
 
   return (
     <div>
-      <p className="text-xs font-bold uppercase tracking-[0.25em] opacity-80">
-        {upcoming ? "La aventura empieza en" : "La campaña termina en"}
-      </p>
+      <p className="text-xs font-bold uppercase tracking-[0.25em] opacity-80">{label || fallbackLabel}</p>
       <ol className="mt-2 flex gap-2" role="timer">
         {values.map((unit) => (
           <li

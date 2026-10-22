@@ -5,6 +5,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { LegalLinks } from "@/components/legal/legal-page";
 import { SafeMarkdown } from "@/components/markdown/safe-markdown";
 import { RankingTable } from "@/components/points/ranking-table";
+import { SiteHeaderView, type SiteNavLink } from "@/components/site/site-header";
 import { readableDigits } from "@/components/ui/readable-digits";
 import { getAvatar } from "@/lib/avatars";
 import type { PublicCampaign } from "@/lib/campaign/queries";
@@ -27,6 +28,14 @@ interface RenderContext {
 }
 
 const numberFormat = new Intl.NumberFormat("es-SV");
+
+const SECTION_ANCHORS: Partial<Record<LandingSection["type"], { anchor: string; label: string }>> = {
+  dates: { anchor: "fechas", label: "Fechas" },
+  faq: { anchor: "preguntas", label: "Preguntas" },
+  prize: { anchor: "premio", label: "Premio" },
+  ranking_preview: { anchor: "ranking", label: "Ranking" },
+  steps: { anchor: "como-participar", label: "Cómo participar" },
+};
 
 function ctaHref(target: CtaTarget, signedIn: boolean): string {
   if (target === "reglas") {
@@ -180,7 +189,7 @@ function HeroSection({ context, section }: { context: RenderContext; section: Se
       </div>
       {section.showCountdown ? (
         <div className="mt-8">
-          <Countdown endsAt={endsAt} startsAt={startsAt} />
+          <Countdown customAt={section.countdownAt} endsAt={endsAt} label={section.countdownLabel} startsAt={startsAt} />
         </div>
       ) : null}
     </>
@@ -595,6 +604,21 @@ export function LandingPage({
   const primaryLabel = hero?.type === "hero" ? hero.primaryCtaLabel : "Crear mi pasaporte";
   const context: RenderContext = { campaign, dark, primaryLabel, quizzes, ranking, signedIn };
   const logoUrl = landingAssetUrl(content.theme.logo?.path);
+  // In-page anchors for the menu: the first visible section of each kind.
+  const anchors = new Map<string, string>();
+  const navLinks: SiteNavLink[] = [];
+
+  for (const section of sections) {
+    const target = SECTION_ANCHORS[section.type];
+    const rendersRanking = section.type !== "ranking_preview" || ranking.length > 0;
+
+    if (target && rendersRanking && !navLinks.some((link) => link.href === `#${target.anchor}`)) {
+      anchors.set(section.id, target.anchor);
+      navLinks.push({ href: `#${target.anchor}`, label: target.label });
+    }
+  }
+
+  navLinks.push({ href: "/reglas", label: "Reglas" });
   const surface = dark
     ? {
         // On dark surfaces the darker "strong" shade lacks contrast; use the light tint.
@@ -610,43 +634,19 @@ export function LandingPage({
       className={`min-h-screen bg-[var(--landing-page)] ${dark ? "text-white" : "text-[var(--color-ink)]"}`}
       style={{ ...themeStyle(content.theme), ...surface } as CSSProperties}
     >
-      <header className="sticky top-0 z-40 border-b-2 border-[var(--frame)] bg-[var(--landing-page)]/90 backdrop-blur">
-        <div aria-hidden="true" className="h-1 bg-[var(--accent)]" />
-        <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 px-4 py-2.5 sm:px-6">
-          <Link className="flex min-h-10 min-w-0 items-center gap-3 font-display text-base leading-tight sm:text-xl" href="/">
-            {logoUrl ? (
-              <Image alt={content.theme.logo?.alt || campaign.name} className="h-9 w-auto shrink-0" height={36} src={logoUrl} unoptimized width={120} />
-            ) : null}
-            <span className="line-clamp-2">{campaign.name}</span>
-          </Link>
-          <nav aria-label="Cuenta" className="flex shrink-0 items-center gap-3 text-sm font-semibold">
-            {signedIn ? (
-              <Link
-                className="inline-flex min-h-10 items-center border-2 border-[var(--frame)] bg-[var(--accent)] px-3 font-bold text-[var(--accent-contrast)]"
-                href="/app/perfil"
-              >
-                Mi pasaporte
-              </Link>
-            ) : (
-              <>
-                <Link className="inline-flex min-h-10 items-center underline-offset-4 hover:underline" href="/login">
-                  Entrar
-                </Link>
-                <Link
-                  className="hidden min-h-10 items-center border-2 border-[var(--frame)] bg-[var(--accent)] px-3 font-bold text-[var(--accent-contrast)] shadow-[2px_2px_0_0_var(--frame)] sm:inline-flex"
-                  href="/registro"
-                >
-                  Registrarme
-                </Link>
-              </>
-            )}
-          </nav>
-        </div>
-      </header>
+      <SiteHeaderView
+        campaignName={campaign.name}
+        dark={dark}
+        links={navLinks}
+        logo={logoUrl ? { alt: content.theme.logo?.alt || campaign.name, url: logoUrl } : null}
+        signedIn={signedIn}
+      />
 
       <main>
         {sections.map((section) => (
-          <div key={section.id}>{renderSection(section, context)}</div>
+          <div className="scroll-mt-16" id={anchors.get(section.id)} key={section.id}>
+            {renderSection(section, context)}
+          </div>
         ))}
       </main>
 

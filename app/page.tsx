@@ -48,6 +48,8 @@ const COMING_SOON_CONTENT: LandingContent = {
       layout: "centered",
       primaryCtaLabel: "Crear cuenta",
       secondaryCtaLabel: "Iniciar sesión",
+      countdownAt: null,
+      countdownLabel: "",
       showCountdown: false,
       subtitle: "Regístrate desde ya para no perderte el inicio de la campaña.",
       type: "hero",

@@ -66,6 +66,9 @@ export const heroSectionSchema = z.object({
   // Added after launch: defaults keep previously stored content valid.
   highlights: z.array(text(40, 1)).max(4, "Máximo 4 destacados.").default([]),
   showCountdown: z.boolean().default(true),
+  // Empty label and null date fall back to the campaign start/end dates.
+  countdownLabel: text(60).default(""),
+  countdownAt: z.iso.datetime({ offset: true }).nullable().default(null),
 });
 
 export const prizeSectionSchema = z.object({

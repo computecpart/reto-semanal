@@ -82,6 +82,11 @@ de tocar código.
   `hero.showCountdown` (con `.default()` para que el contenido ya publicado siga siendo válido) y sección `logos`
   (patrocinadores subidos al bucket + opción de incluir el logo del organizador). `readableDigits()` muestra las cifras de
   los títulos pixel con `font-score`. Sin migraciones.
+- **Navegación (22/10):** cabecera pública común `components/site/site-header.tsx` (portada con anclas por sección,
+  acceso, reglas, privacidad, 404) con menú hamburguesa `mobile-menu.tsx` por debajo de `xl`; en la app del participante,
+  menú de cuenta `components/app/account-menu.tsx` (consola admin si aplica, portada, reglas, privacidad, cerrar sesión).
+  Páginas legales con el tema de la campaña. La puerta de reglas ya no muestra números de versión ni «cambiaron».
+  Contador editable: `hero.countdownAt` (fecha propia o fechas de campaña) y `hero.countdownLabel`; oculta «00 días».
 - Los usuarios existentes deben aceptar las reglas v3 al entrar a `/app` (comportamiento esperado).
 
 ## 1. Qué es y calendario

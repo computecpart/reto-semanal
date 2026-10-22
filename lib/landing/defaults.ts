@@ -23,6 +23,8 @@ export function createSection(type: SectionType): LandingSection {
         layout: "split",
         primaryCtaLabel: "Participar ahora",
         secondaryCtaLabel: "Iniciar sesión",
+        countdownAt: null,
+        countdownLabel: "",
         showCountdown: true,
         subtitle:
           "Completa los retos de cada semana, suma puntos y compite por el premio mayor.",

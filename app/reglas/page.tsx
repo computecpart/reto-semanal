@@ -24,8 +24,9 @@ export default async function RulesPage() {
   if (rules) {
     return (
       <LegalPage
-        title={`Reglas de participación · ${rules.campaign_name}`}
-        updatedAt={`${formatDate(rules.published_at)} · versión ${rules.version}`}
+        eyebrow={rules.campaign_name}
+        title="Reglas de participación"
+        updatedAt={`Vigentes desde el ${formatDate(rules.published_at)}`}
       >
         <SafeMarkdown>{rules.content_md}</SafeMarkdown>
       </LegalPage>
@@ -38,7 +39,7 @@ export default async function RulesPage() {
 // Generic text shown until the organizer publishes versioned campaign rules.
 function FallbackRules() {
   return (
-    <LegalPage title="Reglas de participación" updatedAt="21 de octubre de 2026">
+    <LegalPage title="Reglas de participación" updatedAt="Última actualización: 21 de octubre de 2026">
       <p>
         Al crear tu cuenta en Reto Semanal aceptas estas reglas. Las fechas, el premio y las
         bases específicas de cada campaña se publican dentro de la plataforma.

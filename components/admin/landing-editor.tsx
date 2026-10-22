@@ -12,6 +12,7 @@ import {
   restoreLandingVersionAction,
   saveLandingDraftAction,
 } from "@/lib/campaign/actions";
+import { isoToSalvadorLocal, salvadorLocalToIso } from "@/lib/campaign/schemas";
 import { buildLandingAssetPath, landingAssetUrl } from "@/lib/landing/assets";
 import { createSection } from "@/lib/landing/defaults";
 import {
@@ -259,7 +260,49 @@ function SectionForm({
               Añadir destacado
             </button>
           </fieldset>
-          <Checkbox checked={section.showCountdown} id={`${id}-countdown`} label="Mostrar cuenta regresiva (al inicio o al cierre de la campaña)" onChange={(showCountdown) => set({ showCountdown })} />
+          <fieldset className="space-y-3 rounded-xl border border-slate-200 p-4">
+            <legend className="px-1 text-sm font-semibold text-slate-800">Cuenta regresiva</legend>
+            <Checkbox checked={section.showCountdown} id={`${id}-countdown`} label="Mostrar la cuenta regresiva" onChange={(showCountdown) => set({ showCountdown })} />
+            {section.showCountdown ? (
+              <>
+                <Field id={`${id}-countdown-mode`} label="Contar hasta">
+                  <select
+                    className={fieldClassName}
+                    id={`${id}-countdown-mode`}
+                    onChange={(event) => set({ countdownAt: event.target.value === "custom" ? (section.countdownAt ?? new Date(Date.now() + 86_400_000).toISOString()) : null })}
+                    value={section.countdownAt ? "custom" : "campaign"}
+                  >
+                    <option value="campaign">Fechas de la campaña (inicio y después cierre)</option>
+                    <option value="custom">Una fecha personalizada</option>
+                  </select>
+                </Field>
+                {section.countdownAt ? (
+                  <Field hint="Hora de El Salvador. Al llegar la fecha, el contador desaparece." id={`${id}-countdown-at`} label="Fecha y hora">
+                    <input
+                      className={fieldClassName}
+                      id={`${id}-countdown-at`}
+                      onChange={(event) => {
+                        const iso = salvadorLocalToIso(event.target.value);
+                        if (iso) {
+                          set({ countdownAt: iso });
+                        }
+                      }}
+                      type="datetime-local"
+                      value={isoToSalvadorLocal(section.countdownAt)}
+                    />
+                  </Field>
+                ) : null}
+                <TextInput
+                  hint="Vacío: «La aventura empieza en» antes del inicio y «La campaña termina en» después."
+                  id={`${id}-countdown-label`}
+                  label="Texto sobre el contador"
+                  max={60}
+                  onChange={(countdownLabel) => set({ countdownLabel })}
+                  value={section.countdownLabel}
+                />
+              </>
+            ) : null}
+          </fieldset>
           <div className="grid gap-4 sm:grid-cols-2">
             <TextInput id={`${id}-cta1`} label="Botón principal (registro)" max={40} onChange={(primaryCtaLabel) => set({ primaryCtaLabel })} value={section.primaryCtaLabel} />
             <TextInput hint="Vacío para ocultarlo." id={`${id}-cta2`} label="Botón secundario (login)" max={40} onChange={(secondaryCtaLabel) => set({ secondaryCtaLabel })} value={section.secondaryCtaLabel} />

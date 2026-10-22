@@ -6,7 +6,7 @@ import { FormStatus, SubmitButton } from "@/components/auth/form-ui";
 import { acceptRulesAction } from "@/lib/campaign/actions";
 import { INITIAL_PROFILE_FORM_STATE } from "@/lib/profile/form-state";
 
-export function AcceptRulesForm({ version }: { version: number }) {
+export function AcceptRulesForm() {
   const [state, formAction, pending] = useActionState(acceptRulesAction, INITIAL_PROFILE_FORM_STATE);
 
   // No uncontrolled fields here, so a plain form action is safe.
@@ -14,7 +14,7 @@ export function AcceptRulesForm({ version }: { version: number }) {
     <form action={formAction} className="space-y-4">
       <FormStatus>{state.status === "error" ? state.message : undefined}</FormStatus>
       <SubmitButton pending={pending} pendingLabel="Registrando…" type="submit">
-        Acepto las reglas (versión {version})
+        Acepto las reglas y continúo
       </SubmitButton>
     </form>
   );

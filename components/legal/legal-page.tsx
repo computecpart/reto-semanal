@@ -2,31 +2,43 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-export function LegalPage({
+import { SiteHeader } from "@/components/site/site-header";
+import { getSiteBranding } from "@/lib/campaign/queries";
+import { themeStyle } from "@/lib/landing/theme";
+
+/** Rules, privacy and acceptance pages, styled like the rest of the campaign. */
+export async function LegalPage({
   children,
+  eyebrow,
   title,
   updatedAt,
 }: {
   children: ReactNode;
+  eyebrow?: string;
   title: string;
-  updatedAt: string;
+  updatedAt?: string;
 }) {
+  const branding = await getSiteBranding();
+
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-10 text-slate-950 sm:px-6 sm:py-16">
-      <article className="mx-auto w-full max-w-3xl rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-10">
-        <Link
-          className="inline-flex min-h-10 items-center text-sm font-semibold text-sky-800 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-700"
-          href="/"
-        >
-          <span aria-hidden="true">← </span>Reto Semanal
-        </Link>
-        <h1 className="mt-6 text-3xl font-bold tracking-tight sm:text-4xl">{title}</h1>
-        <p className="mt-2 text-sm text-slate-500">Última actualización: {updatedAt}</p>
-        <div className="mt-8 space-y-6 text-base leading-7 text-slate-700 [&_h2]:mt-10 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-slate-950 [&_li]:ml-5 [&_li]:list-disc [&_ul]:space-y-2">
-          {children}
-        </div>
-      </article>
-    </main>
+    <div className="flex min-h-screen flex-col bg-[var(--color-paper)] text-[var(--color-ink)]" style={themeStyle(branding.theme)}>
+      <SiteHeader />
+      <main className="pixel-grid flex-1 px-4 py-8 sm:px-6 sm:py-14">
+        <article className="pixel-frame mx-auto w-full max-w-3xl bg-white p-5 sm:p-10">
+          <p className="inline-block bg-[var(--accent)] px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-contrast)]">
+            {eyebrow ?? branding.name}
+          </p>
+          <h1 className="mt-5 font-display text-3xl leading-tight sm:text-4xl">{title}</h1>
+          {updatedAt ? <p className="mt-2 text-sm text-slate-500">{updatedAt}</p> : null}
+          <div className="mt-8 space-y-6 text-base leading-7 text-slate-700 [&_h2]:mt-10 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-slate-950 [&_li]:ml-5 [&_li]:list-disc [&_ul]:space-y-2">
+            {children}
+          </div>
+        </article>
+      </main>
+      <footer className="border-t-4 border-[var(--color-ink)] px-4 py-6">
+        <LegalLinks />
+      </footer>
+    </div>
   );
 }
 
