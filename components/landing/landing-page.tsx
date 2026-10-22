@@ -284,16 +284,16 @@ function FaqSection({ context, section }: { context: RenderContext; section: Sec
       <div className="space-y-4">
         {section.items.map((item, index) => (
           <details
-            className={`pixel-frame-sm group p-5 ${context.dark ? "bg-[#141b33]" : "bg-white"}`}
+            className={`pixel-frame-sm group ${context.dark ? "bg-[#141b33]" : "bg-white"}`}
             key={`${section.id}-${index}`}
           >
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--accent)]">
+            <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 p-5 font-semibold focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-[var(--accent)]">
               {item.question}
               <span aria-hidden="true" className="font-display text-xl text-[var(--accent-strong)] group-open:rotate-45">
                 +
               </span>
             </summary>
-            <p className="mt-3 whitespace-pre-line leading-7 opacity-85">{item.answer}</p>
+            <p className="-mt-2 whitespace-pre-line px-5 pb-5 leading-7 opacity-85">{item.answer}</p>
           </details>
         ))}
       </div>
