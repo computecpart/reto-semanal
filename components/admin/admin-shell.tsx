@@ -49,6 +49,9 @@ export function AdminShell({
       <aside className="border-b border-slate-800 bg-slate-950 text-slate-200 lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:border-b-0">
         <div className="flex items-center justify-between gap-3 px-5 py-4 lg:block lg:py-6">
           <Link className="block" href="/admin">
+            <span className="mb-2 inline-flex rounded-md bg-white px-2 py-1.5">
+              <Image alt="Digit@l Solutions" className="h-5 w-auto" height={20} src="/brand/digital-solutions.svg" unoptimized width={110} />
+            </span>
             <span className="block text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Consola</span>
             <span className="block text-lg font-bold text-white">Reto Semanal</span>
           </Link>

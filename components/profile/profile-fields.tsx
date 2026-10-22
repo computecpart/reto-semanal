@@ -18,7 +18,7 @@ export function AvatarPicker({
       <p className="mt-1.5 text-xs leading-5 text-slate-500" id="avatarId-help">
         Elige uno de los avatares oficiales. En esta versión no se permiten fotografías.
       </p>
-      <div className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4">
+      <div className="mt-4 grid grid-cols-4 gap-2 sm:grid-cols-6">
         {AVATARS.map((avatar) => (
           <label className="cursor-pointer" key={avatar.id}>
             <input
@@ -29,14 +29,14 @@ export function AvatarPicker({
               type="radio"
               value={avatar.id}
             />
-            <span className="flex min-h-28 flex-col items-center justify-center gap-2 border-2 border-slate-300 bg-white p-3 text-center text-xs font-bold text-slate-700 transition hover:border-[var(--color-ink)] peer-checked:border-[var(--color-ink)] peer-checked:bg-[var(--accent-soft)] peer-checked:shadow-[4px_4px_0_0_var(--accent)] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--accent)]">
+            <span className="flex min-h-24 flex-col items-center justify-center gap-1 border-2 border-slate-300 bg-white p-3 text-center text-xs font-bold text-slate-700 transition hover:border-[var(--color-ink)] peer-checked:border-[var(--color-ink)] peer-checked:bg-[var(--accent-soft)] peer-checked:shadow-[4px_4px_0_0_var(--accent)] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--accent)]">
               <Image
                 alt=""
                 className="pixelated"
-                height={64}
+                height={56}
                 src={avatar.src}
                 unoptimized
-                width={64}
+                width={56}
               />
               {avatar.label}
             </span>

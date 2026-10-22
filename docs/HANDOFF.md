@@ -4,9 +4,9 @@ Contexto completo para continuar el desarrollo en otra sesión o cuenta de Claud
 Code. Actualizado: **21 de octubre de 2026, fin de la Fase 2**. Léelo entero antes
 de tocar código.
 
-## 0. ESTADO ACTUAL (22/10/2026, Fases 0 a 7 completas y desplegadas)
+## 0. ESTADO ACTUAL (22/10/2026, Fases 0 a 8 completas y desplegadas)
 
-- **Producción al día** con el repo: migraciones hasta `20261022040000` aplicadas y despliegue con la Fase 7. `npm run check` en verde (227 tests + 5 de integración con `npm run test:db`).
+- **Producción al día** con el repo: migraciones hasta `20261022050000` aplicadas y despliegue con la Fase 7. `npm run check` en verde (228 tests + 5 de integración con `npm run test:db`).
 - **Campaña publicada:** «MSI Passport — The Dragon Journey» (`a89d3a8e-…`, slug `msi-passport`),
   23/10/2026 08:00 → 11/12/2026 23:59 hora SV, premio «Equipo MSI» por rifa, tema carmesí/oscuro,
   reglas v2 (importante) = `docs/campaign/msi-passport-reglas.md`, ranking visible y público
@@ -63,8 +63,12 @@ de tocar código.
   limpias desde cero), `npm run seed:demo` (solo local) y `npm run test:db` (5 pruebas de integración: ranking =
   ledger, canjes y envíos concurrentes, suspendido/descalificado, jerarquía admin). Documentación:
   `README_PRODUCTION.md`, `README_DEMO.md`, `SECURITY.md`, `DATABASE.md`.
-- **Siguiente:** Fase 8 (`docs/prompts/08-operacion-produccion.md`): auditoría final de solo lectura y checklist.
-  Pendientes de decisión: MFA para admins, menores en la rifa, CAPTCHA si hay abuso.
+- **22/10 (cierre):** 24 avatares pixel-art nuevos y variados (animales, verduras, frutas, objetos; migración
+  `20261022050000_more_avatars` amplía la restricción a `avatar-01..24`; generador `scripts/generate-avatars.mjs`
+  con dibujos 16×16 en ASCII) y logo pixel de Digit@l Solutions (`scripts/generate-brand.mjs` →
+  `public/brand/digital-solutions.svg`, en el pie de todas las páginas y en la consola admin).
+- **Fase 8 entregada:** auditoría de solo lectura y `docs/CHECKLIST_LANZAMIENTO.md` (listo, pendientes, manual,
+  riesgos y orden). Todas las fases 0–8 completas. Supabase local (Docker) solo se usa para pruebas; está detenido.
 - Los usuarios existentes deben aceptar las reglas v2 al entrar a `/app` (comportamiento esperado).
 
 ## 1. Qué es y calendario

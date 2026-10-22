@@ -1,191 +1,270 @@
-// Genera los avatares genéricos pixel-art de public/avatars/.
-// Son diseños originales construidos por capas; no representan personajes
-// protegidos. Ejecutar con: node scripts/generate-avatars.mjs
+// Generates the pixel-art avatars in public/avatars/. Original designs drawn on
+// a 16×16 grid ("." = background); a 1-px outline is added automatically.
+// Run with: npm run avatars:generate
 import { mkdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
 const SIZE = 16;
 const OUTLINE = "#1e1b2e";
-const EYE = "#1e1b2e";
+const BASE_PALETTE = { k: "#1e1b2e", w: "#ffffff" };
 
 export const AVATAR_SPECS = [
-  { id: "avatar-01", bg: "#bae6fd", skin: "#f5d0b5", hair: "#6b3f1d", hairStyle: "short", shirt: "#2563eb" },
-  { id: "avatar-02", bg: "#fed7aa", skin: "#d6a07a", hair: "#1f1a17", hairStyle: "long", shirt: "#dc2626" },
-  { id: "avatar-03", bg: "#bbf7d0", skin: "#c68b5e", hair: "#9a3412", hairStyle: "bun", shirt: "#15803d", glasses: true },
-  { id: "avatar-04", bg: "#ddd6fe", skin: "#8d5a3b", hair: "#1f1a17", hairStyle: "cap", accent: "#f97316", shirt: "#eab308" },
-  { id: "avatar-05", bg: "#99f6e4", skin: "#f1c7a8", hair: "#3f2a1d", hairStyle: "beanie", accent: "#7c3aed", shirt: "#0f766e" },
-  { id: "avatar-06", bg: "#fef08a", skin: "#5e3a26", hair: "#14110f", hairStyle: "curly", shirt: "#ea580c" },
-  { id: "avatar-07", bg: "#fecaca", skin: "#f8d9c0", hair: "#facc15", hairStyle: "spiky", shirt: "#1e3a8a" },
-  { id: "avatar-08", bg: "#a5f3fc", skin: "#b9805a", hair: "#111827", hairStyle: "headband", accent: "#e11d48", shirt: "#475569" },
-  { id: "avatar-09", bg: "#1e293b", skin: "#94a3b8", hair: "#64748b", hairStyle: "antenna", accent: "#f43f5e", eye: "#22d3ee", mouth: "grille", shirt: "#334155", ears: false },
-  { id: "avatar-10", bg: "#fbcfe8", skin: "#f3c9a6", hair: "#eab308", hairStyle: "long", shirt: "#db2777", glasses: true },
-  { id: "avatar-11", bg: "#e7e5e4", skin: "#c99572", hair: "#d4d4d8", hairStyle: "short", shirt: "#78350f", glasses: true },
-  { id: "avatar-12", bg: "#312e81", skin: "#86efac", hair: "#4ade80", hairStyle: "alien", accent: "#fde047", eye: "#14532d", shirt: "#a855f7", ears: false },
+  {
+    art: [
+      "................", "..o..........o..", "..oo........oo..", "..ooo......ooo..",
+      "..oooooooooooo..", ".oooooooooooooo.", ".ooookoooookooo.", ".oooooooooooooo.",
+      ".wwooooooooooww.", "..wwwwwkkwwwww..", "...wwwwwwwwww...", "....wwwwwwww....",
+      ".....wwwwww.....", "................", "................", "................",
+    ],
+    bg: "#dbeafe", id: "avatar-01", label: "Zorro", palette: { o: "#f97316", w: "#fff7ed" },
+  },
+  {
+    art: [
+      "................", "..g..........g..", "..gg........gg..", "..gpg......gpg..",
+      "..gggggggggggg..", ".gggggggggggggg.", ".ggyyggggggyygg.", ".ggykggggggkygg.",
+      ".gggggggggggggg.", ".ggggggppgggggg.", ".gggggkggkggggg.", "..gggggkkggggg..",
+      "...gggggggggg...", "....gggggggg....", "................", "................",
+    ],
+    bg: "#fde68a", id: "avatar-02", label: "Gato", palette: { g: "#9ca3af", p: "#f9a8d4", y: "#facc15" },
+  },
+  {
+    art: [
+      "................", "................", "...www....www...", "..wwkww..wwkww..",
+      "..wwwwwggwwwww..", ".gggggggggggggg.", ".gggggggggggggg.", ".gkggggggggggkg.",
+      ".ggkkkkkkkkkkgg.", ".ggggrrrrrrgggg.", "..gggggggggggg..", "..dddggggggddd..",
+      ".ddd........ddd.", "................", "................", "................",
+    ],
+    bg: "#bae6fd", id: "avatar-03", label: "Rana", palette: { d: "#15803d", g: "#22c55e", r: "#ef4444" },
+  },
+  {
+    art: [
+      "................", ".....nnnnnn.....", "....nnnnnnnn....", "...nnwwnnwwnn...",
+      "...nwkwnnwkwn...", "...nnnwoownnn...", "..nnwwwwwwwwnn..", ".nnnwwwwwwwwnnn.",
+      ".nnnwwwwwwwwnnn.", "..nnwwwwwwwwnn..", "..nnwwwwwwwwnn..", "...nnwwwwwwnn...",
+      "....oo....oo....", "................", "................", "................",
+    ],
+    bg: "#a5f3fc", id: "avatar-04", label: "Pingüino", palette: { n: "#1f2937", o: "#f59e0b" },
+  },
+  {
+    art: [
+      "................", "..b..........b..", "..bb........bb..", "..bbbbbbbbbbbb..",
+      ".bbwwwwbbwwwwbb.", ".bwwkkwbbwkkwwb.", ".bbwwwwoowwwwbb.", ".bbbbbboobbbbbb.",
+      ".bbttttttttttbb.", ".bbttbttbttbtbb.", "..bttttttttttb..", "...bbttttttbb...",
+      "....oo....oo....", "................", "................", "................",
+    ],
+    bg: "#c7d2fe", id: "avatar-05", label: "Búho", palette: { b: "#92400e", o: "#f97316", t: "#fcd34d" },
+  },
+  {
+    art: [
+      "................", "..nn........nn..", ".nnnn......nnnn.", ".nnwwwwwwwwwwnn.",
+      "..wwwwwwwwwwww..", ".wwnnwwwwwwnnww.", ".wnnwnwwwwnwnnw.", ".wwnnwwwwwwnnww.",
+      ".wwwwwwnnwwwwww.", ".wwwwwnwwnwwwww.", "..wwwwwnnwwwww..", "...wwwwwwwwww...",
+      "....wwwwwwww....", "................", "................", "................",
+    ],
+    bg: "#bbf7d0", id: "avatar-06", label: "Panda", palette: { n: "#111827" },
+  },
+  {
+    art: [
+      "................", ".....pppppp.....", "....pppppppp....", "...pppppppppp...",
+      "..pppppppppppp..", "..ppwwppppwwpp..", "..ppwkppppwkpp..", "..pppppppppppp..",
+      "..pppppppppppp..", "..pppppppppppp..", ".pp.pp.pp.pp.pp.", "pp..p..pp..p..pp",
+      "................", "................", "................", "................",
+    ],
+    bg: "#fef9c3", id: "avatar-07", label: "Pulpo", palette: { p: "#a855f7" },
+  },
+  {
+    art: [
+      "................", "...d........d...", "...dd......dd...", "...rrrrrrrrrr...",
+      "..rrrrrrrrrrrr..", "..rryyrrrryyrr..", "..rrykrrrrkyrr..", ".rrrrrrrrrrrrrr.",
+      ".rroooooooooorr.", ".rrokooooookorr.", "..rrwrwrwrwrrr..", "...rrrrrrrrrr...",
+      "....dd....dd....", "................", "................", "................",
+    ],
+    bg: "#1e293b", id: "avatar-08", label: "Dragón", palette: { d: "#7f1d1d", o: "#fb923c", r: "#dc2626", y: "#facc15" },
+  },
+  {
+    art: [
+      "......g..g......", ".....gg.gg......", "......gggg......", ".....oooooo.....",
+      ".....oodooo.....", ".....okooko.....", "......ooodo.....", "......ooooo.....",
+      "......ooooo.....", ".......odoo.....", ".......ooo......", "........oo......",
+      "........o.......", "................", "................", "................",
+    ],
+    bg: "#dcfce7", id: "avatar-09", label: "Zanahoria", palette: { d: "#c2410c", g: "#16a34a", o: "#f97316" },
+  },
+  {
+    art: [
+      "................", "......gggg......", ".....gllllg.....", "....gllllllg....",
+      "....glkllklg....", "...gllllllllg...", "...glllbbbllg...", "..gllbbbbbbllg..",
+      "..gllbbbbbbllg..", "..gllbbbbbbllg..", "..glllbbbblllg..", "...gllllllllg...",
+      "....gggggggg....", "................", "................", "................",
+    ],
+    bg: "#fce7f3", id: "avatar-10", label: "Aguacate", palette: { b: "#92400e", g: "#3f6212", l: "#bef264" },
+  },
+  {
+    art: [
+      "................", ".......g........", ".....gggggg.....", "....rrrggrrr....",
+      "...rrrrrrrrrr...", "..rrwrrrrrrrrr..", "..rwrrrrrrrrrr..", "..rrrkrrrrkrrr..",
+      "..rrrrrrrrrrrr..", "..rrrrkkkkrrrr..", "...rrrrrrrrrr...", "....rrrrrrrr....",
+      "................", "................", "................", "................",
+    ],
+    bg: "#e0f2fe", id: "avatar-11", label: "Tomate", palette: { g: "#16a34a", r: "#ef4444" },
+  },
+  {
+    art: [
+      "................", "....dd...dd.....", "...dggd.dggd....", "..dgggggggggd...",
+      ".dgggggggggggd..", ".dgggdgggggdggd.", "..dgggggggggggd.", "...dddgggggddd..",
+      "....ssssssss....", "....ssksskss....", "....ssssssss....", ".....ssssss.....",
+      "......ssss......", "................", "................", "................",
+    ],
+    bg: "#ffedd5", id: "avatar-12", label: "Brócoli", palette: { d: "#14532d", g: "#16a34a", s: "#a3e635" },
+  },
+  {
+    art: [
+      "................", ".....rrrrrr.....", "...rrwwrrrrrr...", "..rrwwwrrrwwrr..",
+      ".rrrrwrrrrwwrrr.", ".rwwrrrrrrrrrwr.", ".rrrrrrrrrrrrrr.", "...cccccccccc...",
+      "....cckcckcc....", "....cccccccc....", "....cccccccc....", "....cccccccc....",
+      ".....cccccc.....", "................", "................", "................",
+    ],
+    bg: "#d1fae5", id: "avatar-13", label: "Hongo", palette: { c: "#fef3c7", r: "#dc2626" },
+  },
+  {
+    art: [
+      "......g..g......", ".....gg.gg.g....", "......ggggg.....", ".......ggg......",
+      ".....yyyyyy.....", "....yoyyoyyy....", "....ykyyyyky....", "....yyoyyoyy....",
+      "....yyykkyyy....", "....yoyyoyyo....", "....yyyyyyyy....", ".....yoyyoy.....",
+      "......yyyy......", "................", "................", "................",
+    ],
+    bg: "#ddd6fe", id: "avatar-14", label: "Piña", palette: { g: "#16a34a", o: "#d97706", y: "#facc15" },
+  },
+  {
+    art: [
+      "................", ".......r........", ".......d........", "...ssssssssss...",
+      "..ssssssssssss..", "..ssddddddddss..", "..ssdccddccdss..", "..ssddddddddss..",
+      "..ssssssssssss..", "..ssssddddssss..", "..ssssssssssss..", "...dddddddddd...",
+      "..dd........dd..", "................", "................", "................",
+    ],
+    bg: "#fecaca", id: "avatar-15", label: "Robot", palette: { c: "#22d3ee", d: "#475569", r: "#ef4444", s: "#cbd5e1" },
+  },
+  {
+    art: [
+      "................", ".....wwwwww.....", "....wwwwwwww....", "...wwwwwwwwww...",
+      "...wwkkwwkkww...", "...wwkkwwkkww...", "..wwbwwwwwwbww..", "..wwwwwkkwwwww..",
+      "..wwwwwkkwwwww..", "..wwwwwwwwwwww..", "..wwwwwwwwwwww..", "..ww.www.www.w..",
+      "..w...w...w.....", "................", "................", "................",
+    ],
+    bg: "#4c1d95", id: "avatar-16", label: "Fantasma", palette: { b: "#fda4af", w: "#f8fafc" },
+  },
+  {
+    art: [
+      ".......rr.......", "......rrrr......", ".....wwwwww.....", ".....wwwwww.....",
+      ".....wwccww.....", ".....wccccw.....", ".....wwccww.....", ".....wwwwww.....",
+      "....rwwwwwwr....", "...rrwwwwwwrr...", "...rr.wwww.rr...", "......oyyo......",
+      ".......oo.......", ".......o........", "................", "................",
+    ],
+    bg: "#0f172a", id: "avatar-17", label: "Cohete", palette: { c: "#22d3ee", o: "#f97316", r: "#ef4444", y: "#fde047" },
+  },
+  {
+    art: [
+      "................", "......s..s......", ".....s..s.......", "......s..s......",
+      "................", "...wwwwwwwwww...", "...wbbbbbbbbw...", "...wwwwwwwwwwww.",
+      "...wwkwwwwkww.w.", "...wwwwkkwwww.w.", "...wwwwwwwwwwww.", "....wwwwwwww....",
+      "..wwwwwwwwwwww..", "................", "................", "................",
+    ],
+    bg: "#fca5a5", id: "avatar-18", label: "Taza de café", palette: { b: "#78350f", s: "#e2e8f0", w: "#fafaf9" },
+  },
+  {
+    art: [
+      ".......f........", "......fff.......", ".....gggggg.....", ".....gkggkg.....",
+      ".g...gggggg...g.", ".g...ggkkgg...g.", ".gggggggggggggg.", ".....gdgdgg.....",
+      ".....gggggg.....", "....pppppppp....", "....pppppppp....", ".....pppppp.....",
+      ".....pppppp.....", "................", "................", "................",
+    ],
+    bg: "#fef08a", id: "avatar-19", label: "Cactus", palette: { d: "#166534", f: "#f472b6", g: "#16a34a", p: "#c2410c" },
+  },
+  {
+    art: [
+      "................", "................", ".rrrrrrrrrrrrrr.", ".rrkrrrrrrrkrrr.",
+      "..rrrrrkrrrrrr..", "..rrkrrrrrrkrr..", "...rrrrrrrrrr...", "...rrrkrrkrrr...",
+      "....rrrrrrrr....", "....llllllll....", ".....gggggg.....", "......gggg......",
+      "................", "................", "................", "................",
+    ],
+    bg: "#e0e7ff", id: "avatar-20", label: "Sandía", palette: { g: "#16a34a", l: "#86efac", r: "#f43f5e" },
+  },
+  {
+    art: [
+      "................", "...ww......ww...", "..wwww....wwww..", "..wwwww..wwwww..",
+      "....yyyyyyyy....", "...yykyyyykyy...", "...yyyyyyyyyy...", "...nnnnnnnnnn...",
+      "...yyyyyyyyyy...", "...nnnnnnnnnn...", "....yyyyyyyy....", ".....nnnnnn.....",
+      ".......nn.......", "................", "................", "................",
+    ],
+    bg: "#bbf7d0", id: "avatar-21", label: "Abeja", palette: { n: "#1f2937", w: "#e0f2fe", y: "#facc15" },
+  },
+  {
+    art: [
+      "......c..c......", ".......cc.......", "........c.......", "....bbbbbbb.....",
+      "..bbbbbbbbbbb...", ".bbbbbbbbbbbbb.b", ".bbkbbbbbbbbbbbb", ".bbbbbbbbbbbbbb.",
+      ".bllllllllllbbb.", "..llllllllllbb..", "...bbbbbbbbbb...", "................",
+      "................", "................", "................", "................",
+    ],
+    bg: "#cffafe", id: "avatar-22", label: "Ballena", palette: { b: "#3b82f6", c: "#0891b2", l: "#bfdbfe" },
+  },
+  {
+    art: [
+      "................", "................", "................", "..ssssssssssss..",
+      ".ssssssssssssss.", ".ssdssssssssyss.", ".sdddssssssbsgs.", ".ssdssssssssrss.",
+      ".ssssskksssssss.", ".ssss......ssss.", "..ss........ss..", "................",
+      "................", "................", "................", "................",
+    ],
+    bg: "#fde68a", id: "avatar-23", label: "Control de juego", palette: { b: "#3b82f6", d: "#1e293b", g: "#22c55e", r: "#ef4444", s: "#94a3b8", y: "#facc15" },
+  },
+  {
+    art: [
+      "................", "......yyy.......", ".....yyyyy......", "....yyyyyyy.....",
+      "....ykyyyky.....", "....yyyooyy.....", "...yyyyyyyyy....", "..yyyyyyyyyyy...",
+      "..yyyyyyyyyyy...", "..yyyyyyyyyyy...", "...yyyyyyyyy....", ".....o...o......",
+      "....oo..oo......", "................", "................", "................",
+    ],
+    bg: "#a7f3d0", id: "avatar-24", label: "Pollito", palette: { o: "#f97316", y: "#fde047" },
+  },
 ];
 
-function createCanvas() {
-  return Array.from({ length: SIZE }, () => Array.from({ length: SIZE }, () => null));
-}
-
-function fill(canvas, row, fromCol, toCol, color) {
-  for (let col = fromCol; col <= toCol; col += 1) {
-    canvas[row][col] = color;
-  }
-}
-
-function fillRect(canvas, fromRow, toRow, fromCol, toCol, color) {
-  for (let row = fromRow; row <= toRow; row += 1) {
-    fill(canvas, row, fromCol, toCol, color);
-  }
-}
-
-function drawHair(canvas, spec) {
-  const { accent, hair, hairStyle } = spec;
-
-  switch (hairStyle) {
-    case "short":
-      fillRect(canvas, 3, 4, 4, 11, hair);
-      fill(canvas, 5, 4, 5, hair);
-      fill(canvas, 5, 10, 11, hair);
-      break;
-    case "long":
-      fillRect(canvas, 3, 4, 4, 11, hair);
-      fill(canvas, 5, 4, 6, hair);
-      fill(canvas, 5, 10, 11, hair);
-      fillRect(canvas, 4, 12, 3, 3, hair);
-      fillRect(canvas, 4, 12, 12, 12, hair);
-      break;
-    case "bun":
-      fillRect(canvas, 1, 2, 7, 8, hair);
-      fillRect(canvas, 3, 4, 4, 11, hair);
-      fill(canvas, 5, 4, 4, hair);
-      fill(canvas, 5, 11, 11, hair);
-      break;
-    case "cap":
-      fillRect(canvas, 2, 4, 4, 11, accent);
-      fill(canvas, 5, 9, 13, accent);
-      fill(canvas, 5, 4, 5, hair);
-      break;
-    case "beanie":
-      fillRect(canvas, 1, 1, 7, 8, "#f8fafc");
-      fillRect(canvas, 2, 4, 4, 11, accent);
-      fill(canvas, 5, 4, 11, "#f8fafc");
-      break;
-    case "curly":
-      fillRect(canvas, 1, 2, 5, 10, hair);
-      fillRect(canvas, 3, 5, 3, 12, hair);
-      fillRect(canvas, 6, 7, 3, 3, hair);
-      fillRect(canvas, 6, 7, 12, 12, hair);
-      break;
-    case "spiky":
-      fill(canvas, 1, 5, 5, hair);
-      fill(canvas, 1, 8, 8, hair);
-      fill(canvas, 1, 11, 11, hair);
-      fill(canvas, 2, 4, 11, hair);
-      fillRect(canvas, 3, 4, 4, 11, hair);
-      fill(canvas, 5, 4, 4, hair);
-      fill(canvas, 5, 11, 11, hair);
-      break;
-    case "headband":
-      fillRect(canvas, 3, 4, 4, 11, hair);
-      fill(canvas, 5, 4, 11, accent);
-      fill(canvas, 6, 3, 3, accent);
-      break;
-    case "antenna":
-      fill(canvas, 1, 7, 8, accent);
-      fillRect(canvas, 2, 3, 7, 8, hair);
-      fill(canvas, 4, 4, 11, hair);
-      break;
-    case "alien":
-      fill(canvas, 1, 4, 4, accent);
-      fill(canvas, 1, 11, 11, accent);
-      fill(canvas, 2, 5, 5, hair);
-      fill(canvas, 2, 10, 10, hair);
-      fill(canvas, 3, 6, 6, hair);
-      fill(canvas, 3, 9, 9, hair);
-      break;
-    default:
-      throw new Error(`Estilo de cabello desconocido: ${hairStyle}`);
-  }
-}
-
-function drawFace(canvas, spec) {
-  const eye = spec.eye ?? EYE;
-
-  if (spec.mouth === "grille") {
-    fill(canvas, 7, 5, 10, "#0f172a");
-    fill(canvas, 8, 6, 6, eye);
-    fill(canvas, 8, 9, 9, eye);
-    fill(canvas, 10, 6, 9, "#475569");
-    fill(canvas, 10, 7, 7, "#cbd5e1");
-    fill(canvas, 10, 9, 9, "#cbd5e1");
-    return;
-  }
-
-  if (spec.hairStyle === "alien") {
-    fillRect(canvas, 7, 8, 5, 6, eye);
-    fillRect(canvas, 7, 8, 9, 10, eye);
-    fill(canvas, 7, 5, 5, "#f0fdf4");
-    fill(canvas, 7, 9, 9, "#f0fdf4");
-    fill(canvas, 10, 7, 8, "#166534");
-    return;
-  }
-
-  fill(canvas, 8, 6, 6, eye);
-  fill(canvas, 8, 9, 9, eye);
-  fill(canvas, 9, 5, 5, "#f9a8a8");
-  fill(canvas, 9, 10, 10, "#f9a8a8");
-  fill(canvas, 10, 7, 8, "#9f1239");
-
-  if (spec.glasses) {
-    const frame = "#57534e";
-    fill(canvas, 7, 5, 10, frame);
-    fill(canvas, 8, 5, 5, frame);
-    fill(canvas, 8, 7, 8, frame);
-    fill(canvas, 8, 10, 10, frame);
-  }
-}
-
 export function renderAvatarPixels(spec) {
-  const canvas = createCanvas();
-
-  fillRect(canvas, 13, 15, 3, 12, spec.shirt);
-  fill(canvas, 13, 7, 8, spec.skin);
-  fill(canvas, 12, 6, 9, spec.skin);
-  fillRect(canvas, 4, 11, 4, 11, spec.skin);
-
-  if (spec.ears !== false) {
-    fillRect(canvas, 7, 8, 3, 3, spec.skin);
-    fillRect(canvas, 7, 8, 12, 12, spec.skin);
+  if (spec.art.length !== SIZE || spec.art.some((row) => row.length !== SIZE)) {
+    throw new Error(`${spec.id}: el dibujo debe ser de ${SIZE}×${SIZE}.`);
   }
 
-  drawHair(canvas, spec);
-  drawFace(canvas, spec);
+  const palette = { ...BASE_PALETTE, ...spec.palette };
+  const canvas = spec.art.map((row) =>
+    [...row].map((symbol) => {
+      if (symbol === ".") {
+        return null;
+      }
+
+      if (!palette[symbol]) {
+        throw new Error(`${spec.id}: color sin definir para «${symbol}».`);
+      }
+
+      return palette[symbol];
+    }),
+  );
 
   // A one-pixel outline around the silhouette gives the classic pixel-art read.
-  const outlined = canvas.map((row) => [...row]);
-
-  for (let row = 0; row < SIZE; row += 1) {
-    for (let col = 0; col < SIZE; col += 1) {
-      if (canvas[row][col]) {
-        continue;
+  return canvas.map((row, y) =>
+    row.map((color, x) => {
+      if (color) {
+        return color;
       }
 
       const touchesFigure = [
-        [row - 1, col],
-        [row + 1, col],
-        [row, col - 1],
-        [row, col + 1],
+        [y - 1, x],
+        [y + 1, x],
+        [y, x - 1],
+        [y, x + 1],
       ].some(([r, c]) => r >= 0 && r < SIZE && c >= 0 && c < SIZE && canvas[r][c]);
 
-      if (touchesFigure) {
-        outlined[row][col] = OUTLINE;
-      }
-    }
-  }
-
-  return outlined;
+      return touchesFigure ? OUTLINE : null;
+    }),
+  );
 }
 
 export function renderAvatarSvg(spec) {
@@ -209,16 +288,15 @@ export function renderAvatarSvg(spec) {
         end += 1;
       }
 
-      rects.push(
-        `<rect x="${col}" y="${row}" width="${end - col + 1}" height="1" fill="${color}"/>`,
-      );
+      rects.push(`<rect x="${col}" y="${row}" width="${end - col + 1}" height="1" fill="${color}"/>`);
       col = end + 1;
     }
   }
 
+  // Figures are drawn high in the grid; shift down to center them vertically.
   return [
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${SIZE} ${SIZE}" width="128" height="128" shape-rendering="crispEdges">`,
-    `<rect width="${SIZE}" height="${SIZE}" fill="${spec.bg}"/>`,
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -1 ${SIZE} ${SIZE}" width="128" height="128" shape-rendering="crispEdges">`,
+    `<rect y="-1" width="${SIZE}" height="${SIZE + 1}" fill="${spec.bg}"/>`,
     ...rects,
     "</svg>",
     "",

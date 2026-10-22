@@ -183,7 +183,7 @@ describe("registro", () => {
   });
 
   it("exige un avatar del catálogo cerrado", () => {
-    expect(schema.safeParse({ ...validRegistration, avatarId: "avatar-13" }).success).toBe(false);
+    expect(schema.safeParse({ ...validRegistration, avatarId: "avatar-25" }).success).toBe(false);
     expect(schema.safeParse({ ...validRegistration, avatarId: "/foto.jpg" }).success).toBe(false);
   });
 

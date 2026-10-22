@@ -25,7 +25,8 @@
     "test:watch": "vitest",
     "check": "npm run lint && npm run typecheck && npm test && npm run build",
     "seed:demo": "node scripts/seed-demo.mjs",
-    "test:db": "node scripts/test-db.mjs"
+    "test:db": "node scripts/test-db.mjs",
+    "brand:generate": "node scripts/generate-brand.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",

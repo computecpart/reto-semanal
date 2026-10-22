@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -29,15 +30,30 @@ export function LegalPage({
   );
 }
 
+export function OrganizerBadge() {
+  return (
+    <a
+      className="inline-flex items-center gap-3 rounded-sm border-2 border-[var(--color-ink)] bg-white px-3 py-2 text-xs font-bold uppercase tracking-wide text-slate-600"
+      href="mailto:soporte@digitalsolutions.com.sv"
+    >
+      Organiza
+      <Image alt="Digit@l Solutions" className="h-6 w-auto" height={24} src="/brand/digital-solutions.svg" unoptimized width={132} />
+    </a>
+  );
+}
+
 export function LegalLinks() {
   return (
-    <nav aria-label="Información legal" className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm">
+    <div className="flex flex-col items-center gap-4">
+      <OrganizerBadge />
+      <nav aria-label="Información legal" className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm">
       <Link className="font-semibold text-slate-600 hover:text-slate-950 hover:underline" href="/reglas">
         Reglas de participación
       </Link>
       <Link className="font-semibold text-slate-600 hover:text-slate-950 hover:underline" href="/privacidad">
         Política de privacidad
       </Link>
-    </nav>
+      </nav>
+    </div>
   );
 }

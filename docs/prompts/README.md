@@ -4,7 +4,7 @@ Ejecuta **una fase por sesión**, en este orden, y detente al terminar cada una.
 Claude Code carga `CLAUDE.md`, que incluye `AGENTS.md` y `docs/HANDOFF.md`.
 Este último contiene el estado real, la infraestructura y las convenciones.
 
-Fases 0 a 7 completas y desplegadas en https://piensads.app. Siguiente: 08 (auditoría final de operación).
+**Fases 0 a 8 completas** y desplegadas en https://piensads.app. Ver docs/CHECKLIST_LANZAMIENTO.md.
 
 | Archivo | Fase | Depende de |
 | --- | --- | --- |
@@ -14,7 +14,7 @@ Fases 0 a 7 completas y desplegadas en https://piensads.app. Siguiente: 08 (audi
 | `05-recompensas-qr.md` | **Completada** como misiones (QR con logo) | 3 |
 | `06-moderacion-admin.md` | **Completada** (+ rifa verificable; MFA pendiente) | 3 |
 | `07-qa-pulido.md` | **Completada** | 3–6 |
-| `08-operacion-produccion.md` | Endurecimiento y manual de operación | 7 |
+| `08-operacion-produccion.md` | **Completada** (checklist de lanzamiento) | 7 |
 
 Decisiones de diseño respecto al plan original:
 
