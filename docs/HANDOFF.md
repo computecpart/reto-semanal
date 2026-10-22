@@ -159,7 +159,7 @@ Auth aplicada por la Management API:
 - Confirm email ON, signups ON, anónimos y teléfono OFF.
 - OTP: 6 dígitos y 3600 s. Contraseña mínima 8 + **HaveIBeenPwned ON**.
 - Plantillas en español: confirmación (`{{ .Token }}`), recuperación
-  (`{{ .ConfirmationURL }}`), cambio de correo y reautenticación.
+  (`{{ .SiteURL }}/auth/recuperar?token_hash={{ .TokenHash }}`: página con botón «Continuar» y `verifyOtp`; funciona en cualquier dispositivo y los escáneres de correo no gastan el enlace. `/auth/callback` queda para enlaces PKCE antiguos), cambio de correo y reautenticación.
 - Límites por IP ampliados para la red corporativa compartida:
   `rate_limit_verify=300`, `rate_limit_otp=150`, `rate_limit_token_refresh=900`.
 - **SMTP propio (Resend):** remitente `"Reto Semanal" <no-reply@piensads.app>`, `smtp.resend.com:465`, usuario `resend`, contraseña = clave de **solo envío** `RESEND_SMTP_KEY`. Dominio verificado en Resend (DKIM, SPF y MX en `send`, CNAME `rsend`, DMARC `p=none`, todo en Vercel DNS). `rate_limit_email_sent=100`/h. Plan gratis de Resend: **100 correos/día, 3000/mes**. Entrega verificada el 21/10/2026.
