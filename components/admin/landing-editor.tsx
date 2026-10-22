@@ -210,6 +210,15 @@ function ImageField({
   );
 }
 
+function Checkbox({ checked, id, label, onChange }: { checked: boolean; id: string; label: string; onChange: (value: boolean) => void }) {
+  return (
+    <label className="flex min-h-10 items-center gap-3 text-sm font-semibold text-slate-800" htmlFor={id}>
+      <input checked={checked} className="size-4 accent-sky-700" id={id} onChange={(event) => onChange(event.target.checked)} type="checkbox" />
+      {label}
+    </label>
+  );
+}
+
 function SectionForm({
   campaignId,
   onChange,
@@ -229,6 +238,28 @@ function SectionForm({
           <TextInput id={`${id}-eyebrow`} label="Etiqueta superior" max={60} onChange={(eyebrow) => set({ eyebrow })} value={section.eyebrow} />
           <TextInput id={`${id}-headline`} label="Titular" max={120} onChange={(headline) => set({ headline })} value={section.headline} />
           <TextArea id={`${id}-subtitle`} label="Subtítulo" max={320} onChange={(subtitle) => set({ subtitle })} value={section.subtitle} />
+          <fieldset className="space-y-3 rounded-xl border border-slate-200 p-4">
+            <legend className="px-1 text-sm font-semibold text-slate-800">Destacados (hasta 4)</legend>
+            <p className="text-xs text-slate-500">Frases cortas que aparecen como etiquetas bajo el subtítulo, por ejemplo «Participar es gratis».</p>
+            {section.highlights.map((highlight, index) => (
+              <div className="flex gap-2" key={index}>
+                <input
+                  aria-label={`Destacado ${index + 1}`}
+                  className={fieldClassName}
+                  maxLength={40}
+                  onChange={(event) => set({ highlights: section.highlights.map((value, i) => (i === index ? event.target.value : value)) })}
+                  value={highlight}
+                />
+                <button className={`${buttonClassName} mt-2 shrink-0`} onClick={() => set({ highlights: section.highlights.filter((_, i) => i !== index) })} type="button">
+                  Quitar
+                </button>
+              </div>
+            ))}
+            <button className={buttonClassName} disabled={section.highlights.length >= 4} onClick={() => set({ highlights: [...section.highlights, "Nuevo destacado"] })} type="button">
+              Añadir destacado
+            </button>
+          </fieldset>
+          <Checkbox checked={section.showCountdown} id={`${id}-countdown`} label="Mostrar cuenta regresiva (al inicio o al cierre de la campaña)" onChange={(showCountdown) => set({ showCountdown })} />
           <div className="grid gap-4 sm:grid-cols-2">
             <TextInput id={`${id}-cta1`} label="Botón principal (registro)" max={40} onChange={(primaryCtaLabel) => set({ primaryCtaLabel })} value={section.primaryCtaLabel} />
             <TextInput hint="Vacío para ocultarlo." id={`${id}-cta2`} label="Botón secundario (login)" max={40} onChange={(secondaryCtaLabel) => set({ secondaryCtaLabel })} value={section.secondaryCtaLabel} />
@@ -370,6 +401,46 @@ function SectionForm({
               ))}
             </select>
           </Field>
+        </div>
+      );
+    }
+    case "logos": {
+      const set = (patch: Partial<SectionOf<"logos">>) => onChange({ ...section, ...patch });
+      return (
+        <div className="space-y-4">
+          <p className="rounded-lg bg-sky-50 p-3 text-sm text-sky-900">
+            Sube los logos oficiales (por ejemplo, MSI) en PNG con fondo transparente o blanco. Se muestran sobre tarjetas blancas.
+          </p>
+          <TextInput hint="Opcional. Ej.: «Una campaña de», «Con el respaldo de»." id={`${id}-heading`} label="Encabezado" max={80} onChange={(heading) => set({ heading })} value={section.heading} />
+          <Checkbox checked={section.includeOrganizer} id={`${id}-organizer`} label="Incluir el logo de Digit@l Solutions" onChange={(includeOrganizer) => set({ includeOrganizer })} />
+          {section.logos.map((logo, index) => (
+            <div className="space-y-2" key={logo.path}>
+              <ImageField
+                campaignId={campaignId}
+                id={`${id}-logo-${index}`}
+                label={`Logo ${index + 1}`}
+                onChange={(image) => set({ logos: image ? section.logos.map((value, i) => (i === index ? image : value)) : section.logos.filter((_, i) => i !== index) })}
+                value={logo}
+              />
+              <button className={buttonClassName} onClick={() => set({ logos: section.logos.filter((_, i) => i !== index) })} type="button">
+                Quitar logo
+              </button>
+            </div>
+          ))}
+          {section.logos.length < 6 ? (
+            <ImageField
+              campaignId={campaignId}
+              id={`${id}-logo-new`}
+              key={section.logos.length}
+              label="Añadir logo"
+              onChange={(image) => {
+                if (image) {
+                  set({ logos: [...section.logos, { alt: image.alt || "Logo", path: image.path }] });
+                }
+              }}
+              value={null}
+            />
+          ) : null}
         </div>
       );
     }

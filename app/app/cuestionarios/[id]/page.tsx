@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { readableDigits } from "@/components/ui/readable-digits";
 import { PixelCard } from "@/components/auth/form-ui";
 import { QuizPlayer } from "@/components/quiz/quiz-player";
 import { QuizResultView } from "@/components/quiz/quiz-result";
@@ -31,7 +32,7 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
         ← Todas las trivias
       </Link>
       <header>
-        <h1 className="font-display text-3xl leading-tight sm:text-4xl">{quiz.title}</h1>
+        <h1 className="font-display text-3xl leading-tight sm:text-4xl">{readableDigits(quiz.title)}</h1>
         {quiz.description ? <p className="mt-3 max-w-2xl whitespace-pre-line text-slate-600">{quiz.description}</p> : null}
       </header>
 

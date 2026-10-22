@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 
+import { readableDigits } from "@/components/ui/readable-digits";
 import { FormStatus, SubmitButton, fieldClassName, labelClassName, secondaryButtonClassName } from "@/components/auth/form-ui";
 import { previewMissionAction, redeemMissionAction } from "@/lib/missions/actions";
 import { formatCode, isValidCode, parseScannedRedeemUrl, type MissionPreview } from "@/lib/missions/schema";
@@ -202,7 +203,7 @@ export function RedeemPanel({ initialCode, origin }: { initialCode: string | nul
       {preview ? (
         <section className="pixel-frame bg-white p-6">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Misión {formatCode(code)}</p>
-          <h2 className="mt-2 font-display text-3xl">{preview.name}</h2>
+          <h2 className="mt-2 font-display text-3xl">{readableDigits(preview.name)}</h2>
           {preview.description ? <p className="mt-2 text-slate-600">{preview.description}</p> : null}
           <p className="mt-4 font-score text-4xl text-[var(--accent-strong)]">+{preview.points} pts</p>
           <p className="mt-1 text-xs text-slate-500">Vigente hasta {dateFormat.format(new Date(preview.expires_at))}</p>

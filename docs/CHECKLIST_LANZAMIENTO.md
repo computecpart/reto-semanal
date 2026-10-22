@@ -26,6 +26,11 @@ Auditoría de solo lectura sobre producción (Supabase, Vercel, Resend). Nada se
 3. **Prueba visual en móvil** (360 px) de registro, trivia, canje con cámara y ranking: hacerla el jueves.
 4. **MFA** para cuentas administrativas (Supabase lo admite; la app aún no ofrece la inscripción).
 5. **CAPTCHA** en el registro: activarlo solo si aparece abuso (Supabase Auth → Turnstile/hCaptcha).
+6. **Imagen de la portada** (21/10): la actual muestra un mouse **Logitech**; reemplazarla por un producto o arte MSI
+   (Admin → Campaña → Portada → Portada principal → Imagen) y publicar.
+7. **Logo de MSI**: añadir la sección «Logos y patrocinadores» y subir el logo oficial (PNG); opcionalmente los
+   «Destacados» del hero (p. ej. «Participar es gratis», «Trivias semanales», «Misiones en vivo»).
+8. **Actividad del sábado 24**: aún no hay trivias ni misiones creadas en producción. Crearlas y probarlas el viernes.
 
 ## Configuración manual recomendada
 

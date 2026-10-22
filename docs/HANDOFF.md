@@ -65,8 +65,8 @@ de tocar código.
   `README_PRODUCTION.md`, `README_DEMO.md`, `SECURITY.md`, `DATABASE.md`.
 - **22/10 (cierre):** 24 avatares pixel-art nuevos y variados (animales, verduras, frutas, objetos; migración
   `20261022050000_more_avatars` amplía la restricción a `avatar-01..24`; generador `scripts/generate-avatars.mjs`
-  con dibujos 16×16 en ASCII) y logo pixel de Digit@l Solutions (`scripts/generate-brand.mjs` →
-  `public/brand/digital-solutions.svg`, en el pie de todas las páginas y en la consola admin).
+  con dibujos 16×16 en ASCII). El logo de Digit@l Solutions es el **original** (`public/brand/digital-solutions.png`,
+  300×227; reemplazable por una versión en mayor resolución con el mismo nombre).
 - **Fase 8 entregada:** auditoría de solo lectura y `docs/CHECKLIST_LANZAMIENTO.md` (listo, pendientes, manual,
   riesgos y orden). Todas las fases 0–8 completas. Supabase local (Docker) solo se usa para pruebas; está detenido.
 - **Repaso UX móvil (21/10):** auditoría con Playwright a 360 y 1280 px de todas las rutas (0 desbordes). Participante:
@@ -75,6 +75,13 @@ de tocar código.
   (Pixelify confunde 5 y 7). Trivia: barra de progreso, opciones de 48 px y aviso de preguntas sin responder.
   Admin: barra de cuenta (perfil/salir) en móvil, zonas táctiles ≥ 40 px y filtros en rejilla.
   `viewport-fit=cover` con `safe-area-inset-bottom`.
+- **Portada v2 (21/10):** estética rojo dragón/negro (acento «carmesí» = rojo MSI `#e4002b`, superficie oscura casi
+  negra, `DARK_SURFACE` y tinte `onDark` con contraste AA por test), cabecera fija, CTA fijo en móvil, cuenta regresiva
+  (`components/landing/countdown.tsx`, solo presentación), podio del Top con estado vacío que invita a registrarse,
+  fechas en tarjetas, Open Graph para compartir. Campos nuevos editables: `hero.highlights` (≤ 4) y
+  `hero.showCountdown` (con `.default()` para que el contenido ya publicado siga siendo válido) y sección `logos`
+  (patrocinadores subidos al bucket + opción de incluir el logo del organizador). `readableDigits()` muestra las cifras de
+  los títulos pixel con `font-score`. Sin migraciones.
 - Los usuarios existentes deben aceptar las reglas v2 al entrar a `/app` (comportamiento esperado).
 
 ## 1. Qué es y calendario

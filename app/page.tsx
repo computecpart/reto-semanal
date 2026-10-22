@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { LandingPage } from "@/components/landing/landing-page";
 import { getPublicLanding, type PublicCampaign } from "@/lib/campaign/queries";
+import { landingAssetUrl } from "@/lib/landing/assets";
 import { DEFAULT_THEME, type LandingContent } from "@/lib/landing/schema";
 import { getRanking } from "@/lib/points/queries";
 import { getPublicQuizzes } from "@/lib/quiz/queries";
@@ -13,9 +14,16 @@ export async function generateMetadata(): Promise<Metadata> {
   const data = await getPublicLanding().catch(() => null);
   const hero = data?.landing?.sections.find((section) => section.type === "hero");
 
+  const description = hero?.type === "hero" && hero.subtitle ? hero.subtitle : "Campaña de retos semanales.";
+  const title = data?.campaign.name ?? "Reto Semanal";
+  const image = hero?.type === "hero" ? landingAssetUrl(hero.image?.path) : null;
+
+  // Rich previews when the link is shared on WhatsApp or social networks.
   return {
-    description: hero?.type === "hero" && hero.subtitle ? hero.subtitle : "Campaña de retos semanales.",
-    title: data?.campaign.name ?? "Reto Semanal",
+    description,
+    openGraph: { description, images: image ? [{ alt: hero?.type === "hero" ? hero.image?.alt : undefined, url: image }] : undefined, locale: "es_SV", title, type: "website" },
+    title,
+    twitter: { card: image ? "summary_large_image" : "summary", description, title },
   };
 }
 
@@ -34,11 +42,13 @@ const COMING_SOON_CONTENT: LandingContent = {
     {
       eyebrow: "Muy pronto",
       headline: "Se viene un nuevo reto",
+      highlights: [],
       id: "00000000-0000-4000-8000-000000000001",
       image: null,
       layout: "centered",
       primaryCtaLabel: "Crear cuenta",
       secondaryCtaLabel: "Iniciar sesión",
+      showCountdown: false,
       subtitle: "Regístrate desde ya para no perderte el inicio de la campaña.",
       type: "hero",
       visible: true,

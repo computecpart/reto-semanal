@@ -33,11 +33,12 @@ export function LegalPage({
 export function OrganizerBadge() {
   return (
     <a
-      className="inline-flex items-center gap-3 rounded-sm border-2 border-[var(--color-ink)] bg-white px-3 py-2 text-xs font-bold uppercase tracking-wide text-slate-600"
+      aria-label="Organiza Digit@l Solutions. Escribir a soporte@digitalsolutions.com.sv"
+      className="inline-flex items-center gap-4 rounded-md border-2 border-[var(--color-ink)] bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-500 shadow-[3px_3px_0_0_var(--color-ink)] transition hover:-translate-y-0.5"
       href="mailto:soporte@digitalsolutions.com.sv"
     >
       Organiza
-      <Image alt="Digit@l Solutions" className="h-6 w-auto" height={24} src="/brand/digital-solutions.svg" unoptimized width={132} />
+      <Image alt="" className="h-14 w-auto" height={56} src="/brand/digital-solutions.png" unoptimized width={74} />
     </a>
   );
 }

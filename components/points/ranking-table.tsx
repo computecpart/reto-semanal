@@ -31,7 +31,7 @@ export function RankingTable({
         const surface = row.is_current_user
           ? "bg-[var(--accent-soft)] text-[var(--color-ink)]"
           : dark
-            ? "bg-[#141b33]"
+            ? "bg-[#13141b]"
             : "bg-white";
 
         return (

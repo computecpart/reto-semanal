@@ -92,3 +92,13 @@ body {
   font-weight: 800;
   letter-spacing: -0.02em;
 }
+
+/* Landing hero backdrop: accent glow plus a faint pixel grid. */
+@utility hero-glow {
+  background-image:
+    radial-gradient(60% 50% at 85% 15%, color-mix(in srgb, var(--accent) 28%, transparent), transparent 70%),
+    radial-gradient(45% 40% at 0% 100%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%),
+    linear-gradient(to right, color-mix(in srgb, var(--frame) 7%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--frame) 7%, transparent) 1px, transparent 1px);
+  background-size: auto, auto, 24px 24px, 24px 24px;
+}

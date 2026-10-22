@@ -55,11 +55,11 @@ describe("avatares", () => {
 });
 
 describe("logo de Digit@l Solutions", () => {
-  it("el SVG publicado coincide con el generador y es estático", async () => {
-    const { renderBrandSvg } = await import("@/scripts/generate-brand.mjs");
-    const published = readFileSync(resolve(process.cwd(), "public", "brand", "digital-solutions.svg"), "utf8");
+  it("se publica el logo original como PNG estático", () => {
+    const logo = readFileSync(resolve(process.cwd(), "public", "brand", "digital-solutions.png"));
 
-    expect(published).toBe(renderBrandSvg());
-    expect(published).not.toMatch(/<script|href=|on[a-z]+=|url\(/i);
+    expect([...logo.subarray(0, 8)]).toEqual([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+    expect(logo.readUInt32BE(16)).toBe(300);
+    expect(logo.readUInt32BE(20)).toBe(227);
   });
 });

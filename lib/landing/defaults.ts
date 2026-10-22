@@ -18,10 +18,12 @@ export function createSection(type: SectionType): LandingSection {
         ...base,
         eyebrow: "Reto Semanal",
         headline: "¿Quieres ganarte una PC?",
+        highlights: ["Participar es gratis", "Trivias semanales", "Misiones en vivo"],
         image: null,
         layout: "split",
         primaryCtaLabel: "Participar ahora",
         secondaryCtaLabel: "Iniciar sesión",
+        showCountdown: true,
         subtitle:
           "Completa los retos de cada semana, suma puntos y compite por el premio mayor.",
         type,
@@ -80,6 +82,8 @@ export function createSection(type: SectionType): LandingSection {
         note: "Inicia sesión para participar cuando abran.",
         type,
       };
+    case "logos":
+      return { ...base, heading: "Una campaña de", includeOrganizer: true, logos: [], type };
     case "ranking_preview":
       return {
         ...base,

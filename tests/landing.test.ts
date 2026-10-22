@@ -11,7 +11,7 @@ import {
   landingContentSchema,
   readLandingContent,
 } from "@/lib/landing/schema";
-import { ACCENT_PALETTES } from "@/lib/landing/theme";
+import { ACCENT_PALETTES, DARK_SURFACE } from "@/lib/landing/theme";
 
 const CAMPAIGN_ID = "11111111-2222-4333-8444-555555555555";
 const ASSET = `campaigns/${CAMPAIGN_ID}/aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee.webp`;
@@ -64,6 +64,32 @@ describe("contenido de la portada", () => {
     expect(landingContentSchema.safeParse({ sections: [{ ...createSection("cta"), type: "script" }], theme }).success).toBe(false);
   });
 
+  it("el contenido publicado antes de los campos nuevos sigue siendo válido", () => {
+    const hero = createSection("hero");
+    const legacyHero = Object.fromEntries(
+      Object.entries(hero).filter(([key]) => key !== "highlights" && key !== "showCountdown"),
+    );
+    const result = readLandingContent({ sections: [legacyHero], theme: createDefaultLanding().theme });
+    const parsed = result.sections[0];
+
+    expect(parsed?.type).toBe("hero");
+    expect(parsed?.type === "hero" ? parsed.highlights : null).toEqual([]);
+    expect(parsed?.type === "hero" ? parsed.showCountdown : null).toBe(true);
+  });
+
+  it("los logos solo aceptan imágenes del bucket y como máximo seis", () => {
+    const theme = createDefaultLanding().theme;
+    const logos = createSection("logos");
+    const withLogo = (path: string, count = 1) => ({
+      sections: [{ ...logos, logos: Array.from({ length: count }, () => ({ alt: "MSI", path })) }],
+      theme,
+    });
+
+    expect(landingContentSchema.safeParse(withLogo(ASSET)).success).toBe(true);
+    expect(landingContentSchema.safeParse(withLogo("https://evil.example/logo.png")).success).toBe(false);
+    expect(landingContentSchema.safeParse(withLogo(ASSET, 7)).success).toBe(false);
+  });
+
   it("la lectura tolerante descarta secciones inválidas sin romper la página", () => {
     const valid = createSection("steps");
     const result = readLandingContent({
@@ -104,6 +130,13 @@ describe("paleta del tema", () => {
   it.each(ACCENTS)("el acento %s cumple contraste AA con su texto", (accent) => {
     const palette = ACCENT_PALETTES[accent];
     expect(contrast(palette.accent, palette.contrast)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it.each(ACCENTS)("el acento %s es legible sobre el fondo oscuro", (accent) => {
+    const palette = ACCENT_PALETTES[accent];
+    expect(contrast(palette.onDark, DARK_SURFACE.page)).toBeGreaterThanOrEqual(4.5);
+    expect(contrast(palette.onDark, DARK_SURFACE.card)).toBeGreaterThanOrEqual(4.5);
+    expect(contrast("#ffffff", DARK_SURFACE.card)).toBeGreaterThanOrEqual(7);
   });
 });
 

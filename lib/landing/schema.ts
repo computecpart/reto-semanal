@@ -63,6 +63,9 @@ export const heroSectionSchema = z.object({
   secondaryCtaLabel: text(40),
   layout: z.enum(["split", "background", "centered"]),
   image,
+  // Added after launch: defaults keep previously stored content valid.
+  highlights: z.array(text(40, 1)).max(4, "Máximo 4 destacados.").default([]),
+  showCountdown: z.boolean().default(true),
 });
 
 export const prizeSectionSchema = z.object({
@@ -138,6 +141,14 @@ export const upcomingActivitiesSectionSchema = z.object({
   note: text(240),
 });
 
+export const logosSectionSchema = z.object({
+  ...sectionBase,
+  type: z.literal("logos"),
+  heading: text(80),
+  includeOrganizer: z.boolean().default(true),
+  logos: z.array(z.object({ alt: text(120, 1), path: assetPath })).max(6, "Máximo 6 logos."),
+});
+
 export const sectionSchema = z.discriminatedUnion("type", [
   heroSectionSchema,
   prizeSectionSchema,
@@ -149,6 +160,7 @@ export const sectionSchema = z.discriminatedUnion("type", [
   ctaSectionSchema,
   rankingPreviewSectionSchema,
   upcomingActivitiesSectionSchema,
+  logosSectionSchema,
 ]);
 
 export type LandingSection = z.infer<typeof sectionSchema>;
@@ -166,6 +178,7 @@ export const SECTION_TYPES = [
   "cta",
   "ranking_preview",
   "upcoming_activities",
+  "logos",
 ] as const satisfies readonly SectionType[];
 
 export const SECTION_LABELS: Readonly<Record<SectionType, string>> = {
@@ -174,6 +187,7 @@ export const SECTION_LABELS: Readonly<Record<SectionType, string>> = {
   faq: "Preguntas frecuentes",
   hero: "Portada principal (hero)",
   image_banner: "Imagen destacada",
+  logos: "Logos y patrocinadores",
   prize: "Premio",
   ranking_preview: "Top del ranking",
   rich_text: "Texto libre",
