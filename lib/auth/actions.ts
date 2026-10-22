@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 
+import { isRecoveryTokenHash } from "./recovery-token";
+
 export async function signOutAction(): Promise<never> {
   const supabase = await createClient();
 
@@ -13,8 +15,6 @@ export async function signOutAction(): Promise<never> {
   redirect("/login?sesion=cerrada");
 }
 
-// Supabase token hashes are hex digests; anything else is rejected unread.
-const TOKEN_HASH = /^[a-f0-9]{20,128}$/i;
 
 /**
  * Completes a password recovery from the e-mail link. The link opens a page
@@ -24,7 +24,7 @@ const TOKEN_HASH = /^[a-f0-9]{20,128}$/i;
 export async function confirmRecoveryAction(formData: FormData): Promise<never> {
   const tokenHash = formData.get("token_hash");
 
-  if (typeof tokenHash !== "string" || !TOKEN_HASH.test(tokenHash)) {
+  if (!isRecoveryTokenHash(tokenHash)) {
     redirect("/forgot-password?error=invalid-link");
   }
 
