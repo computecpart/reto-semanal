@@ -55,7 +55,7 @@ export function AdminShell({
             <span className="block text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Consola</span>
             <span className="block text-lg font-bold text-white">Reto Semanal</span>
           </Link>
-          <Link className="text-sm font-semibold text-sky-300 hover:text-white lg:mt-3 lg:inline-block" href="/" target="_blank">
+          <Link className="inline-flex min-h-10 shrink-0 items-center text-sm font-semibold text-sky-300 hover:text-white lg:mt-2" href="/" target="_blank">
             Ver sitio público ↗
           </Link>
         </div>
@@ -63,11 +63,28 @@ export function AdminShell({
         <nav aria-label="Administración" className="flex gap-1 overflow-x-auto px-3 pb-3 lg:flex-1 lg:flex-col lg:overflow-visible">
           <NavLinks
             activeClassName="bg-slate-800 text-white"
-            className="whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold text-slate-300 hover:bg-slate-900 hover:text-white"
+            className="inline-flex min-h-10 shrink-0 items-center whitespace-nowrap rounded-lg px-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-sky-400"
+            inactiveClassName="text-slate-300 hover:bg-slate-900 hover:text-white"
             exact={["/admin"]}
             items={role === "superadmin" ? [...ADMIN_NAV, ...SUPERADMIN_NAV] : ADMIN_NAV}
           />
         </nav>
+
+        <div className="flex items-center justify-between gap-3 border-t border-slate-800 px-5 py-2 text-xs font-semibold lg:hidden">
+          <span className="min-w-0 truncate text-slate-300">
+            {alias ? `@${alias}` : "Cuenta"} · {ROLE_LABELS[role]}
+          </span>
+          <div className="flex shrink-0 gap-2">
+            <Link className="inline-flex min-h-9 items-center rounded-md border border-slate-700 px-2.5 hover:bg-slate-900" href="/app/perfil">
+              Mi perfil
+            </Link>
+            <form action={signOutAction}>
+              <button className="inline-flex min-h-9 items-center rounded-md border border-slate-700 px-2.5 hover:bg-slate-900" type="submit">
+                Salir
+              </button>
+            </form>
+          </div>
+        </div>
 
         <div className="hidden border-t border-slate-800 p-4 lg:block">
           <div className="flex items-center gap-3">
@@ -92,7 +109,7 @@ export function AdminShell({
         </div>
       </aside>
 
-      <main className="min-w-0 px-4 py-8 sm:px-8 lg:px-10 lg:py-10">
+      <main className="min-w-0 px-4 py-6 sm:px-8 sm:py-8 lg:px-10 lg:py-10">
         <div className="mx-auto w-full max-w-6xl">{children}</div>
       </main>
     </div>

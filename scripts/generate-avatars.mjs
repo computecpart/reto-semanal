@@ -170,7 +170,7 @@ export const AVATAR_SPECS = [
       "...wwkwwwwkww.w.", "...wwwwkkwwww.w.", "...wwwwwwwwwwww.", "....wwwwwwww....",
       "..wwwwwwwwwwww..", "................", "................", "................",
     ],
-    bg: "#fca5a5", id: "avatar-18", label: "Taza de café", palette: { b: "#78350f", s: "#e2e8f0", w: "#fafaf9" },
+    bg: "#fca5a5", id: "avatar-18", label: "Café", palette: { b: "#78350f", s: "#e2e8f0", w: "#fafaf9" },
   },
   {
     art: [
@@ -215,7 +215,7 @@ export const AVATAR_SPECS = [
       ".ssssskksssssss.", ".ssss......ssss.", "..ss........ss..", "................",
       "................", "................", "................", "................",
     ],
-    bg: "#fde68a", id: "avatar-23", label: "Control de juego", palette: { b: "#3b82f6", d: "#1e293b", g: "#22c55e", r: "#ef4444", s: "#94a3b8", y: "#facc15" },
+    bg: "#fde68a", id: "avatar-23", label: "Control", palette: { b: "#3b82f6", d: "#1e293b", g: "#22c55e", r: "#ef4444", s: "#94a3b8", y: "#facc15" },
   },
   {
     art: [

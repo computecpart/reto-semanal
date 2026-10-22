@@ -25,12 +25,12 @@ export default async function PointsPage() {
       <section className="pixel-frame flex flex-wrap items-end justify-between gap-6 bg-[var(--accent)] p-6 text-[var(--accent-contrast)] sm:p-8">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.2em]">Total acumulado</p>
-          <h1 className="mt-2 font-display text-5xl leading-none sm:text-6xl">
+          <h1 className="mt-2 font-score text-5xl leading-none sm:text-6xl">
             {new Intl.NumberFormat("es-SV").format(points.total)}
             <span className="ml-2 text-2xl">pts</span>
           </h1>
         </div>
-        <p className="font-display text-2xl">{points.standing ? `Posición #${points.standing}` : "Sin posición aún"}</p>
+        <p className="font-score text-2xl">{points.standing ? `Posición #${points.standing}` : "Sin posición aún"}</p>
       </section>
 
       <PixelCard>
@@ -53,7 +53,7 @@ export default async function PointsPage() {
                   </p>
                 </div>
                 <p
-                  className={`shrink-0 font-display text-2xl ${event.amount >= 0 ? "text-emerald-700" : "text-red-700"}`}
+                  className={`shrink-0 font-score text-2xl ${event.amount >= 0 ? "text-emerald-700" : "text-red-700"}`}
                 >
                   {formatPoints(event.amount)}
                 </p>

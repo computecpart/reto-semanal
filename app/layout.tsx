@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Pixelify_Sans } from "next/font/google";
 import type { ReactNode } from "react";
 
@@ -21,6 +21,12 @@ export const metadata: Metadata = {
   description:
     "Plataforma empresarial de gamificación para la campaña Reto Semanal.",
   title: "Reto Semanal",
+};
+
+export const viewport: Viewport = {
+  initialScale: 1,
+  viewportFit: "cover",
+  width: "device-width",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {

@@ -41,7 +41,7 @@ export function RankingTable({
             key={`${row.standing}-${primary}-${index}`}
           >
             <span
-              className={`grid size-11 shrink-0 place-items-center font-display text-lg ${top ? "bg-[var(--accent)] text-[var(--accent-contrast)]" : "border-2 border-current"}`}
+              className={`grid size-11 shrink-0 place-items-center font-score text-lg ${top ? "bg-[var(--accent)] text-[var(--accent-contrast)]" : "border-2 border-current"}`}
               title={tie ? "Empate" : undefined}
             >
               {row.standing}
@@ -60,7 +60,7 @@ export function RankingTable({
               </span>
             </span>
             <span className="shrink-0 text-right">
-              <span className="block font-display text-xl leading-none">{numberFormat.format(row.points)}</span>
+              <span className="block font-score text-xl leading-none">{numberFormat.format(row.points)}</span>
               <span className="text-[11px] font-bold uppercase tracking-wide opacity-70">pts</span>
             </span>
           </li>

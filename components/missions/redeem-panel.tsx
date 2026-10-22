@@ -204,7 +204,7 @@ export function RedeemPanel({ initialCode, origin }: { initialCode: string | nul
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Misión {formatCode(code)}</p>
           <h2 className="mt-2 font-display text-3xl">{preview.name}</h2>
           {preview.description ? <p className="mt-2 text-slate-600">{preview.description}</p> : null}
-          <p className="mt-4 font-display text-4xl text-[var(--accent-strong)]">+{preview.points} pts</p>
+          <p className="mt-4 font-score text-4xl text-[var(--accent-strong)]">+{preview.points} pts</p>
           <p className="mt-1 text-xs text-slate-500">Vigente hasta {dateFormat.format(new Date(preview.expires_at))}</p>
           {blocked ? (
             <p className="mt-4 font-bold text-red-700">{blocked}</p>

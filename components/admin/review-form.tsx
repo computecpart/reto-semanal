@@ -5,7 +5,7 @@ import { useState, useTransition } from "react";
 
 import { reviewAnswerAction } from "@/lib/quiz/actions";
 
-const button = "rounded-md px-3 py-1.5 text-xs font-semibold disabled:opacity-50";
+const button = "inline-flex min-h-10 items-center rounded-md px-3 text-xs font-semibold disabled:opacity-50";
 
 export function ReviewForm({
   attemptId,
@@ -50,7 +50,7 @@ export function ReviewForm({
           Parcial:
           <input
             aria-label="Puntos parciales"
-            className="w-20 rounded-md border border-slate-300 px-2 py-1"
+            className="min-h-10 w-20 rounded-md border border-slate-300 px-2"
             max={maxPoints}
             min={0}
             onChange={(event) => setPoints(Number(event.target.value))}
@@ -64,7 +64,7 @@ export function ReviewForm({
       </div>
       <input
         aria-label="Nota interna"
-        className="w-full rounded-md border border-slate-300 px-2 py-1 text-xs"
+        className="min-h-10 w-full rounded-md border border-slate-300 px-3 text-sm"
         maxLength={500}
         onChange={(event) => setNote(event.target.value)}
         placeholder="Nota interna (opcional)"

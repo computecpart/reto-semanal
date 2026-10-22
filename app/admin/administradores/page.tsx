@@ -27,7 +27,7 @@ export default async function AdministratorsPage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-3xl font-bold tracking-tight">Administradores</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Administradores</h1>
         <p className="mt-1 text-sm text-slate-600">
           Solo un superadmin gestiona roles. Siempre debe quedar al menos un superadmin. Las cuentas de admin no compiten en el
           ranking ni en la rifa. Todo cambio queda en la auditoría.

@@ -25,7 +25,7 @@ const STATUS_STYLES: Readonly<Record<string, string>> = {
   suspended: "bg-amber-100 text-amber-900",
 };
 
-const input = "rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm";
+const input = "min-h-10 min-w-0 rounded-lg border border-slate-300 bg-white px-3 text-sm";
 
 type Params = Record<string, string | string[] | undefined>;
 
@@ -57,20 +57,20 @@ export default async function ParticipantsPage({ searchParams }: { searchParams:
     <div className="space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Participantes</h1>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Participantes</h1>
           <p className="mt-1 text-sm text-slate-600">
             {total} resultados. Toda suspensión o descalificación exige motivo y queda en la auditoría. Nunca se borran cuentas con historial.
           </p>
         </div>
         {role === "superadmin" ? (
-          <a className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold hover:bg-slate-50" href="/admin/participantes/exportar">
+          <a className="inline-flex min-h-10 items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-semibold hover:bg-slate-50" href="/admin/participantes/exportar">
             Exportar CSV
           </a>
         ) : null}
       </header>
 
-      <form className="flex flex-wrap gap-2 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm" method="get">
-        <input aria-label="Buscar" className={`${input} min-w-56 flex-1`} defaultValue={filters.query} name="q" placeholder="Alias, nombre, correo o pasaporte" />
+      <form className="grid grid-cols-2 gap-2 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex sm:flex-wrap" method="get">
+        <input aria-label="Buscar" className={`${input} col-span-2 min-w-0 sm:min-w-56 sm:flex-1`} defaultValue={filters.query} name="q" placeholder="Alias, nombre, correo o pasaporte" />
         <select aria-label="Estado" className={input} defaultValue={filters.status} name="estado">
           <option value="">Todos los estados</option>
           {Object.entries(STATUS_LABELS).map(([value, label]) => (
@@ -98,7 +98,7 @@ export default async function ParticipantsPage({ searchParams }: { searchParams:
           <option value="admin">Admin</option>
           <option value="superadmin">Superadmin</option>
         </select>
-        <button className="rounded-lg bg-sky-700 px-4 py-2 text-sm font-semibold text-white" type="submit">
+        <button className="col-span-2 min-h-10 rounded-lg bg-sky-700 px-4 text-sm font-semibold text-white hover:bg-sky-800 sm:col-span-1" type="submit">
           Filtrar
         </button>
       </form>
@@ -124,7 +124,7 @@ export default async function ParticipantsPage({ searchParams }: { searchParams:
               <p className="font-bold">{row.points} pts</p>
             </div>
             <details className="mt-2">
-              <summary className="cursor-pointer text-xs font-semibold text-sky-800">Cambiar estado</summary>
+              <summary className="inline-flex min-h-9 cursor-pointer items-center text-xs font-semibold text-sky-800">Cambiar estado</summary>
               <div className="mt-2">
                 <ActionForm action={setParticipantStatusAction} confirm="¿Aplicar este cambio de estado?" submitLabel="Aplicar">
                   <input name="userId" type="hidden" value={row.user_id} />

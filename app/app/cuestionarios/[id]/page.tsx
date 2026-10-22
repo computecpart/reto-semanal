@@ -27,11 +27,11 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
 
   return (
     <div className="space-y-8">
-      <Link className="text-sm font-bold text-[var(--accent-strong)] hover:underline" href="/app/cuestionarios">
+      <Link className="inline-flex min-h-10 items-center text-sm font-bold text-[var(--accent-strong)] hover:underline" href="/app/cuestionarios">
         ← Todas las trivias
       </Link>
       <header>
-        <h1 className="font-display text-4xl leading-tight">{quiz.title}</h1>
+        <h1 className="font-display text-3xl leading-tight sm:text-4xl">{quiz.title}</h1>
         {quiz.description ? <p className="mt-3 max-w-2xl whitespace-pre-line text-slate-600">{quiz.description}</p> : null}
       </header>
 

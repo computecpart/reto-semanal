@@ -151,7 +151,7 @@ export function ReverseEventForm({ campaignId, eventId }: { campaignId: string; 
 
   if (!open) {
     return (
-      <button className="text-xs font-semibold text-red-700 hover:underline" onClick={() => setOpen(true)} type="button">
+      <button className="inline-flex min-h-9 items-center rounded-md border border-red-200 px-2.5 text-xs font-semibold text-red-700 hover:bg-red-50" onClick={() => setOpen(true)} type="button">
         Revertir
       </button>
     );

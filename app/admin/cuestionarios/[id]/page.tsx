@@ -21,10 +21,10 @@ export default async function AdminQuizPage({ params }: { params: Promise<{ id: 
 
   return (
     <div className="space-y-4">
-      <Link className="text-sm font-semibold text-sky-800 hover:underline" href="/admin/cuestionarios">
+      <Link className="inline-flex min-h-10 items-center text-sm font-semibold text-sky-800 hover:underline" href="/admin/cuestionarios">
         ← Cuestionarios
       </Link>
-      <h1 className="text-3xl font-bold tracking-tight">{quiz ? quiz.title : "Nuevo cuestionario"}</h1>
+      <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{quiz ? quiz.title : "Nuevo cuestionario"}</h1>
       {quiz && quiz.pending_reviews > 0 ? (
         <p className="text-sm">
           <Link className="font-semibold text-amber-800 underline" href="/admin/revisiones">

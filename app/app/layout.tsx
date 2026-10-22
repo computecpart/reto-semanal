@@ -47,9 +47,9 @@ export default async function ParticipantLayout({ children }: { children: ReactN
         </p>
       ) : null}
       <main className="pixel-grid flex-1">
-        <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 sm:py-12">{children}</div>
+        <div className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 sm:py-12">{children}</div>
       </main>
-      <footer className="border-t-4 border-[var(--color-ink)] px-4 py-6">
+      <footer className="border-t-4 border-[var(--color-ink)] px-4 pt-6 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:pb-6">
         <LegalLinks />
       </footer>
     </div>

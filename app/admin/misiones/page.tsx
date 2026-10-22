@@ -21,7 +21,7 @@ export default async function AdminMissionsPage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-3xl font-bold tracking-tight">Misiones y códigos</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Misiones y códigos</h1>
         <p className="mt-1 text-sm text-slate-600">
           Cada misión tiene un código y un QR equivalentes: un participante solo puede canjearla una vez por cualquiera
           de los dos. Muestra el código o el QR solo a quien completó la actividad.

@@ -69,6 +69,12 @@ de tocar código.
   `public/brand/digital-solutions.svg`, en el pie de todas las páginas y en la consola admin).
 - **Fase 8 entregada:** auditoría de solo lectura y `docs/CHECKLIST_LANZAMIENTO.md` (listo, pendientes, manual,
   riesgos y orden). Todas las fases 0–8 completas. Supabase local (Docker) solo se usa para pruebas; está detenido.
+- **Repaso UX móvil (21/10):** auditoría con Playwright a 360 y 1280 px de todas las rutas (0 desbordes). Participante:
+  barra inferior fija con íconos pixel en móvil (`components/app/pixel-icons.tsx`) y pastillas arriba desde `sm`;
+  `NavLinks` aplica clases activas/inactivas exclusivas (antes la activa salía en blanco). Cifras con `font-score`
+  (Pixelify confunde 5 y 7). Trivia: barra de progreso, opciones de 48 px y aviso de preguntas sin responder.
+  Admin: barra de cuenta (perfil/salir) en móvil, zonas táctiles ≥ 40 px y filtros en rejilla.
+  `viewport-fit=cover` con `safe-area-inset-bottom`.
 - Los usuarios existentes deben aceptar las reglas v2 al entrar a `/app` (comportamiento esperado).
 
 ## 1. Qué es y calendario

@@ -206,7 +206,7 @@ function StepsSection({ context, section }: { context: RenderContext; section: S
             <Card dark={context.dark}>
               <span
                 aria-hidden="true"
-                className="pixel-frame-sm inline-grid size-10 place-items-center bg-[var(--accent)] font-display text-lg text-[var(--accent-contrast)]"
+                className="pixel-frame-sm inline-grid size-10 place-items-center bg-[var(--accent)] font-score text-lg text-[var(--accent-contrast)]"
               >
                 {index + 1}
               </span>

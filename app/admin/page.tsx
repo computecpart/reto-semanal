@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   title: "Panel | Administración",
 };
 
-const card = "rounded-2xl border border-slate-200 bg-white p-6 shadow-sm";
+const card = "min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6";
 const numberFormat = new Intl.NumberFormat("es-SV");
 const dateFormat = new Intl.DateTimeFormat("es-SV", {
   dateStyle: "medium",
@@ -22,8 +22,8 @@ const dateFormat = new Intl.DateTimeFormat("es-SV", {
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className={card}>
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</p>
-      <p className="mt-2 text-3xl font-bold tracking-tight">{value}</p>
+      <p className="text-[0.65rem] font-semibold uppercase leading-tight tracking-wide text-slate-500 sm:text-xs">{label}</p>
+      <p className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">{value}</p>
     </div>
   );
 }
@@ -76,7 +76,7 @@ export default async function AdminPage() {
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-sky-700">Campaña actual</p>
           <div className="mt-1 flex flex-wrap items-center gap-3">
-            <h1 className="text-3xl font-bold tracking-tight">{current.name}</h1>
+            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{current.name}</h1>
             <CampaignStatusBadge status={current.status} />
           </div>
           <p className="mt-1 text-sm text-slate-600">
@@ -86,16 +86,16 @@ export default async function AdminPage() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2 text-sm font-semibold">
-          <Link className="rounded-lg bg-sky-700 px-4 py-2 text-white hover:bg-sky-800" href={`${base}/portada`}>
+          <Link className="inline-flex min-h-10 items-center rounded-lg bg-sky-700 px-4 text-white hover:bg-sky-800" href={`${base}/portada`}>
             Editar portada
           </Link>
-          <Link className="rounded-lg border border-slate-300 bg-white px-4 py-2 hover:bg-slate-50" href={base}>
+          <Link className="inline-flex min-h-10 items-center rounded-lg border border-slate-300 bg-white px-4 hover:bg-slate-50" href={base}>
             Datos y estado
           </Link>
         </div>
       </header>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-3 gap-2 sm:gap-4">
         <Stat label="Participantes" value={numberFormat.format(standings.length)} />
         <Stat label="Puntos otorgados" value={numberFormat.format(totalPoints)} />
         <Stat label="Versión de reglas" value={rules[0] ? `v${rules[0].version}` : "—"} />
@@ -107,7 +107,7 @@ export default async function AdminPage() {
           <ul className="mt-4 space-y-1 text-sm">
             {checklist.map((item) => (
               <li key={item.label}>
-                <Link className="flex items-center gap-3 rounded-lg px-2 py-1.5 hover:bg-slate-50" href={item.href}>
+                <Link className="flex min-h-10 items-center gap-3 rounded-lg px-2 hover:bg-slate-50" href={item.href}>
                   <span
                     aria-hidden="true"
                     className={`grid size-5 place-items-center rounded-full text-xs font-bold ${item.done ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}`}
@@ -125,7 +125,7 @@ export default async function AdminPage() {
         <section className={card}>
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold">Actividad reciente</h2>
-            <Link className="text-sm font-semibold text-sky-800 hover:underline" href="/admin/ranking">
+            <Link className="inline-flex min-h-10 items-center text-sm font-semibold text-sky-800 hover:underline" href="/admin/ranking">
               Ver todo
             </Link>
           </div>
@@ -135,7 +135,7 @@ export default async function AdminPage() {
             <ul className="mt-4 divide-y divide-slate-100 text-sm">
               {events.slice(0, 6).map((event) => (
                 <li className="flex justify-between gap-3 py-2" key={event.id}>
-                  <span className="truncate">
+                  <span className="min-w-0 truncate">
                     <span className="font-semibold">@{event.alias}</span> · {event.description}
                   </span>
                   <span className={`shrink-0 font-bold ${event.amount >= 0 ? "text-emerald-700" : "text-red-700"}`}>

@@ -19,7 +19,7 @@ export default async function AliasModerationPage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-3xl font-bold tracking-tight">Moderación de alias</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Moderación de alias</h1>
         <p className="mt-1 text-sm text-slate-600">
           PostgreSQL rechaza los alias que contienen estos términos (también con números o variantes como «4dm1n»). Los
           cambios quedan auditados. Los alias existentes nunca se renombran solos: revísalos abajo.

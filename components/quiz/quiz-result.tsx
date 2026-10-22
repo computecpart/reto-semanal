@@ -17,7 +17,7 @@ export function QuizResultView({ result }: { result: QuizResult }) {
           {result.status === "invalidated" ? "Participación sin puntuación" : "Cuestionario enviado"}
         </p>
         {result.score !== null ? (
-          <p className="mt-2 font-display text-5xl leading-none">
+          <p className="mt-2 font-score text-5xl leading-none">
             {result.score}
             <span className="ml-2 text-2xl">pts</span>
           </p>

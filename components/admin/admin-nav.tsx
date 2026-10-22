@@ -37,7 +37,7 @@ export function CampaignTabs({
 }) {
   return (
     <div className="space-y-4">
-      <Link className="text-sm font-semibold text-sky-800 hover:underline" href="/admin/campana">
+      <Link className="inline-flex min-h-10 items-center text-sm font-semibold text-sky-800 hover:underline" href="/admin/campana">
         <span aria-hidden="true">← </span>Campañas
       </Link>
       <div className="flex flex-wrap items-center gap-3">

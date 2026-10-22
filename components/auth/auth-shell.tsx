@@ -30,28 +30,28 @@ export async function AuthShell({
       style={themeStyle(branding.theme)}
     >
       <header className="border-b-4 border-[var(--color-ink)] bg-[var(--color-paper)]">
-        <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
+        <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
           <Link
-            className="font-display text-lg leading-tight focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--accent)] sm:text-xl"
+            className="min-w-0 font-display text-base leading-tight focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--accent)] sm:text-xl"
             href="/"
           >
             {branding.name}
           </Link>
-          <nav aria-label="Cuenta" className="flex shrink-0 items-center gap-4 text-sm font-semibold">
-            <Link className="underline-offset-4 hover:underline" href="/login">
+          <nav aria-label="Cuenta" className="flex shrink-0 items-center gap-3 text-sm font-semibold sm:gap-4">
+            <Link className="inline-flex min-h-10 items-center underline-offset-4 hover:underline" href="/login">
               Iniciar sesión
             </Link>
-            <Link className="hidden underline-offset-4 hover:underline sm:inline" href="/registro">
+            <Link className="inline-flex min-h-10 items-center border-2 border-[var(--color-ink)] bg-[var(--accent)] px-3 text-[var(--accent-contrast)] shadow-[2px_2px_0_0_var(--color-ink)] hover:opacity-90" href="/registro">
               Registrarse
             </Link>
           </nav>
         </div>
       </header>
 
-      <main className="pixel-grid flex-1 px-4 py-10 sm:px-6 sm:py-14">
+      <main className="pixel-grid flex-1 px-4 py-6 sm:px-6 sm:py-14">
         <div className={`mx-auto w-full ${wide ? "max-w-3xl" : "max-w-xl"}`}>
-          <section className="pixel-frame bg-white p-6 sm:p-10">
-            <header className="mb-8">
+          <section className="pixel-frame bg-white p-5 sm:p-10">
+            <header className="mb-6 sm:mb-8">
               <p className="inline-block bg-[var(--accent)] px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-contrast)]">
                 {eyebrow}
               </p>

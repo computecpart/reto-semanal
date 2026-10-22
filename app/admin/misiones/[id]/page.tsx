@@ -37,10 +37,10 @@ export default async function AdminMissionPage({ params }: { params: Promise<{ i
 
   return (
     <div className="space-y-6">
-      <Link className="text-sm font-semibold text-sky-800 hover:underline" href="/admin/misiones">
+      <Link className="inline-flex min-h-10 items-center text-sm font-semibold text-sky-800 hover:underline" href="/admin/misiones">
         ← Misiones
       </Link>
-      <h1 className="text-3xl font-bold tracking-tight">{mission.name}</h1>
+      <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{mission.name}</h1>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_20rem]">
         <section className={card}>

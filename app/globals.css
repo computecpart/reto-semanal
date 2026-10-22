@@ -83,3 +83,12 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* Pixelify Sans renders 5 and 7 ambiguously at small sizes; scores and
+   positions use the body face with tabular figures instead. */
+@utility font-score {
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}

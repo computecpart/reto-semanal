@@ -15,7 +15,7 @@ export function LegalPage({
     <main className="min-h-screen bg-slate-50 px-4 py-10 text-slate-950 sm:px-6 sm:py-16">
       <article className="mx-auto w-full max-w-3xl rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-10">
         <Link
-          className="text-sm font-semibold text-sky-800 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-700"
+          className="inline-flex min-h-10 items-center text-sm font-semibold text-sky-800 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-700"
           href="/"
         >
           <span aria-hidden="true">← </span>Reto Semanal
@@ -46,11 +46,11 @@ export function LegalLinks() {
   return (
     <div className="flex flex-col items-center gap-4">
       <OrganizerBadge />
-      <nav aria-label="Información legal" className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm">
-      <Link className="font-semibold text-slate-600 hover:text-slate-950 hover:underline" href="/reglas">
+      <nav aria-label="Información legal" className="flex flex-wrap justify-center gap-x-5 text-sm">
+      <Link className="inline-flex min-h-10 items-center font-semibold text-slate-600 hover:text-slate-950 hover:underline" href="/reglas">
         Reglas de participación
       </Link>
-      <Link className="font-semibold text-slate-600 hover:text-slate-950 hover:underline" href="/privacidad">
+      <Link className="inline-flex min-h-10 items-center font-semibold text-slate-600 hover:text-slate-950 hover:underline" href="/privacidad">
         Política de privacidad
       </Link>
       </nav>

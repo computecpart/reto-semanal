@@ -233,7 +233,7 @@ export function VerifyEmailForm({ linkError = false }: { linkError?: boolean }) 
       <div className="border-2 border-dashed border-slate-300 bg-[var(--color-paper)] p-4 text-center text-sm text-slate-600">
         <p>¿No recibiste el correo?</p>
         <button
-          className="mt-2 font-bold text-[var(--accent-strong)] underline-offset-4 hover:underline disabled:cursor-not-allowed disabled:text-slate-500 disabled:no-underline"
+          className="mt-1 inline-flex min-h-10 items-center font-bold text-[var(--accent-strong)] underline-offset-4 hover:underline disabled:cursor-not-allowed disabled:text-slate-500 disabled:no-underline"
           disabled={remainingSeconds > 0 || pendingAction !== null}
           onClick={handleResend}
           type="button"

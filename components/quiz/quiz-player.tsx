@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 
-import { FormStatus, SubmitButton, checkboxClassName, fieldClassName } from "@/components/auth/form-ui";
+import { FormStatus, SubmitButton, fieldClassName } from "@/components/auth/form-ui";
 import { saveAnswerAction, startQuizAction, submitQuizAction } from "@/lib/quiz/actions";
 import type { AttemptPayload, QuizResult } from "@/lib/quiz/schema";
 
@@ -151,15 +151,15 @@ export function QuizPlayer({
     return (
       <div className="space-y-6">
         <FormStatus>{error}</FormStatus>
-        <dl className="grid gap-3 sm:grid-cols-3">
+        <dl className="grid grid-cols-3 gap-2 sm:gap-3">
           {[
             ["Preguntas", String(intro.question_count)],
             ["Tiempo", formatClock(intro.duration_seconds)],
             ["Puntos posibles", String(intro.max_points)],
           ].map(([label, value]) => (
-            <div className="pixel-frame-sm bg-white p-4" key={label}>
-              <dt className="text-[11px] font-bold uppercase tracking-wide text-slate-500">{label}</dt>
-              <dd className="mt-1 font-display text-3xl">{value}</dd>
+            <div className="pixel-frame-sm min-w-0 bg-white p-3 sm:p-4" key={label}>
+              <dt className="text-[0.65rem] font-bold uppercase leading-tight tracking-wide text-slate-500 sm:text-[11px]">{label}</dt>
+              <dd className="mt-1 font-score text-2xl sm:text-3xl">{value}</dd>
             </div>
           ))}
         </dl>
@@ -182,26 +182,41 @@ export function QuizPlayer({
 
   return (
     <div className="space-y-6">
-      <div className="pixel-frame-sm sticky top-2 z-10 flex flex-wrap items-center justify-between gap-3 bg-white px-4 py-3">
-        <p className="text-sm font-bold">
-          {preview ? "Vista previa (no se guarda)" : `${answeredCount} de ${attempt.questions.length} respondidas`}
-          {!preview && saveState === "saving" ? " · Guardando…" : null}
-          {!preview && saveState === "saved" ? " · Guardado" : null}
-        </p>
-        <p
-          aria-live="polite"
-          className={`font-display text-2xl ${remaining <= 30 && !preview ? "text-red-700" : ""}`}
-          role="timer"
-        >
-          {formatClock(preview ? attempt.quiz.duration_seconds : remaining)}
-        </p>
+      <div className="pixel-frame-sm sticky top-2 z-10 bg-white px-4 py-3">
+        <div className="flex items-center justify-between gap-3">
+          <p className="min-w-0 text-sm font-bold">
+            {preview ? "Vista previa (no se guarda)" : `${answeredCount} de ${attempt.questions.length} respondidas`}
+            {!preview && saveState === "saving" ? " · Guardando…" : null}
+            {!preview && saveState === "saved" ? " · Guardado" : null}
+          </p>
+          {/* role="timer" is not announced every second; screen readers read it on demand. */}
+          <p
+            className={`shrink-0 font-score text-2xl ${remaining <= 30 && !preview ? "text-red-700" : ""}`}
+            role="timer"
+          >
+            {formatClock(preview ? attempt.quiz.duration_seconds : remaining)}
+          </p>
+        </div>
+        <div aria-hidden="true" className="mt-2 flex gap-1">
+          {attempt.questions.map((question) => {
+            const answer = answers[question.id];
+            const done = question.type === "multiple_choice" ? Boolean(answer?.option_id) : Boolean(answer?.text?.trim());
+
+            return (
+              <span
+                className={`h-2 flex-1 border border-[var(--color-ink)] ${done ? "bg-[var(--accent)]" : "bg-white"}`}
+                key={question.id}
+              />
+            );
+          })}
+        </div>
       </div>
 
       <FormStatus>{error}</FormStatus>
 
       <ol className="space-y-6">
         {attempt.questions.map((question, index) => (
-          <li className="pixel-frame bg-white p-5 sm:p-6" key={question.id}>
+          <li className="pixel-frame scroll-mt-28 bg-white p-4 sm:p-6" key={question.id}>
             <fieldset>
               <legend className="w-full">
                 <span className="text-xs font-bold uppercase tracking-wide text-slate-500">
@@ -214,12 +229,12 @@ export function QuizPlayer({
                 <div className="mt-4 grid gap-3">
                   {question.options.map((option) => (
                     <label
-                      className="flex cursor-pointer items-start gap-3 border-2 border-slate-300 p-3 has-[:checked]:border-[var(--color-ink)] has-[:checked]:bg-[var(--accent-soft)]"
+                      className="flex min-h-12 cursor-pointer items-center gap-3 border-2 border-slate-300 bg-white p-3 font-medium transition-colors hover:border-[var(--color-ink)] has-[:checked]:border-[var(--color-ink)] has-[:checked]:bg-[var(--accent-soft)] has-[:checked]:shadow-[3px_3px_0_0_var(--color-ink)] has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--accent)]"
                       key={option.id}
                     >
                       <input
                         checked={answers[question.id]?.option_id === option.id}
-                        className={checkboxClassName}
+                        className="size-5 shrink-0 accent-[var(--accent)]"
                         disabled={remaining === 0 && !preview}
                         name={`question-${question.id}`}
                         onChange={() => choose(question.id, option.id)}
@@ -253,7 +268,10 @@ export function QuizPlayer({
         <SubmitButton
           className="sm:w-auto"
           onClick={() => {
-            if (window.confirm("¿Enviar tus respuestas? No podrás cambiarlas después.")) {
+            const missing = attempt.questions.length - answeredCount;
+            const warning = missing > 0 ? ` Tienes ${missing} sin responder.` : "";
+
+            if (window.confirm(`¿Enviar tus respuestas? No podrás cambiarlas después.${warning}`)) {
               submit();
             }
           }}

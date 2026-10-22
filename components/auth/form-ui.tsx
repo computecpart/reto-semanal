@@ -88,7 +88,7 @@ export function PixelCard({
   children: ReactNode;
   className?: string;
 }) {
-  return <section className={`pixel-frame bg-white p-5 sm:p-8 ${className}`}>{children}</section>;
+  return <section className={`pixel-frame bg-white p-4 sm:p-8 ${className}`}>{children}</section>;
 }
 
 export function SectionTitle({

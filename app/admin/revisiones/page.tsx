@@ -23,7 +23,7 @@ export default async function ReviewsPage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-3xl font-bold tracking-tight">Revisiones</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Revisiones</h1>
         <p className="mt-1 text-sm text-slate-600">
           {pending} pendientes. Mientras haya pendientes, el ranking se muestra como provisional. Cambiar
           una decisión ya puntuada crea una corrección; nunca se edita el movimiento original.

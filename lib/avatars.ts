@@ -51,12 +51,12 @@ const AVATAR_LABELS: Readonly<Record<AvatarId, string>> = {
   "avatar-15": "Robot",
   "avatar-16": "Fantasma",
   "avatar-17": "Cohete",
-  "avatar-18": "Taza de café",
+  "avatar-18": "Café",
   "avatar-19": "Cactus",
   "avatar-20": "Sandía",
   "avatar-21": "Abeja",
   "avatar-22": "Ballena",
-  "avatar-23": "Control de juego",
+  "avatar-23": "Control",
   "avatar-24": "Pollito",
 };
 

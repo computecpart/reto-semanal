@@ -44,7 +44,7 @@ export default async function QuizPreviewPage({ params }: { params: Promise<{ id
       <p className="rounded-lg bg-amber-100 px-4 py-2 text-sm font-semibold text-amber-900">
         Vista previa: así lo verá un participante. No se crea ningún intento.
       </p>
-      <h1 className="text-3xl font-bold tracking-tight">{quiz.title}</h1>
+      <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{quiz.title}</h1>
       <QuizPlayer
         intro={{ duration_seconds: quiz.duration_seconds, max_points: 0, question_count: quiz.questions.length }}
         preview={payload}

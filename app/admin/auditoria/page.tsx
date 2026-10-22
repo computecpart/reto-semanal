@@ -55,7 +55,7 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-3xl font-bold tracking-tight">Auditoría</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Auditoría</h1>
         <p className="mt-1 text-sm text-slate-600">
           Registro de solo lectura. Ni la interfaz ni la base de datos permiten editarlo o borrarlo.
         </p>
@@ -95,7 +95,7 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
             {entry.reason ? <p className="mt-1 text-slate-700">Motivo: {entry.reason}</p> : null}
             {entry.before || entry.after ? (
               <details className="mt-2">
-                <summary className="cursor-pointer text-xs font-semibold text-sky-800">Ver antes / después</summary>
+                <summary className="inline-flex min-h-9 cursor-pointer items-center text-xs font-semibold text-sky-800">Ver antes / después</summary>
                 <div className="mt-2 grid gap-2 md:grid-cols-2">
                   <pre className="overflow-x-auto rounded-lg bg-slate-50 p-2 text-xs">{JSON.stringify(entry.before, null, 2)}</pre>
                   <pre className="overflow-x-auto rounded-lg bg-slate-50 p-2 text-xs">{JSON.stringify(entry.after, null, 2)}</pre>

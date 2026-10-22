@@ -23,7 +23,7 @@ export default async function CampaignsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight">Campañas</h1>
+      <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Campañas</h1>
 
       <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
         {campaigns.length === 0 ? (

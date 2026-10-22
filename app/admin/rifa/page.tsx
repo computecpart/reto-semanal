@@ -28,7 +28,7 @@ export default async function RafflePage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-3xl font-bold tracking-tight">Rifa final</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Rifa final</h1>
         <p className="mt-1 text-sm text-slate-600">
           Reglas 8 y 11: cada participante elegible tiene una sola oportunidad, sin importar sus puntos. Elegibles: rol
           participante, perfil completo y no descalificado ni archivado.
