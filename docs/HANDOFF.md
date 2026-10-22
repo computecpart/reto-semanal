@@ -8,8 +8,8 @@ de tocar código.
 
 - **Producción al día** con el repo: migraciones hasta `20261022050000` aplicadas y despliegue con la Fase 7. `npm run check` en verde (228 tests + 5 de integración con `npm run test:db`).
 - **Campaña publicada:** «MSI Passport — The Dragon Journey» (`a89d3a8e-…`, slug `msi-passport`),
-  23/10/2026 08:00 → 11/12/2026 23:59 hora SV, premio «Equipo MSI» por rifa, tema carmesí/oscuro,
-  reglas v2 (importante) = `docs/campaign/msi-passport-reglas.md`, ranking visible y público
+  23/10/2026 08:00 → 11/12/2026 23:59 hora SV, premio «Equipo MSI» al **Top 1** (entrega en el cierre del 12/12, Top 5 presente o pasa al siguiente) + rifa final aparte, tema carmesí/oscuro,
+  reglas v3 (importante, 22/10) = `docs/campaign/msi-passport-reglas.md`, ranking visible y público
   (alias + identificador parcial, Top 5). Cargada con las RPC admin auditadas a nombre del superadmin.
 - **Fase 3 entregada:** teléfono obligatorio en el alta, consentimiento comercial, `passport_code`,
   estado del participante, ledger `point_events` inmutable e idempotente, `private.award_points`
@@ -82,7 +82,7 @@ de tocar código.
   `hero.showCountdown` (con `.default()` para que el contenido ya publicado siga siendo válido) y sección `logos`
   (patrocinadores subidos al bucket + opción de incluir el logo del organizador). `readableDigits()` muestra las cifras de
   los títulos pixel con `font-score`. Sin migraciones.
-- Los usuarios existentes deben aceptar las reglas v2 al entrar a `/app` (comportamiento esperado).
+- Los usuarios existentes deben aceptar las reglas v3 al entrar a `/app` (comportamiento esperado).
 
 ## 1. Qué es y calendario
 

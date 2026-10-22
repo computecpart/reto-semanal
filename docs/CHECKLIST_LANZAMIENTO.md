@@ -14,7 +14,7 @@ Auditoría de solo lectura sobre producción (Supabase, Vercel, Resend). Nada se
 | Dominio | `piensads.app` con HTTPS; `www` → raíz; `*.vercel.app` y previews protegidas |
 | Backups | Diarios activos (Supabase Pro). PITR desactivado |
 | Cabeceras | CSP, HSTS, `X-Frame-Options`, `nosniff`, cámara solo propia |
-| Datos | Sin cuentas ni contenido de demostración; campaña MSI publicada con reglas v2 |
+| Datos | Sin cuentas ni contenido de demostración; campaña MSI publicada con reglas v3 (Top 1 + rifa) |
 | Funcionalidad | Registro, perfil/pasaporte, trivias, misiones con QR, puntos, ranking, moderación, auditoría y rifa |
 | Pruebas | 228 unitarias/estáticas + 5 de integración con concurrencia real (local) |
 

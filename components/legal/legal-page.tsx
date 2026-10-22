@@ -30,15 +30,23 @@ export function LegalPage({
   );
 }
 
+const footerLink =
+  "inline-flex min-h-10 items-center font-semibold underline-offset-4 opacity-75 transition hover:text-[var(--accent-strong,currentColor)] hover:underline hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent,currentColor)]";
+
 export function OrganizerBadge() {
   return (
     <a
-      aria-label="Organiza Digit@l Solutions. Escribir a soporte@digitalsolutions.com.sv"
-      className="inline-flex items-center gap-4 rounded-md border-2 border-[var(--color-ink)] bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-500 shadow-[3px_3px_0_0_var(--color-ink)] transition hover:-translate-y-0.5"
+      className="group inline-flex max-w-full items-center gap-3 rounded-lg border-2 border-[var(--color-ink)] bg-white px-3 py-3 sm:gap-4 sm:px-4 text-left text-[var(--color-ink)] shadow-[4px_4px_0_0_var(--accent,var(--color-ink))] transition hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--accent,currentColor)]"
       href="mailto:soporte@digitalsolutions.com.sv"
     >
-      Organiza
-      <Image alt="" className="h-14 w-auto" height={56} src="/brand/digital-solutions.png" unoptimized width={74} />
+      <Image alt="" className="h-12 w-auto shrink-0 sm:h-14" height={56} src="/brand/digital-solutions.png" unoptimized width={74} />
+      <span className="min-w-0 border-l-2 border-slate-200 pl-3 sm:pl-4">
+        <span className="block text-[10px] font-bold uppercase tracking-[0.25em] text-slate-500">Organiza</span>
+        <span className="block font-bold leading-tight">Digit@l Solutions</span>
+        <span className="block truncate text-[11px] text-slate-600 sm:text-xs group-hover:text-[var(--accent-strong,currentColor)] group-hover:underline">
+          soporte@digitalsolutions.com.sv
+        </span>
+      </span>
     </a>
   );
 }
@@ -48,12 +56,12 @@ export function LegalLinks() {
     <div className="flex flex-col items-center gap-4">
       <OrganizerBadge />
       <nav aria-label="Información legal" className="flex flex-wrap justify-center gap-x-5 text-sm">
-      <Link className="inline-flex min-h-10 items-center font-semibold text-slate-600 hover:text-slate-950 hover:underline" href="/reglas">
-        Reglas de participación
-      </Link>
-      <Link className="inline-flex min-h-10 items-center font-semibold text-slate-600 hover:text-slate-950 hover:underline" href="/privacidad">
-        Política de privacidad
-      </Link>
+        <Link className={footerLink} href="/reglas">
+          Reglas de participación
+        </Link>
+        <Link className={footerLink} href="/privacidad">
+          Política de privacidad
+        </Link>
       </nav>
     </div>
   );

@@ -1,6 +1,6 @@
 # Rifa verificable — MSI Passport
 
-Cómo se sortea el equipo MSI (reglas 8 y 11) y cómo cualquiera puede comprobarlo.
+Cómo se realiza la rifa final (reglas 8 y 11) y cómo cualquiera puede comprobarla. El equipo MSI ya no se sortea: es para el Top 1 (reglas v3).
 
 ## Antes del sorteo
 1. El superadmin abre **Admin → Rifa** y publica la **lista de elegibles**: identificadores MSI Passport

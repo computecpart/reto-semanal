@@ -651,7 +651,7 @@ export function LandingPage({
       </main>
 
       <footer
-        className={`border-t-2 border-[var(--frame)] px-4 pt-8 ${signedIn ? "pb-8" : "pb-28 sm:pb-8"} ${dark ? "[&_nav_a]:text-white/80" : ""}`}
+        className={`border-t-2 border-[var(--frame)] px-4 pt-8 ${signedIn ? "pb-8" : "pb-28 sm:pb-8"}`}
       >
         <LegalLinks />
       </footer>
