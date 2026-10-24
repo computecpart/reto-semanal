@@ -97,6 +97,7 @@ de tocar código.
   usuarios (24), trivia «El despertar del Dragon» (8 preguntas y claves) y 3 misiones conservados. Trivia reabierta del
   sáb 24/10 08:00 al vie 30/10 23:59 SV. Auditoría `maintenance.reset_test_data`. Copia local de las filas borradas en el
   scratchpad de la sesión. Con todos en 0 la app no muestra posición (todos empatan en #1).
+  21:52 SV: eliminadas las 3 misiones de prueba y sus códigos (`mission.delete_all` en Auditoría); no hay misiones creadas.
 - Los usuarios existentes deben aceptar las reglas v3 al entrar a `/app` (comportamiento esperado).
 
 ## 1. Qué es y calendario
