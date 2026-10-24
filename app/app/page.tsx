@@ -103,7 +103,8 @@ export default async function DashboardPage() {
   const progress = campaign ? campaignProgress(new Date(), campaign.starts_at, campaign.ends_at) : null;
   const events = points?.events ?? [];
   const total = points?.total ?? 0;
-  const standing = points?.standing ?? null;
+  // With nobody scoring, everyone ties at #1: only show a position once there are points.
+  const standing = (points?.total ?? 0) > 0 ? (points?.standing ?? null) : null;
   const weekly = campaign?.starts_at && progress ? pointsByWeek(events, campaign.starts_at, progress.weeks) : [];
   const breakdown = pointsBreakdown(events);
   const breakdownMax = Math.max(breakdown.quizzes, breakdown.speed, breakdown.missions, 1);

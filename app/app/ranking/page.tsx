@@ -55,6 +55,13 @@ export default async function RankingPage() {
             El ranking aún no está visible. Se publicará cuando el equipo organizador lo active.
           </p>
         </PixelCard>
+      ) : !rows.some((row) => row.points > 0) ? (
+        <PixelCard>
+          <p className="font-display text-2xl">El podio está vacío</p>
+          <p className="mt-2 text-slate-600">
+            Nadie ha sumado puntos todavía. Responde la próxima trivia o completa una misión para aparecer en el Top.
+          </p>
+        </PixelCard>
       ) : (
         <>
           {me && me.standing > highlightTop ? (

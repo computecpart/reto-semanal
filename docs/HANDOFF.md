@@ -92,6 +92,11 @@ de tocar código.
   (`components/dashboard/pixel-charts.tsx`) de puntos por semana y por origen; Top 5 y actividad reciente. Cálculos puros y
   probados en `lib/dashboard/stats.ts`. Navegación: Inicio, Trivias, Canjear, Ranking, Puntos y Pasaporte (en móvil 5
   pestañas; Puntos va en el menú de cuenta). `/app/puntos` muestra los gráficos y `/app/ranking` la siguiente meta. Sin migraciones.
+- **Limpieza previa al evento (23/10, 20:45 SV, autorizada):** puntos, intentos de trivia, respuestas, canjes y registro de
+  intentos de canje a cero en una transacción (trigger append-only desactivado solo dentro de ella y verificado de nuevo);
+  usuarios (24), trivia «El despertar del Dragon» (8 preguntas y claves) y 3 misiones conservados. Trivia reabierta del
+  sáb 24/10 08:00 al vie 30/10 23:59 SV. Auditoría `maintenance.reset_test_data`. Copia local de las filas borradas en el
+  scratchpad de la sesión. Con todos en 0 la app no muestra posición (todos empatan en #1).
 - Los usuarios existentes deben aceptar las reglas v3 al entrar a `/app` (comportamiento esperado).
 
 ## 1. Qué es y calendario

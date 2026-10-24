@@ -39,7 +39,7 @@ export default async function PointsPage() {
             <span className="ml-2 text-2xl">pts</span>
           </h1>
         </div>
-        <p className="font-score text-2xl">{points.standing ? `Posición #${points.standing}` : "Sin posición aún"}</p>
+        <p className="font-score text-2xl">{points.standing && points.total > 0 ? `Posición #${points.standing}` : "Sin posición aún"}</p>
       </section>
 
       {points.events.length > 0 ? (

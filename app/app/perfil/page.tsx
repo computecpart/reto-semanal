@@ -113,7 +113,7 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
                 </div>
                 <div className="pixel-frame-sm bg-[var(--color-paper)] p-3">
                   <dt className="text-[11px] font-bold uppercase tracking-wide text-slate-500">Posición</dt>
-                  <dd className="mt-1 font-score text-3xl">{points.standing ? `#${points.standing}` : "—"}</dd>
+                  <dd className="mt-1 font-score text-3xl">{points.standing && points.total > 0 ? `#${points.standing}` : "—"}</dd>
                 </div>
               </dl>
             ) : null}
