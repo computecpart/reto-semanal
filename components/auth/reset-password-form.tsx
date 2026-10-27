@@ -2,9 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import type { FormEvent } from "react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { getAuthErrorMessage } from "@/lib/auth/browser-errors";
+import { PWNED_MESSAGE, isPwnedPassword, localPasswordIssue } from "@/lib/auth/password-strength";
 import { createClient } from "@/lib/supabase/client";
 import { passwordSchema } from "@/lib/validation/profile";
 
@@ -15,6 +16,7 @@ import {
   fieldClassName,
   labelClassName,
 } from "./form-ui";
+import { PasswordGuidance } from "./password-guidance";
 
 export function ResetPasswordForm() {
   const router = useRouter();
@@ -22,6 +24,23 @@ export function ResetPasswordForm() {
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [formError, setFormError] = useState("");
   const [pending, setPending] = useState(false);
+  const [password, setPassword] = useState("");
+  // Discards results of an older check that resolves after a newer edit.
+  const passwordCheck = useRef(0);
+
+  async function checkPassword() {
+    const run = ++passwordCheck.current;
+
+    if (password.length < 8) {
+      return;
+    }
+
+    const issue = localPasswordIssue(password) ?? ((await isPwnedPassword(password)) ? PWNED_MESSAGE : null);
+
+    if (run === passwordCheck.current) {
+      setPasswordError(issue ?? "");
+    }
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -47,6 +66,17 @@ export function ResetPasswordForm() {
     }
 
     setPending(true);
+
+    // Same rule Supabase enforces (HaveIBeenPwned), explained before the request.
+    const weak =
+      localPasswordIssue(parsedPassword.data) ?? ((await isPwnedPassword(parsedPassword.data)) ? PWNED_MESSAGE : null);
+
+    if (weak) {
+      setPasswordError(weak);
+      setPending(false);
+      return;
+    }
+
     const supabase = createClient();
     const { error } = await supabase.auth.updateUser({
       password: parsedPassword.data,
@@ -89,13 +119,17 @@ export function ResetPasswordForm() {
           maxLength={128}
           minLength={8}
           name="password"
+          onBlur={() => void checkPassword()}
+          onChange={(event) => {
+            passwordCheck.current += 1;
+            setPassword(event.target.value);
+            setPasswordError("");
+          }}
           required
           type="password"
         />
-        <p className="mt-1.5 text-xs leading-5 text-slate-500" id="password-help">
-          Debe tener entre 8 y 128 caracteres y ser distinta de tus contraseñas fáciles de adivinar.
-        </p>
         <FieldError id="password-error">{passwordError}</FieldError>
+        <PasswordGuidance id="password-help" password={password} />
       </div>
 
       <div>

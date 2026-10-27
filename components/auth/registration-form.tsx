@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { FormEvent } from "react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import {
   AvatarPicker,
@@ -12,6 +12,7 @@ import {
   NameAndAliasFields,
 } from "@/components/profile/profile-fields";
 import { getAuthErrorMessage } from "@/lib/auth/browser-errors";
+import { PWNED_MESSAGE, isPwnedPassword, localPasswordIssue } from "@/lib/auth/password-strength";
 import {
   rememberVerificationEmail,
   startOtpResendCooldown,
@@ -31,6 +32,7 @@ import {
   fieldClassName,
   labelClassName,
 } from "./form-ui";
+import { PasswordGuidance } from "./password-guidance";
 
 type RegistrationField = keyof RegistrationInput;
 type RegistrationErrors = Partial<Record<string, string>>;
@@ -45,6 +47,31 @@ export function RegistrationForm({ operationalDate }: { operationalDate: string 
   const [errors, setErrors] = useState<RegistrationErrors>({});
   const [formError, setFormError] = useState("");
   const [pending, setPending] = useState(false);
+  const [password, setPassword] = useState("");
+  // Discards results of an older check that resolves after a newer edit.
+  const passwordCheck = useRef(0);
+
+  // Early warning when leaving the field, so nobody fills the whole form first.
+  async function checkPassword(form: HTMLFormElement | null) {
+    const run = ++passwordCheck.current;
+
+    if (password.length < 8) {
+      return;
+    }
+
+    const formData = form ? new FormData(form) : null;
+    const issue = localPasswordIssue(password, {
+      alias: formData ? value(formData, "alias") : "",
+      email: formData ? value(formData, "email") : "",
+      firstName: formData ? value(formData, "firstName") : "",
+      lastName: formData ? value(formData, "lastName") : "",
+    });
+    const message = issue ?? ((await isPwnedPassword(password)) ? PWNED_MESSAGE : undefined);
+
+    if (run === passwordCheck.current) {
+      setErrors((current) => ({ ...current, password: message }));
+    }
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -82,6 +109,22 @@ export function RegistrationForm({ operationalDate }: { operationalDate: string 
 
     const data = parsed.data;
     const supabase = createClient();
+
+    // Same rule Supabase enforces (HaveIBeenPwned), explained before the request.
+    const weak =
+      localPasswordIssue(data.password, {
+        alias: data.alias,
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
+      }) ?? ((await isPwnedPassword(data.password)) ? PWNED_MESSAGE : null);
+
+    if (weak) {
+      setErrors({ password: weak });
+      setFormError("Elige otra contraseña antes de continuar.");
+      setPending(false);
+      return;
+    }
 
     // UX pre-check only; the unique index in PostgreSQL remains the authority.
     const { data: aliasAvailable, error: aliasError } = await supabase.rpc(
@@ -203,12 +246,15 @@ export function RegistrationForm({ operationalDate }: { operationalDate: string 
             id="password"
             maxLength={128}
             name="password"
+            onBlur={(event) => void checkPassword(event.currentTarget.form)}
+            onChange={(event) => {
+              passwordCheck.current += 1;
+              setPassword(event.target.value);
+              setErrors((current) => (current.password ? { ...current, password: undefined } : current));
+            }}
             required
             type="password"
           />
-          <p className="mt-1.5 text-xs leading-5 text-slate-500" id="password-help">
-            Mínimo 8 caracteres. Usa una contraseña larga, única y difícil de adivinar.
-          </p>
           <FieldError id="password-error">{errors.password}</FieldError>
         </div>
 
@@ -228,6 +274,9 @@ export function RegistrationForm({ operationalDate }: { operationalDate: string 
             type="password"
           />
           <FieldError id="confirmPassword-error">{errors.confirmPassword}</FieldError>
+        </div>
+        <div className="sm:col-span-2">
+          <PasswordGuidance id="password-help" password={password} />
         </div>
       </fieldset>
 

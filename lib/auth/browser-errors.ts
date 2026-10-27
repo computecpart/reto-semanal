@@ -19,7 +19,7 @@ const AUTH_ERROR_MESSAGES: Readonly<Record<string, string>> = {
     "Por seguridad, vuelve a iniciar sesión antes de cambiar la contraseña.",
   same_password: "La contraseña nueva debe ser diferente de la anterior.",
   weak_password:
-    "La contraseña es demasiado débil o apareció en filtraciones conocidas. Elige otra.",
+    "Esta contraseña aparece en filtraciones públicas y no se acepta. Prueba uniendo tres palabras sin relación y un número o símbolo.",
 };
 
 export function getAuthErrorMessage(

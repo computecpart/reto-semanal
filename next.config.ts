@@ -20,7 +20,8 @@ const contentSecurityPolicy = [
   "style-src 'self' 'unsafe-inline'",
   `img-src 'self' data: blob: ${supabaseOrigin}`,
   "font-src 'self'",
-  `connect-src 'self' ${supabaseOrigin} ${supabaseOrigin.replace(/^https:/, "wss:")}`,
+  // Pwned Passwords range API: only a 5-character hash prefix is sent (k-anonymity).
+  `connect-src 'self' ${supabaseOrigin} ${supabaseOrigin.replace(/^https:/, "wss:")} https://api.pwnedpasswords.com`,
   "media-src 'self' blob:",
   "object-src 'none'",
   "base-uri 'self'",
