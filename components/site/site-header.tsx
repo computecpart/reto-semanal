@@ -3,6 +3,8 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 
 import { getSiteBranding } from "@/lib/campaign/queries";
+import { campaignBase } from "@/lib/campaign/scope";
+import { getCampaignSlug } from "@/lib/campaign/scope-server";
 import { landingAssetUrl } from "@/lib/landing/assets";
 import { DARK_SURFACE, themeStyle } from "@/lib/landing/theme";
 import { createClient } from "@/lib/supabase/server";
@@ -22,6 +24,23 @@ export const PUBLIC_NAV: readonly SiteNavLink[] = [
   { href: "/#preguntas", label: "Preguntas" },
   { href: "/reglas", label: "Reglas" },
 ];
+
+/** Destinations of the account buttons; invitations and private campaigns override them. */
+export interface SiteActions {
+  home: string;
+  login: string;
+  member: string;
+  memberLabel: string;
+  register: string;
+}
+
+export const DEFAULT_SITE_ACTIONS: SiteActions = {
+  home: "/",
+  login: "/login",
+  member: "/app",
+  memberLabel: "Mi panel",
+  register: "/registro",
+};
 
 export function siteSurfaceStyle(dark: boolean): CSSProperties {
   const vars: Record<string, string> =
@@ -44,6 +63,7 @@ const ctaLink =
 
 /** Shared public navigation: landing, sign-in pages, rules and legal pages. */
 export function SiteHeaderView({
+  actions = DEFAULT_SITE_ACTIONS,
   campaignName,
   dark,
   links,
@@ -51,6 +71,7 @@ export function SiteHeaderView({
   signedIn,
   themeVars,
 }: {
+  actions?: SiteActions;
   campaignName: string;
   dark: boolean;
   links: readonly SiteNavLink[];
@@ -65,7 +86,7 @@ export function SiteHeaderView({
     >
       <div aria-hidden="true" className="h-1 bg-[var(--accent)]" />
       <div className="relative mx-auto flex w-full max-w-5xl items-center justify-between gap-3 px-4 py-2.5 sm:px-6">
-        <Link className="flex min-h-10 min-w-0 items-center gap-3 font-display text-base leading-tight sm:text-lg" href="/">
+        <Link className="flex min-h-10 min-w-0 items-center gap-3 font-display text-base leading-tight sm:text-lg" href={actions.home}>
           {logo ? <Image alt={logo.alt} className="h-9 w-auto shrink-0" height={36} src={logo.url} unoptimized width={120} /> : null}
           <span className="line-clamp-2">{campaignName}</span>
         </Link>
@@ -81,21 +102,21 @@ export function SiteHeaderView({
         <div className="flex shrink-0 items-center gap-2">
           <div className="hidden items-center gap-2 lg:flex">
             {signedIn ? (
-              <Link className={ctaLink} href="/app">
-                Mi panel
+              <Link className={ctaLink} href={actions.member}>
+                {actions.memberLabel}
               </Link>
             ) : (
               <>
-                <Link className={navLink} href="/login">
+                <Link className={navLink} href={actions.login}>
                   Entrar
                 </Link>
-                <Link className={ctaLink} href="/registro">
+                <Link className={ctaLink} href={actions.register}>
                   Crear pasaporte
                 </Link>
               </>
             )}
           </div>
-          <MobileMenu links={links} signedIn={signedIn} />
+          <MobileMenu actions={actions} links={links} signedIn={signedIn} />
         </div>
       </div>
     </header>
@@ -110,14 +131,16 @@ export async function getSignedIn(): Promise<boolean> {
 
 /** Header for pages outside the landing: loads branding and session itself. */
 export async function SiteHeader() {
-  const [branding, signedIn] = await Promise.all([getSiteBranding(), getSignedIn()]);
+  const [branding, signedIn, slug] = await Promise.all([getSiteBranding(), getSignedIn(), getCampaignSlug()]);
   const logoUrl = landingAssetUrl(branding.theme.logo?.path);
+  const base = campaignBase(slug);
 
   return (
     <SiteHeaderView
+        actions={slug ? { ...DEFAULT_SITE_ACTIONS, home: base, member: base } : DEFAULT_SITE_ACTIONS}
         campaignName={branding.name}
         dark={branding.theme.surface === "oscuro"}
-        links={PUBLIC_NAV}
+        links={slug ? [{ href: `${base}/reglas`, label: "Reglas" }] : PUBLIC_NAV}
         logo={logoUrl ? { alt: branding.theme.logo?.alt || branding.name, url: logoUrl } : null}
         signedIn={signedIn}
         themeVars={themeStyle(branding.theme)}

@@ -160,7 +160,13 @@ export function NameAndAliasFields({
   );
 }
 
-export function ConsentFields({ errors }: { errors: Partial<Record<string, string>> }) {
+export function ConsentFields({
+  errors,
+  rulesHref = "/reglas",
+}: {
+  errors: Partial<Record<string, string>>;
+  rulesHref?: string;
+}) {
   const linkClassName = "font-bold text-[var(--accent-strong)] underline underline-offset-2";
 
   // New tab so reading the documents never discards a half-filled form.
@@ -173,7 +179,7 @@ export function ConsentFields({ errors }: { errors: Partial<Record<string, strin
           <input className="mt-1 size-4 shrink-0 accent-[var(--accent)]" name="acceptedRules" type="checkbox" />
           <span>
             Acepto las{" "}
-            <Link className={linkClassName} href="/reglas" rel="noopener" target="_blank">
+            <Link className={linkClassName} href={rulesHref} rel="noopener" target="_blank">
               reglas de participación
             </Link>{" "}
             de la campaña.

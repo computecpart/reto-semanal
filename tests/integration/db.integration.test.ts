@@ -60,7 +60,7 @@ run("integración con PostgreSQL local", () => {
   });
 
   it("el ranking coincide exactamente con la suma del ledger", async () => {
-    const campaigns = await boss.from("campaigns").select("id").eq("status", "published").single();
+    const campaigns = await boss.from("campaigns").select("id").eq("status", "published").eq("is_private", false).single();
     const campaignId = campaigns.data!.id as string;
     const standings = await call<{ points: number; user_id: string }[]>(boss, "admin_get_standings", { p_campaign_id: campaignId });
     const events = await boss.from("point_events").select("user_id, amount").eq("campaign_id", campaignId);

@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { PixelCard, SectionTitle } from "@/components/auth/form-ui";
 import { requireSessionPage } from "@/lib/auth/guards";
+import { getCampaignBase } from "@/lib/campaign/scope-server";
 import { listMyQuizzes, type MyQuiz } from "@/lib/quiz/queries";
 import { ATTEMPT_STATUS_LABELS } from "@/lib/quiz/schema";
 import { OPERATIONAL_TIME_ZONE } from "@/lib/time-zone";
@@ -17,7 +18,7 @@ const dateFormat = new Intl.DateTimeFormat("es-SV", {
   timeZone: OPERATIONAL_TIME_ZONE,
 });
 
-function QuizCard({ quiz }: { quiz: MyQuiz }) {
+function QuizCard({ base, quiz }: { base: string; quiz: MyQuiz }) {
   const done = quiz.attempt_status && quiz.attempt_status !== "started";
   const label =
     quiz.phase === "upcoming"
@@ -43,7 +44,7 @@ function QuizCard({ quiz }: { quiz: MyQuiz }) {
       {quiz.phase === "upcoming" ? null : (
         <Link
           className={`pixel-button px-4 py-2 text-sm font-bold uppercase tracking-wide ${quiz.phase === "active" && !done ? "bg-[var(--accent)] text-[var(--accent-contrast)]" : "bg-white"}`}
-          href={`/app/cuestionarios/${quiz.id}`}
+          href={`${base}/cuestionarios/${quiz.id}`}
         >
           {quiz.phase === "active" && !done ? (quiz.attempt_status === "started" ? "Continuar" : "Responder") : "Ver resultado"}
         </Link>
@@ -52,7 +53,17 @@ function QuizCard({ quiz }: { quiz: MyQuiz }) {
   );
 }
 
-function Group({ empty, quizzes, title }: { empty: string; quizzes: MyQuiz[]; title: string }) {
+function Group({
+  base,
+  empty,
+  quizzes,
+  title,
+}: {
+  base: string;
+  empty: string;
+  quizzes: MyQuiz[];
+  title: string;
+}) {
   return (
     <PixelCard>
       <SectionTitle>{title}</SectionTitle>
@@ -61,7 +72,7 @@ function Group({ empty, quizzes, title }: { empty: string; quizzes: MyQuiz[]; ti
       ) : (
         <ul className="space-y-3">
           {quizzes.map((quiz) => (
-            <QuizCard key={quiz.id} quiz={quiz} />
+            <QuizCard base={base} key={quiz.id} quiz={quiz} />
           ))}
         </ul>
       )}
@@ -70,7 +81,8 @@ function Group({ empty, quizzes, title }: { empty: string; quizzes: MyQuiz[]; ti
 }
 
 export default async function QuizzesPage() {
-  await requireSessionPage("/app/cuestionarios");
+  const base = await getCampaignBase();
+  await requireSessionPage(`${base}/cuestionarios`);
   const quizzes = await listMyQuizzes();
 
   return (
@@ -84,9 +96,9 @@ export default async function QuizzesPage() {
           Un intento puntuable por trivia. Las respuestas correctas suman y las incorrectas no restan.
         </p>
       </header>
-      <Group empty="No hay trivias abiertas en este momento." quizzes={quizzes.filter((quiz) => quiz.phase === "active")} title="Disponibles" />
-      <Group empty="Pronto anunciaremos nuevas trivias." quizzes={quizzes.filter((quiz) => quiz.phase === "upcoming")} title="Próximas" />
-      <Group empty="Aún no hay trivias finalizadas." quizzes={quizzes.filter((quiz) => quiz.phase === "ended")} title="Finalizadas" />
+      <Group base={base} empty="No hay trivias abiertas en este momento." quizzes={quizzes.filter((quiz) => quiz.phase === "active")} title="Disponibles" />
+      <Group base={base} empty="Pronto anunciaremos nuevas trivias." quizzes={quizzes.filter((quiz) => quiz.phase === "upcoming")} title="Próximas" />
+      <Group base={base} empty="Aún no hay trivias finalizadas." quizzes={quizzes.filter((quiz) => quiz.phase === "ended")} title="Finalizadas" />
     </div>
   );
 }

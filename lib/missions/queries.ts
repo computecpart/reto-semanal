@@ -27,6 +27,7 @@ export async function getAdminMissions(): Promise<AdminMissionSummary[]> {
 }
 
 export interface AdminMission {
+  campaign_id: string;
   code: string | null;
   description: string;
   enabled: boolean;

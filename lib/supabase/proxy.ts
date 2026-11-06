@@ -4,12 +4,14 @@ import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
 import { getSafePostLoginPath } from "@/lib/auth/safe-redirect";
+import { ADMIN_CAMPAIGN_COOKIE, CAMPAIGN_HEADER, isCampaignSlug, parseCampaignPath } from "@/lib/campaign/scope";
 import { SUPABASE_COOKIE_OPTIONS } from "@/lib/supabase/cookie-options";
 import { getPublicSupabaseEnv } from "@/lib/validation/env";
 
 export async function updateSession(request: NextRequest) {
   const environment = getPublicSupabaseEnv();
-  let response = NextResponse.next({ request });
+  const scope = resolveScope(request);
+  let response = forward(request, scope);
 
   const supabase = createServerClient(
     environment.NEXT_PUBLIC_SUPABASE_URL,
@@ -25,7 +27,7 @@ export async function updateSession(request: NextRequest) {
             request.cookies.set(name, value);
           });
 
-          response = NextResponse.next({ request });
+          response = forward(request, scope);
 
           cookiesToSet.forEach(({ name, options, value }) => {
             response.cookies.set(name, value, options);
@@ -50,9 +52,9 @@ export async function updateSession(request: NextRequest) {
     // The login page re-validates this against the closed allowlist.
     const next = ADMIN_PATH.test(pathname)
       ? "/admin"
-      : pathname === "/app/canjear" && code
-        ? getSafePostLoginPath(`/app/canjear?c=${code}`)
-        : "/app";
+      : REDEEM_PATH.test(pathname) && code
+        ? getSafePostLoginPath(`${pathname}?c=${code}`)
+        : getSafePostLoginPath(pathname);
     loginUrl.pathname = "/login";
     loginUrl.search = "";
     loginUrl.searchParams.set("next", next);
@@ -68,5 +70,48 @@ export async function updateSession(request: NextRequest) {
   return response;
 }
 
-const PROTECTED_PATH = /^\/(?:app|admin|vista-previa|aceptar-reglas)(?:\/|$)/;
+interface RequestScope {
+  rewrite: string | null;
+  slug: string | null;
+}
+
+// Only the proxy sets the campaign header: whatever a client sends is dropped.
+function resolveScope(request: NextRequest): RequestScope {
+  const pathname = request.nextUrl.pathname;
+  const campaign = parseCampaignPath(pathname);
+
+  if (campaign) {
+    return { rewrite: campaign.internalPath, slug: campaign.slug };
+  }
+
+  const selected = request.cookies.get(ADMIN_CAMPAIGN_COOKIE)?.value;
+
+  return { rewrite: null, slug: ADMIN_PATH.test(pathname) && isCampaignSlug(selected) ? selected : null };
+}
+
+function forward(request: NextRequest, scope: RequestScope) {
+  if (!scope.slug && !request.headers.has(CAMPAIGN_HEADER)) {
+    return NextResponse.next({ request });
+  }
+
+  const headers = new Headers(request.headers);
+
+  if (scope.slug) {
+    headers.set(CAMPAIGN_HEADER, scope.slug);
+  } else {
+    headers.delete(CAMPAIGN_HEADER);
+  }
+
+  if (!scope.rewrite) {
+    return NextResponse.next({ request: { headers } });
+  }
+
+  const url = request.nextUrl.clone();
+  url.pathname = scope.rewrite;
+
+  return NextResponse.rewrite(url, { request: { headers } });
+}
+
+const PROTECTED_PATH = /^\/(?:app|admin|vista-previa|aceptar-reglas|c\/[^/]+|unirse\/[^/]+\/aceptar)(?:\/|$)/;
 const ADMIN_PATH = /^\/(?:admin|vista-previa)(?:\/|$)/;
+const REDEEM_PATH = /^\/(?:app|c\/[^/]+)\/canjear$/;

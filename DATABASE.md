@@ -44,8 +44,24 @@ erDiagram
 | `public.rewards` / `private.reward_codes` | Misiones y su código | Código privado, regenerable |
 | `public.reward_redemptions` | Canjes | `unique(user_id, reward_id)` (código = QR) |
 | `private.redeem_attempts` | Intentos de canje | Límite 10 fallos / 10 min |
+| `private.campaign_members` | Miembros de campañas privadas | Se entra con el enlace de invitación |
+| `private.private_only_accounts` | Cuentas creadas desde una invitación | Fuera de la campaña principal hasta unirse |
 | `private.audit_log` | Auditoría | Solo inserción |
 | `private.raffle_draws` | Sorteos | Inmutable; semilla + huella de la lista |
+
+## Varias campañas
+
+`public.campaigns` admite una sola campaña **pública** publicada (índice `campaigns_single_published_public`) y cualquier
+número de campañas **privadas** (`is_private`, `invite_token`, `invite_enabled`).
+
+- `private.primary_campaign_id()`: la campaña pública vigente.
+- `private.requested_campaign_id()`: la campaña pedida en la cabecera `x-campaign`, solo si quien llama es miembro o staff.
+- `private.current_campaign_id()`: la pedida o, si no, la principal. Todas las RPC de campaña la usan.
+- `private.user_in_campaign(usuario, campaña)`: pertenencia. Filtra ranking, rifa y directorio, y el trigger
+  `enforce_campaign_participation` la exige al escribir puntos, intentos y canjes.
+- **RPC:** `get_campaign_invite`, `get_my_campaigns`, `join_campaign`, `join_primary_campaign`,
+  `admin_set_campaign_private`, `admin_regenerate_campaign_invite`, `admin_set_campaign_invite`,
+  `admin_campaign_member_count`.
 
 ## Funciones clave
 

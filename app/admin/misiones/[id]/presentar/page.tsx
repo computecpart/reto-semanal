@@ -3,7 +3,8 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import { requireAdminPage } from "@/lib/auth/guards";
-import { getSiteBranding } from "@/lib/campaign/queries";
+import { getAdminCampaign, getSiteBranding } from "@/lib/campaign/queries";
+import { campaignBase } from "@/lib/campaign/scope";
 import { qrPngDataUrl, qrSvgWithLogoDataUrl } from "@/lib/missions/qr";
 import { getAdminMission, getSiteOrigin } from "@/lib/missions/queries";
 import { formatCode, redeemUrl } from "@/lib/missions/schema";
@@ -25,7 +26,9 @@ export default async function PresentMissionPage({ params }: { params: Promise<{
     notFound();
   }
 
-  const url = redeemUrl(await getSiteOrigin(), mission.code);
+  // A private campaign's QR opens its own redeem page.
+  const campaign = await getAdminCampaign(mission.campaign_id);
+  const url = redeemUrl(await getSiteOrigin(), mission.code, campaignBase(campaign?.is_private ? campaign.slug : null));
   const branding = await getSiteBranding();
   // Prefer the branded QR; fall back to the plain one when there is no logo.
   const png = (await qrSvgWithLogoDataUrl(url, branding.theme.logo?.path)) ?? (await qrPngDataUrl(url, 1024));

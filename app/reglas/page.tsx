@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { LegalPage } from "@/components/legal/legal-page";
 import { SafeMarkdown } from "@/components/markdown/safe-markdown";
-import { getCurrentRules } from "@/lib/campaign/queries";
+import { assertCampaignAccess, getCurrentRules } from "@/lib/campaign/queries";
 import { OPERATIONAL_TIME_ZONE } from "@/lib/time-zone";
 
 export const metadata: Metadata = {
@@ -19,6 +19,7 @@ function formatDate(value: string): string {
 }
 
 export default async function RulesPage() {
+  await assertCampaignAccess();
   const rules = await getCurrentRules();
 
   if (rules) {

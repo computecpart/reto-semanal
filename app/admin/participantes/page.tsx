@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { ActionForm } from "@/components/admin/action-form";
 import { requireAdminPage } from "@/lib/auth/guards";
+import { getAdminScope } from "@/lib/campaign/queries";
 import { setParticipantStatusAction } from "@/lib/moderation/actions";
 import { listParticipants, PAGE_SIZE } from "@/lib/moderation/queries";
 import { formatSalvadorPhone, EL_SALVADOR_DEPARTMENTS } from "@/lib/validation/profile";
@@ -45,7 +46,7 @@ export default async function ParticipantsPage({ searchParams }: { searchParams:
     role: param(params, "rol"),
     status: param(params, "estado"),
   };
-  const rows = await listParticipants(filters);
+  const [rows, { campaign }] = await Promise.all([listParticipants(filters), getAdminScope()]);
   const total = rows[0]?.total_count ?? 0;
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const pageLink = (page: number) => {
@@ -58,6 +59,11 @@ export default async function ParticipantsPage({ searchParams }: { searchParams:
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Participantes</h1>
+          {campaign?.is_private ? (
+            <p className="mt-1 text-sm font-semibold text-amber-800">
+              Miembros de {campaign.name}. Suspender o descalificar a alguien aplica en todas sus campañas.
+            </p>
+          ) : null}
           <p className="mt-1 text-sm text-slate-600">
             {total} resultados. Toda suspensión o descalificación exige motivo y queda en la auditoría. Nunca se borran cuentas con historial.
           </p>

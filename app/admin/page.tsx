@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { CampaignStatusBadge } from "@/components/admin/admin-nav";
 import { requireAdminPage } from "@/lib/auth/guards";
-import { getAdminCampaigns, getAdminLanding, getAdminRulesVersions } from "@/lib/campaign/queries";
+import { getAdminLanding, getAdminRulesVersions, getAdminScope } from "@/lib/campaign/queries";
 import { getAdminRankingConfig, getAdminRecentEvents, getAdminStandings } from "@/lib/points/queries";
 import { OPERATIONAL_TIME_ZONE } from "@/lib/time-zone";
 
@@ -32,8 +32,7 @@ export default async function AdminPage() {
   // Each admin page re-checks the role: layouts are not re-run on every
   // client navigation, so they are not a sufficient boundary on their own.
   await requireAdminPage();
-  const campaigns = await getAdminCampaigns();
-  const current = campaigns.find((campaign) => campaign.status === "published") ?? campaigns[0];
+  const { campaign: current } = await getAdminScope();
 
   if (!current) {
     return (

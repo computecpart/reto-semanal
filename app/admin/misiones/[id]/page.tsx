@@ -5,7 +5,8 @@ import { notFound } from "next/navigation";
 
 import { MissionForm, RegenerateCodeForm } from "@/components/admin/mission-forms";
 import { requireAdminPage } from "@/lib/auth/guards";
-import { getSiteBranding } from "@/lib/campaign/queries";
+import { getAdminCampaign, getSiteBranding } from "@/lib/campaign/queries";
+import { campaignBase } from "@/lib/campaign/scope";
 import { qrPngDataUrl, qrSvgDataUrl, qrSvgWithLogoDataUrl } from "@/lib/missions/qr";
 import { getAdminMission, getSiteOrigin } from "@/lib/missions/queries";
 import { formatCode, redeemUrl } from "@/lib/missions/schema";
@@ -28,7 +29,10 @@ export default async function AdminMissionPage({ params }: { params: Promise<{ i
     notFound();
   }
 
-  const url = mission.code ? redeemUrl(await getSiteOrigin(), mission.code) : null;
+  // A private campaign's QR opens its own redeem page.
+  const campaign = await getAdminCampaign(mission.campaign_id);
+  const base = campaignBase(campaign?.is_private ? campaign.slug : null);
+  const url = mission.code ? redeemUrl(await getSiteOrigin(), mission.code, base) : null;
   const branding = await getSiteBranding();
   const [png, svg, svgLogo] = url
     ? await Promise.all([qrPngDataUrl(url), qrSvgDataUrl(url), qrSvgWithLogoDataUrl(url, branding.theme.logo?.path)])

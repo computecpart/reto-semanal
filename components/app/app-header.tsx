@@ -8,51 +8,55 @@ import { AccountMenu } from "./account-menu";
 import { NavLinks } from "./nav-links";
 import { PixelIcon } from "./pixel-icons";
 
-const PARTICIPANT_NAV = [
-  { href: "/app", icon: <PixelIcon name="home" />, label: "Inicio" },
-  { href: "/app/cuestionarios", icon: <PixelIcon name="quiz" />, label: "Trivias" },
-  { href: "/app/canjear", icon: <PixelIcon name="qr" />, label: "Canjear" },
-  { href: "/app/ranking", icon: <PixelIcon name="trophy" />, label: "Ranking" },
-  { href: "/app/puntos", icon: <PixelIcon name="points" />, label: "Puntos" },
-  { href: "/app/perfil", icon: <PixelIcon name="passport" />, label: "Mi pasaporte", shortLabel: "Pasaporte" },
-];
-
-// Five thumb-sized tabs on phones; "Puntos" stays reachable from Inicio and the account menu.
-const MOBILE_NAV = PARTICIPANT_NAV.filter((item) => item.href !== "/app/puntos");
+function participantNav(base: string) {
+  return [
+    { href: base, icon: <PixelIcon name="home" />, label: "Inicio" },
+    { href: `${base}/cuestionarios`, icon: <PixelIcon name="quiz" />, label: "Trivias" },
+    { href: `${base}/canjear`, icon: <PixelIcon name="qr" />, label: "Canjear" },
+    { href: `${base}/ranking`, icon: <PixelIcon name="trophy" />, label: "Ranking" },
+    { href: `${base}/puntos`, icon: <PixelIcon name="points" />, label: "Puntos" },
+    { href: `${base}/perfil`, icon: <PixelIcon name="passport" />, label: "Mi pasaporte", shortLabel: "Pasaporte" },
+  ];
+}
 
 const focusRing = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]";
 
 export function AppHeader({
   alias,
   avatarId,
+  base,
   campaignName,
   role,
 }: {
   alias: string | null;
   avatarId: string | null;
+  base: string;
   campaignName: string;
   role: AppRole;
 }) {
   const avatar = getAvatar(avatarId);
+  const items = participantNav(base);
+  // Five thumb-sized tabs on phones; "Puntos" stays reachable from Inicio and the account menu.
+  const mobileItems = items.filter((item) => item.href !== `${base}/puntos`);
 
   return (
     <>
       <header className="border-b-4 border-[var(--color-ink)] bg-[var(--color-paper)]">
         <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
-          <Link className={`flex min-h-10 min-w-0 items-center font-display text-base leading-tight sm:text-xl ${focusRing}`} href="/">
+          <Link className={`flex min-h-10 min-w-0 items-center font-display text-base leading-tight sm:text-xl ${focusRing}`} href={base === "/app" ? "/" : base}>
             <span className="line-clamp-2">{campaignName}</span>
           </Link>
 
-          <AccountMenu alias={alias} avatarSrc={avatar?.src ?? null} isAdmin={isAdministrativeRole(role)} />
+          <AccountMenu alias={alias} avatarSrc={avatar?.src ?? null} base={base} isAdmin={isAdministrativeRole(role)} />
         </div>
 
         <nav aria-label="Secciones" className="mx-auto hidden w-full max-w-5xl flex-wrap gap-2 px-6 pb-4 sm:flex">
           <NavLinks
             activeClassName="bg-[var(--accent)] text-[var(--accent-contrast)] shadow-[3px_3px_0_0_var(--color-ink)]"
             className={`inline-flex min-h-10 items-center gap-2 whitespace-nowrap border-2 border-[var(--color-ink)] px-3 text-sm font-bold uppercase tracking-wide ${focusRing}`}
-            exact={["/app"]}
+            exact={[base]}
             inactiveClassName="bg-white text-[var(--color-ink)] hover:bg-[var(--accent-soft)]"
-            items={PARTICIPANT_NAV}
+            items={items}
           />
         </nav>
       </header>
@@ -66,9 +70,9 @@ export function AppHeader({
           activeClassName="bg-[var(--accent)] text-[var(--accent-contrast)]"
           className={`flex min-h-16 flex-col items-center justify-center gap-1 px-0.5 text-[0.68rem] font-bold uppercase leading-none tracking-wide ${focusRing} focus-visible:-outline-offset-4`}
           compact
-          exact={["/app"]}
+          exact={[base]}
           inactiveClassName="text-[var(--color-ink)] active:bg-[var(--accent-soft)]"
-          items={MOBILE_NAV}
+          items={mobileItems}
         />
       </nav>
     </>

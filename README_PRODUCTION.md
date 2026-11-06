@@ -18,6 +18,32 @@ entorno con datos reales: https://piensads.app (Vercel) + Supabase `reto-semanal
 | Revisar cambios | Auditoría | Solo lectura, con antes/después. |
 | Editar portada | Campañas → la campaña → Portada | Se autoguarda el borrador; **Publicar** para que se vea. |
 
+## Campañas privadas (enlace de invitación)
+
+Funcionan al mismo tiempo que la campaña principal, en `/c/<slug>`, sin costo adicional.
+
+1. **Campañas → Nueva campaña**: marca «Campaña privada con enlace de invitación».
+2. Completa **Datos** (fechas y premio), **Reglas** y **Portada** (publica ambas) y cambia el **Estado** a Publicada.
+3. Copia el enlace en **Tipo de campaña e invitación** o usa **Compartir por WhatsApp**.
+4. En la barra lateral, **Trabajando en** elige la campaña: cuestionarios, misiones, revisiones, ranking, participantes y rifa
+   pasan a ser los de esa campaña. Vuelve a la principal al terminar.
+
+- **Pausar enlace:** nadie nuevo entra. **Crear enlace nuevo:** el anterior deja de funcionar. Quien ya entró sigue dentro.
+- Quien se registra desde el enlace no aparece en la campaña principal, salvo que elija unirse.
+- Suspender o descalificar a alguien aplica en todas sus campañas.
+
+### Publicar esta función por primera vez
+
+Requiere tokens vigentes de Supabase y Vercel en `.env.seed.local`. **El orden importa:** la web actual funciona con la
+migración aplicada, pero la web nueva no funciona sin ella.
+
+1. Confirma que hay un respaldo reciente y haz `npx supabase db push --dry-run`: solo debe listar `20261106000000`.
+2. `npx supabase db push`.
+3. Comprueba que `/`, `/reglas` y el ranking de la campaña principal siguen iguales.
+4. Fusiona la rama en `main` y despliega con `vercel deploy --prod`.
+5. Crea una campaña privada de prueba y confirma que un miembro entra a `/c/<slug>` y que quien no tiene el enlace ve 404.
+6. Si algo falla en la web, vuelve al despliegue anterior en Vercel: la migración es compatible con la web actual.
+
 ## Cierre de campaña (11/12/2026)
 
 1. Cerrar la última trivia y terminar **todas** las revisiones abiertas antes de la hora de cierre.

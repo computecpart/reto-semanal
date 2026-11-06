@@ -2,6 +2,7 @@ import type { DatabaseErrorLike } from "@/lib/profile/rpc-errors";
 
 // Messages raised by the quiz RPCs; anything else is replaced.
 const DATABASE_MESSAGES = new Set([
+  "Tu cuenta no participa en esta campaña.",
   "No tienes permiso para esta operación.",
   "El cuestionario no existe.",
   "El cuestionario no es válido.",

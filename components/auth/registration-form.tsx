@@ -42,7 +42,14 @@ function value(formData: FormData, name: RegistrationField): string {
   return typeof entry === "string" ? entry : "";
 }
 
-export function RegistrationForm({ operationalDate }: { operationalDate: string }) {
+export function RegistrationForm({
+  invite,
+  operationalDate,
+}: {
+  /** Set when signing up from a campaign invitation link. */
+  invite?: { loginHref: string; rulesHref: string; token: string };
+  operationalDate: string;
+}) {
   const router = useRouter();
   const [errors, setErrors] = useState<RegistrationErrors>({});
   const [formError, setFormError] = useState("");
@@ -154,6 +161,7 @@ export function RegistrationForm({ operationalDate }: { operationalDate: string 
           birth_date: data.birthDate,
           department: data.department,
           first_name: data.firstName,
+          ...(invite ? { invite_token: invite.token } : {}),
           last_name: data.lastName,
           marketing_consent: data.marketingConsent,
           phone: data.phone,
@@ -179,7 +187,7 @@ export function RegistrationForm({ operationalDate }: { operationalDate: string 
 
     rememberVerificationEmail(data.email);
     startOtpResendCooldown();
-    router.push("/verificar-correo");
+    router.push(invite ? `/verificar-correo?invitacion=${invite.token}` : "/verificar-correo");
   }
 
   return (
@@ -331,7 +339,7 @@ export function RegistrationForm({ operationalDate }: { operationalDate: string 
 
       <AvatarPicker error={errors.avatarId} />
 
-      <ConsentFields errors={errors} />
+      <ConsentFields errors={errors} rulesHref={invite?.rulesHref} />
 
       <label className="flex items-start gap-3 text-sm leading-6 text-slate-700">
         <input className="mt-1 size-4 shrink-0 accent-[var(--accent)]" name="marketingConsent" type="checkbox" />
@@ -344,7 +352,7 @@ export function RegistrationForm({ operationalDate }: { operationalDate: string 
 
       <p className="text-center text-sm text-slate-600">
         ¿Ya tienes una cuenta?{" "}
-        <Link className="font-bold text-[var(--accent-strong)] underline-offset-4 hover:underline" href="/login">
+        <Link className="font-bold text-[var(--accent-strong)] underline-offset-4 hover:underline" href={invite?.loginHref ?? "/login"}>
           Inicia sesión
         </Link>
       </p>

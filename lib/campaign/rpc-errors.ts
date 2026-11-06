@@ -14,6 +14,10 @@ const DATABASE_MESSAGES = new Set([
   "Ya existe otra campaña publicada.",
   "El contenido de la portada no es válido.",
   "No hay reglas publicadas.",
+  "Solo una campaña en borrador puede cambiar de tipo.",
+  "Este enlace de invitación no es válido o ya no está activo.",
+  "Las cuentas del equipo organizador no participan en las campañas.",
+  "Tu cuenta no puede unirse a esta campaña.",
 ]);
 
 export function getCampaignRpcErrorMessage(error: DatabaseErrorLike): string {

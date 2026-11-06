@@ -1,10 +1,13 @@
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { AppHeader } from "@/components/app/app-header";
+import { CampaignSwitcher } from "@/components/app/campaign-switcher";
 import { LegalLinks } from "@/components/legal/legal-page";
 import { requireSessionPage } from "@/lib/auth/guards";
-import { getMyRulesStatus, getSiteBranding } from "@/lib/campaign/queries";
+import { getMyCampaigns, getMyRulesStatus, getSiteBranding } from "@/lib/campaign/queries";
+import { campaignBase } from "@/lib/campaign/scope";
+import { getCampaignSlug } from "@/lib/campaign/scope-server";
 import { themeStyle } from "@/lib/landing/theme";
 import { getMyParticipantStatus } from "@/lib/points/queries";
 import { getMyProfile } from "@/lib/profile/my-profile";
@@ -16,19 +19,42 @@ const STATUS_BANNERS: Readonly<Record<string, string>> = {
 };
 
 export default async function ParticipantLayout({ children }: { children: ReactNode }) {
-  const { role, user } = await requireSessionPage("/app/perfil");
-  const [profile, rulesStatus, branding, status] = await Promise.all([
+  const slug = await getCampaignSlug();
+  const base = campaignBase(slug);
+  const { role, user } = await requireSessionPage(base);
+  const [profile, rulesStatus, branding, status, mine] = await Promise.all([
     getMyProfile(user.id),
     getMyRulesStatus(),
     getSiteBranding(),
     getMyParticipantStatus(),
+    getMyCampaigns(),
   ]);
   const banner = status ? STATUS_BANNERS[status] : undefined;
+  const firstCampaign = mine.campaigns[0];
+
+  // A private campaign does not exist for anyone outside it.
+  if (slug && !mine.campaigns.some((campaign) => campaign.slug === slug)) {
+    notFound();
+  }
+
+  // Accounts created from an invitation have no place in the main campaign.
+  if (!slug && mine.privateOnly && firstCampaign) {
+    redirect(campaignBase(firstCampaign.slug));
+  }
 
   // A newer major rules version must be accepted before using the app.
   if (rulesStatus.required) {
-    redirect("/aceptar-reglas");
+    redirect(slug ? `${base}/aceptar-reglas` : "/aceptar-reglas");
   }
+
+  const campaignLinks = [
+    ...(mine.privateOnly || !mine.primaryName ? [] : [{ active: !slug, href: "/app", name: mine.primaryName }]),
+    ...mine.campaigns.map((campaign) => ({
+      active: campaign.slug === slug,
+      href: campaignBase(campaign.slug),
+      name: campaign.name,
+    })),
+  ];
 
   return (
     <div
@@ -38,9 +64,11 @@ export default async function ParticipantLayout({ children }: { children: ReactN
       <AppHeader
         alias={profile?.alias ?? null}
         avatarId={profile?.avatar_id ?? null}
+        base={base}
         campaignName={branding.name}
         role={role}
       />
+      <CampaignSwitcher campaigns={campaignLinks} joinableMain={mine.privateOnly ? mine.primaryName : null} />
       {banner ? (
         <p className="border-b-4 border-[var(--color-ink)] bg-amber-200 px-4 py-3 text-center text-sm font-bold" role="status">
           {banner}
@@ -50,7 +78,7 @@ export default async function ParticipantLayout({ children }: { children: ReactN
         <div className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 sm:py-12">{children}</div>
       </main>
       <footer className="border-t-4 border-[var(--color-ink)] px-4 pt-6 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:pb-6">
-        <LegalLinks />
+        <LegalLinks rulesHref={slug ? `${base}/reglas` : undefined} />
       </footer>
     </div>
   );

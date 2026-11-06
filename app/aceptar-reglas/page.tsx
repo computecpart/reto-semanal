@@ -5,18 +5,21 @@ import { AcceptRulesForm } from "@/components/campaign/accept-rules-form";
 import { LegalPage } from "@/components/legal/legal-page";
 import { SafeMarkdown } from "@/components/markdown/safe-markdown";
 import { requireSessionPage } from "@/lib/auth/guards";
-import { getCurrentRules, getMyRulesStatus } from "@/lib/campaign/queries";
+import { assertCampaignAccess, getCurrentRules, getMyRulesStatus } from "@/lib/campaign/queries";
+import { getCampaignBase } from "@/lib/campaign/scope-server";
 
 export const metadata: Metadata = {
   title: "Acepta las reglas | Reto Semanal",
 };
 
 export default async function AcceptRulesPage() {
-  await requireSessionPage("/app/perfil");
+  const base = await getCampaignBase();
+  await requireSessionPage(base);
+  await assertCampaignAccess();
   const [status, rules] = await Promise.all([getMyRulesStatus(), getCurrentRules()]);
 
   if (!status.required || !rules) {
-    redirect("/app");
+    redirect(base);
   }
 
   return (

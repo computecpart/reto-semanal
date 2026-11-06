@@ -3,10 +3,18 @@
 import Link from "next/link";
 import { useEffect, useId, useState } from "react";
 
-import type { SiteNavLink } from "./site-header";
+import type { SiteActions, SiteNavLink } from "./site-header";
 
 /** Full-width disclosure menu for phones; links close it on navigation. */
-export function MobileMenu({ links, signedIn }: { links: readonly SiteNavLink[]; signedIn: boolean }) {
+export function MobileMenu({
+  actions,
+  links,
+  signedIn,
+}: {
+  actions: SiteActions;
+  links: readonly SiteNavLink[];
+  signedIn: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const panelId = useId();
 
@@ -57,7 +65,7 @@ export function MobileMenu({ links, signedIn }: { links: readonly SiteNavLink[];
         >
           <ul>
             <li>
-              <Link className={item} href="/" onClick={close}>
+              <Link className={item} href={actions.home} onClick={close}>
                 Inicio
               </Link>
             </li>
@@ -71,15 +79,15 @@ export function MobileMenu({ links, signedIn }: { links: readonly SiteNavLink[];
           </ul>
           <div className="mt-4 grid gap-3">
             {signedIn ? (
-              <Link className={`${button} bg-[var(--accent)] text-[var(--accent-contrast)]`} href="/app" onClick={close}>
-                Mi panel
+              <Link className={`${button} bg-[var(--accent)] text-[var(--accent-contrast)]`} href={actions.member} onClick={close}>
+                {actions.memberLabel}
               </Link>
             ) : (
               <>
-                <Link className={`${button} bg-[var(--accent)] text-[var(--accent-contrast)]`} href="/registro" onClick={close}>
+                <Link className={`${button} bg-[var(--accent)] text-[var(--accent-contrast)]`} href={actions.register} onClick={close}>
                   Crear mi pasaporte
                 </Link>
-                <Link className={`${button} bg-white text-[var(--color-ink)]`} href="/login" onClick={close}>
+                <Link className={`${button} bg-white text-[var(--color-ink)]`} href={actions.login} onClick={close}>
                   Iniciar sesión
                 </Link>
               </>

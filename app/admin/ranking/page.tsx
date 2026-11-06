@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ActionForm } from "@/components/admin/action-form";
 import { PointAdjustmentForm, RankingSettingsForm, ReverseEventForm } from "@/components/admin/ranking-forms";
 import { requireAdminPage } from "@/lib/auth/guards";
-import { getAdminCampaigns } from "@/lib/campaign/queries";
+import { getAdminScope } from "@/lib/campaign/queries";
 import { setShowDisqualifiedAction } from "@/lib/moderation/actions";
 import { formatPoints, POINT_KIND_LABELS } from "@/lib/points/config";
 import { getRankingSettings } from "@/lib/points/queries";
@@ -30,8 +30,7 @@ const STATUS_LABELS: Readonly<Record<string, string>> = {
 
 export default async function AdminRankingPage() {
   await requireAdminPage();
-  const campaigns = await getAdminCampaigns();
-  const campaign = campaigns.find((item) => item.status === "published") ?? campaigns[0];
+  const { campaign } = await getAdminScope();
 
   if (!campaign) {
     return (

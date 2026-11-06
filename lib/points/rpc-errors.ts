@@ -2,6 +2,7 @@ import type { DatabaseErrorLike } from "@/lib/profile/rpc-errors";
 
 // Messages raised by our own point RPCs; anything else is replaced.
 const DATABASE_MESSAGES = new Set([
+  "Tu cuenta no participa en esta campaña.",
   "No tienes permiso para esta operación.",
   "La campaña no existe.",
   "Solo se ajustan puntos de participantes.",

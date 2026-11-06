@@ -1,7 +1,7 @@
 // Runs the DB integration suite against LOCAL Supabase (see README_DEMO.md).
 import { spawnSync } from "node:child_process";
 
-const result = spawnSync("npx", ["vitest", "run", "tests/integration"], {
+const result = spawnSync("npx", ["vitest", "run", "tests/integration", "--no-file-parallelism"], {
   env: { ...process.env, RUN_DB_TESTS: "1" },
   shell: true,
   stdio: "inherit",

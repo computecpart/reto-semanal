@@ -1,5 +1,6 @@
 import "server-only";
 
+import { notFound } from "next/navigation";
 import { cache } from "react";
 
 import {
@@ -10,6 +11,7 @@ import {
 } from "@/lib/landing/schema";
 import { createClient } from "@/lib/supabase/server";
 
+import { getCampaignSlug } from "./scope-server";
 import { isCampaignStatus, type CampaignStatus } from "./status";
 
 export interface PublicCampaign {
@@ -102,14 +104,90 @@ export async function getMyRulesStatus(): Promise<{ required: boolean; latest_ve
   return data as { required: boolean; latest_version?: number };
 }
 
+export interface MyCampaign {
+  name: string;
+  slug: string;
+  status: CampaignStatus;
+}
+
+export interface MyCampaigns {
+  campaigns: MyCampaign[];
+  primaryName: string | null;
+  privateOnly: boolean;
+}
+
+/** Private campaigns the session can enter, plus whether it is invite-only. */
+export const getMyCampaigns = cache(async (): Promise<MyCampaigns> => {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("get_my_campaigns");
+
+  if (error || !data || typeof data !== "object") {
+    return { campaigns: [], primaryName: null, privateOnly: false };
+  }
+
+  const raw = data as { campaigns?: MyCampaign[]; primary_name?: string | null; private_only?: boolean };
+
+  return {
+    campaigns: Array.isArray(raw.campaigns) ? raw.campaigns : [],
+    primaryName: raw.primary_name ?? null,
+    privateOnly: raw.private_only === true,
+  };
+});
+
+/** /c/<slug> pages shared with public routes: outsiders must not reach them. */
+export async function assertCampaignAccess(): Promise<void> {
+  const slug = await getCampaignSlug();
+
+  if (slug && !(await getMyCampaigns()).campaigns.some((campaign) => campaign.slug === slug)) {
+    notFound();
+  }
+}
+
+export interface CampaignInvite {
+  campaign: PublicCampaign;
+  isMember: boolean;
+  landing: LandingContent | null;
+  rulesMd: string | null;
+}
+
+/** Public view of a private campaign: only reachable with its invitation link. */
+export const getCampaignInvite = cache(async (token: string): Promise<CampaignInvite | null> => {
+  if (!/^[0-9a-f]{32}$/.test(token)) {
+    return null;
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("get_campaign_invite", { p_token: token });
+
+  if (error || !data || typeof data !== "object") {
+    return null;
+  }
+
+  const raw = data as { campaign?: PublicCampaign; is_member?: boolean; landing?: unknown; rules_md?: string | null };
+
+  if (!raw.campaign || !isCampaignStatus(raw.campaign.status)) {
+    return null;
+  }
+
+  return {
+    campaign: raw.campaign,
+    isMember: raw.is_member === true,
+    landing: raw.landing ? readLandingContent(raw.landing) : null,
+    rulesMd: raw.rules_md ?? null,
+  };
+});
+
 export interface AdminCampaign extends PublicCampaign {
   created_at: string;
   id: string;
+  invite_enabled: boolean;
+  invite_token: string | null;
+  is_private: boolean;
   updated_at: string;
 }
 
 const ADMIN_CAMPAIGN_COLUMNS =
-  "id, slug, name, status, starts_at, ends_at, prize_title, prize_description, created_at, updated_at";
+  "id, slug, name, status, starts_at, ends_at, prize_title, prize_description, is_private, invite_token, invite_enabled, created_at, updated_at";
 
 // Admin reads rely on RLS policies that require public.is_admin().
 export async function getAdminCampaigns(): Promise<AdminCampaign[]> {
@@ -125,6 +203,34 @@ export async function getAdminCampaigns(): Promise<AdminCampaign[]> {
   }
 
   return data ?? [];
+}
+
+export interface AdminScope {
+  campaign: AdminCampaign | null;
+  campaigns: AdminCampaign[];
+}
+
+/**
+ * Campaign the console is working on: the private one chosen in the sidebar,
+ * or the main campaign. PostgreSQL resolves the same one for every admin RPC.
+ */
+export const getAdminScope = cache(async (): Promise<AdminScope> => {
+  const [campaigns, slug] = await Promise.all([getAdminCampaigns(), getCampaignSlug()]);
+  const selected = slug
+    ? campaigns.find((item) => item.slug === slug && item.is_private && item.status !== "archived")
+    : undefined;
+  const main = campaigns.filter((item) => !item.is_private);
+
+  return {
+    campaign: selected ?? main.find((item) => item.status === "published") ?? main[0] ?? null,
+    campaigns,
+  };
+});
+
+export async function getCampaignMemberCount(campaignId: string): Promise<number> {
+  const supabase = await createClient();
+  const { data } = await supabase.rpc("admin_campaign_member_count", { p_campaign_id: campaignId });
+  return Number(data ?? 0);
 }
 
 export async function getAdminCampaign(id: string): Promise<AdminCampaign | null> {

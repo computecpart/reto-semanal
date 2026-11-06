@@ -7,6 +7,7 @@ import { ContactForm } from "@/components/profile/contact-form";
 import { ProfileCompletionForm } from "@/components/profile/profile-completion-form";
 import { ProfileEditForm } from "@/components/profile/profile-edit-form";
 import { requireSessionPage } from "@/lib/auth/guards";
+import { getCampaignBase } from "@/lib/campaign/scope-server";
 import { getAvatar } from "@/lib/avatars";
 import { isAdministrativeRole } from "@/lib/permissions/roles";
 import { getMyPoints } from "@/lib/points/queries";
@@ -40,7 +41,8 @@ interface ProfilePageProps {
 }
 
 export default async function ProfilePage({ searchParams }: ProfilePageProps) {
-  const { role, user } = await requireSessionPage("/app/perfil");
+  const base = await getCampaignBase();
+  const { role, user } = await requireSessionPage(`${base}/perfil`);
   const [profile, params, points] = await Promise.all([
     getMyProfile(user.id),
     searchParams,
@@ -121,10 +123,10 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
             <div className="mt-6 flex flex-wrap gap-3 text-sm">
               {competes ? (
                 <>
-                  <Link className="pixel-button bg-[var(--accent)] px-4 py-2 font-bold uppercase tracking-wide text-[var(--accent-contrast)]" href="/app/puntos">
+                  <Link className="pixel-button bg-[var(--accent)] px-4 py-2 font-bold uppercase tracking-wide text-[var(--accent-contrast)]" href={`${base}/puntos`}>
                     Ver mis puntos
                   </Link>
-                  <Link className="pixel-button bg-white px-4 py-2 font-bold uppercase tracking-wide" href="/app/ranking">
+                  <Link className="pixel-button bg-white px-4 py-2 font-bold uppercase tracking-wide" href={`${base}/ranking`}>
                     Ver ranking
                   </Link>
                 </>

@@ -7,6 +7,7 @@ import { PixelCard } from "@/components/auth/form-ui";
 import { QuizPlayer } from "@/components/quiz/quiz-player";
 import { QuizResultView } from "@/components/quiz/quiz-result";
 import { requireSessionPage } from "@/lib/auth/guards";
+import { getCampaignBase } from "@/lib/campaign/scope-server";
 import { getQuizResult, listMyQuizzes } from "@/lib/quiz/queries";
 
 export const metadata: Metadata = {
@@ -15,7 +16,8 @@ export const metadata: Metadata = {
 
 export default async function QuizPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  await requireSessionPage("/app/cuestionarios");
+  const base = await getCampaignBase();
+  await requireSessionPage(`${base}/cuestionarios`);
   const quizzes = await listMyQuizzes();
   const quiz = quizzes.find((item) => item.id === id);
 
@@ -28,7 +30,7 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
 
   return (
     <div className="space-y-8">
-      <Link className="inline-flex min-h-10 items-center text-sm font-bold text-[var(--accent-strong)] hover:underline" href="/app/cuestionarios">
+      <Link className="inline-flex min-h-10 items-center text-sm font-bold text-[var(--accent-strong)] hover:underline" href={`${base}/cuestionarios`}>
         ← Todas las trivias
       </Link>
       <header>

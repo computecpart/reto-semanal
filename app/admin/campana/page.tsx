@@ -39,7 +39,12 @@ export default async function CampaignsPage() {
                       {formatDate(campaign.starts_at)} — {formatDate(campaign.ends_at)}
                     </span>
                   </span>
-                  <CampaignStatusBadge status={campaign.status} />
+                  <span className="flex flex-wrap items-center gap-2">
+                    {campaign.is_private ? (
+                      <span className="inline-flex rounded-full bg-sky-100 px-2.5 py-0.5 text-xs font-bold text-sky-900">Privada</span>
+                    ) : null}
+                    <CampaignStatusBadge status={campaign.status} />
+                  </span>
                 </Link>
               </li>
             ))}

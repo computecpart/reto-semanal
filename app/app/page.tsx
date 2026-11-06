@@ -10,6 +10,7 @@ import { readableDigits } from "@/components/ui/readable-digits";
 import { requireSessionPage } from "@/lib/auth/guards";
 import { getAvatar } from "@/lib/avatars";
 import { getPublicLanding } from "@/lib/campaign/queries";
+import { getCampaignBase } from "@/lib/campaign/scope-server";
 import { campaignProgress, nextGoal, pointsBreakdown, pointsByWeek, type NextGoal } from "@/lib/dashboard/stats";
 import { isAdministrativeRole } from "@/lib/permissions/roles";
 import { getMyPoints, getRanking } from "@/lib/points/queries";
@@ -76,15 +77,18 @@ function goalText(goal: NextGoal | null, started: boolean): string {
     : `Te faltan ${pointsLabel(goal.missing)} para alcanzar el puesto #${goal.target}.`;
 }
 
-const ACTIONS: readonly { description: string; href: string; icon: PixelIconName; label: string }[] = [
-  { description: "Responde y suma puntos", href: "/app/cuestionarios", icon: "quiz", label: "Trivias" },
-  { description: "Código o QR de una misión", href: "/app/canjear", icon: "qr", label: "Canjear" },
-  { description: "Tabla de posiciones", href: "/app/ranking", icon: "trophy", label: "Ranking" },
-  { description: "Historial de movimientos", href: "/app/puntos", icon: "points", label: "Mis puntos" },
-];
+function quickActions(base: string): readonly { description: string; href: string; icon: PixelIconName; label: string }[] {
+  return [
+    { description: "Responde y suma puntos", href: `${base}/cuestionarios`, icon: "quiz", label: "Trivias" },
+    { description: "Código o QR de una misión", href: `${base}/canjear`, icon: "qr", label: "Canjear" },
+    { description: "Tabla de posiciones", href: `${base}/ranking`, icon: "trophy", label: "Ranking" },
+    { description: "Historial de movimientos", href: `${base}/puntos`, icon: "points", label: "Mis puntos" },
+  ];
+}
 
 export default async function DashboardPage() {
-  const { role, user } = await requireSessionPage("/app");
+  const base = await getCampaignBase();
+  const { role, user } = await requireSessionPage(base);
   const [profile, points, ranking, quizzes, landing] = await Promise.all([
     getMyProfile(user.id),
     getMyPoints().catch(() => null),
@@ -94,7 +98,7 @@ export default async function DashboardPage() {
   ]);
 
   if (!profile?.profile_completed_at) {
-    redirect("/app/perfil");
+    redirect(`${base}/perfil`);
   }
 
   const competes = !isAdministrativeRole(role);
@@ -182,8 +186,8 @@ export default async function DashboardPage() {
         <Card>
           <CardTitle>Accesos rápidos</CardTitle>
           <ul className="grid grid-cols-2 gap-3">
-            {ACTIONS.map((action) => {
-              const badge = action.href === "/app/cuestionarios" && available.length > 0 ? available.length : null;
+            {quickActions(base).map((action) => {
+              const badge = action.icon === "quiz" && available.length > 0 ? available.length : null;
 
               return (
                 <li key={action.href}>
@@ -214,7 +218,7 @@ export default async function DashboardPage() {
 
       {/* Trivias module */}
       <Card>
-        <CardTitle action={<MoreLink href="/app/cuestionarios">Ver todas</MoreLink>}>Trivias</CardTitle>
+        <CardTitle action={<MoreLink href={`${base}/cuestionarios`}>Ver todas</MoreLink>}>Trivias</CardTitle>
         <div className="grid gap-4 md:grid-cols-[1.4fr_1fr]">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent-strong)]">Disponibles ahora</p>
@@ -230,7 +234,7 @@ export default async function DashboardPage() {
                     </span>
                     <Link
                       className="pixel-button inline-flex min-h-10 items-center bg-[var(--accent)] px-4 text-sm font-bold uppercase text-[var(--accent-contrast)]"
-                      href={`/app/cuestionarios/${quiz.id}`}
+                      href={`${base}/cuestionarios/${quiz.id}`}
                     >
                       {quiz.attempt_status === "started" ? "Continuar" : "Responder"}
                     </Link>
@@ -267,7 +271,7 @@ export default async function DashboardPage() {
       {/* Charts */}
       <div className="grid gap-6 lg:grid-cols-[1.5fr_1fr]">
         <Card>
-          <CardTitle action={<MoreLink href="/app/puntos">Historial</MoreLink>}>Puntos por semana</CardTitle>
+          <CardTitle action={<MoreLink href={`${base}/puntos`}>Historial</MoreLink>}>Puntos por semana</CardTitle>
           {weekly.length > 0 ? (
             <PixelBarChart
               current={progress?.phase === "active" ? progress.week - 1 : -1}
@@ -300,7 +304,7 @@ export default async function DashboardPage() {
       {/* Ranking + activity */}
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
-          <CardTitle action={<MoreLink href="/app/ranking">Ranking</MoreLink>}>Top 5</CardTitle>
+          <CardTitle action={<MoreLink href={`${base}/ranking`}>Ranking</MoreLink>}>Top 5</CardTitle>
           {top.length > 0 ? (
             <ol className="space-y-2">
               {top.map((row) => {
@@ -339,7 +343,7 @@ export default async function DashboardPage() {
         </Card>
 
         <Card>
-          <CardTitle action={<MoreLink href="/app/puntos">Ver todo</MoreLink>}>Actividad reciente</CardTitle>
+          <CardTitle action={<MoreLink href={`${base}/puntos`}>Ver todo</MoreLink>}>Actividad reciente</CardTitle>
           {events.length > 0 ? (
             <ul className="divide-y-2 divide-dashed divide-slate-200">
               {events.slice(0, 5).map((event) => (

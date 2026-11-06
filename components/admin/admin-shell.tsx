@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { CampaignScopeSelect } from "@/components/admin/campaign-scope-select";
 import { NavLinks } from "@/components/app/nav-links";
 import { signOutAction } from "@/lib/auth/actions";
 import { getAvatar } from "@/lib/avatars";
@@ -34,11 +35,15 @@ const ROLE_LABELS: Readonly<Record<AppRole, string>> = {
 export function AdminShell({
   alias,
   avatarId,
+  campaignOptions,
+  campaignValue,
   children,
   role,
 }: {
   alias: string | null;
   avatarId: string | null;
+  campaignOptions: readonly { label: string; value: string }[];
+  campaignValue: string;
   children: ReactNode;
   role: AppRole;
 }) {
@@ -59,6 +64,8 @@ export function AdminShell({
             Ver sitio público ↗
           </Link>
         </div>
+
+        {campaignOptions.length > 0 ? <CampaignScopeSelect campaigns={campaignOptions} value={campaignValue} /> : null}
 
         <nav aria-label="Administración" className="flex gap-1 overflow-x-auto px-3 pb-3 lg:flex-1 lg:flex-col lg:overflow-visible">
           <NavLinks

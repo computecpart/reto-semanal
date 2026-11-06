@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { requireAdminPage } from "@/lib/auth/guards";
+import { getAdminScope } from "@/lib/campaign/queries";
 import { getAdminQuizzes } from "@/lib/quiz/queries";
 import { QUIZ_STATUS_LABELS } from "@/lib/quiz/schema";
 import { OPERATIONAL_TIME_ZONE } from "@/lib/time-zone";
@@ -22,7 +23,8 @@ function isActive(quiz: { closes_at: string; opens_at: string; status: string },
 
 export default async function AdminQuizzesPage() {
   await requireAdminPage();
-  const quizzes = await getAdminQuizzes();
+  const { campaign } = await getAdminScope();
+  const quizzes = campaign ? await getAdminQuizzes(campaign.id) : [];
   // eslint-disable-next-line react-hooks/purity -- server component, rendered per request.
   const now = Date.now();
 

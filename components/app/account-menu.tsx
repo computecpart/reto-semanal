@@ -6,23 +6,29 @@ import { useEffect, useId, useState } from "react";
 
 import { signOutAction } from "@/lib/auth/actions";
 
-const LINKS = [
-  { href: "/app", label: "Inicio" },
-  { href: "/app/perfil", label: "Mi pasaporte" },
-  { href: "/app/puntos", label: "Mis puntos" },
-  { href: "/", label: "Portada de la campaña" },
-  { href: "/reglas", label: "Reglas de participación" },
-  { href: "/privacidad", label: "Política de privacidad" },
-] as const;
+function menuLinks(base: string) {
+  const main = base === "/app";
+
+  return [
+    { href: base, label: "Inicio" },
+    { href: `${base}/perfil`, label: "Mi pasaporte" },
+    { href: `${base}/puntos`, label: "Mis puntos" },
+    ...(main ? [{ href: "/", label: "Portada de la campaña" }] : []),
+    { href: main ? "/reglas" : `${base}/reglas`, label: "Reglas de participación" },
+    { href: "/privacidad", label: "Política de privacidad" },
+  ];
+}
 
 /** Account dropdown of the participant header: profile, campaign pages and sign out. */
 export function AccountMenu({
   alias,
   avatarSrc,
+  base,
   isAdmin,
 }: {
   alias: string | null;
   avatarSrc: string | null;
+  base: string;
   isAdmin: boolean;
 }) {
   const [open, setOpen] = useState(false);
@@ -78,7 +84,7 @@ export function AccountMenu({
                 Consola de administración
               </Link>
             ) : null}
-            {LINKS.map((link) => (
+            {menuLinks(base).map((link) => (
               <Link className={item} href={link.href} key={link.href} onClick={close}>
                 {link.label}
               </Link>

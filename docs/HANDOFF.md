@@ -98,6 +98,24 @@ de tocar código.
   sáb 24/10 08:00 al vie 30/10 23:59 SV. Auditoría `maintenance.reset_test_data`. Copia local de las filas borradas en el
   scratchpad de la sesión. Con todos en 0 la app no muestra posición (todos empatan en #1).
   21:52 SV: eliminadas las 3 misiones de prueba y sus códigos (`mission.delete_all` en Auditoría); no hay misiones creadas.
+- **Campañas privadas (06/11, rama `feature/campanas-privadas`, AÚN NO en producción):** migración
+  `20261106000000_private_campaigns`. Varias campañas privadas pueden estar publicadas junto a la principal (pública), con
+  sus propias trivias, misiones, puntos, ranking, reglas y portada, y las mismas cuentas.
+  - **Cómo funciona:** `/c/<slug>/…` reutiliza las pantallas de `/app`: `lib/supabase/proxy.ts` reescribe la ruta y añade
+    la cabecera `x-campaign` (solo el proxy la pone; la del cliente se descarta). `lib/supabase/server.ts` la reenvía a
+    PostgREST y `private.current_campaign_id()` la lee vía `private.requested_campaign_id()`: solo vale para miembros y
+    staff; cualquier otro sigue en la principal. Sin cabecera, el resultado es el mismo de antes, por eso las RPC existentes
+    no se reescribieron. En `/admin`, la cabecera sale de la cookie `admin_campaign` (selector «Trabajando en»).
+  - **Entrada:** `/unirse/<token>` (portada de la campaña) → registro `/registro?invitacion=<token>` o login →
+    `/unirse/<token>/aceptar`. El panel admin de cada campaña muestra el enlace, WhatsApp, pausar y regenerar.
+  - **Cuentas solo invitadas:** `private.private_only_accounts` las deja fuera del ranking, la rifa y el directorio de la
+    principal; `/app` las redirige a su campaña y pueden sumarse a la principal con `join_primary_campaign`.
+  - **Barrera:** el trigger `enforce_campaign_participation` en `point_events`, `quiz_attempts` y `reward_redemptions`
+    exige `private.user_in_campaign(usuario, campaña)` en cada escritura.
+  - **Limitación:** el estado del participante es global: suspender o descalificar aplica en todas sus campañas.
+  - **Verificado en local:** foto de ranking, puntos, intentos, portada, reglas y rifa idéntica antes y después de migrar sobre
+    datos existentes; `npm run test:db` (14) y recorrido en navegador (36 pasos, en scratchpad).
+  - **Para publicar:** ver «Campañas privadas» en `README_PRODUCTION.md`. Orden obligatorio: migración primero, web después.
 - Los usuarios existentes deben aceptar las reglas v3 al entrar a `/app` (comportamiento esperado).
 
 ## 1. Qué es y calendario

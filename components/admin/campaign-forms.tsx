@@ -106,6 +106,16 @@ export function CreateCampaignForm() {
           <FieldError id="slug-error">{state.fieldErrors.slug}</FieldError>
         </div>
       </div>
+      <label className="flex items-start gap-3 text-sm text-slate-800">
+        <input className="mt-0.5 size-4 accent-sky-700" name="isPrivate" type="checkbox" />
+        <span>
+          <span className="font-semibold">Campaña privada con enlace de invitación.</span>{" "}
+          <span className="text-slate-600">
+            Funciona al mismo tiempo que la campaña principal, en su propia dirección y con sus propios puntos. Solo entra
+            quien tenga el enlace.
+          </span>
+        </span>
+      </label>
       <p className="text-sm text-slate-600">
         Se crea en borrador con una portada de ejemplo que podrás editar sección por sección.
       </p>

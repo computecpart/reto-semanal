@@ -4,6 +4,8 @@ import type { ReactNode } from "react";
 
 import { SiteHeader } from "@/components/site/site-header";
 import { getSiteBranding } from "@/lib/campaign/queries";
+import { campaignBase } from "@/lib/campaign/scope";
+import { getCampaignSlug } from "@/lib/campaign/scope-server";
 import { themeStyle } from "@/lib/landing/theme";
 
 /** Rules, privacy and acceptance pages, styled like the rest of the campaign. */
@@ -18,7 +20,7 @@ export async function LegalPage({
   title: string;
   updatedAt?: string;
 }) {
-  const branding = await getSiteBranding();
+  const [branding, slug] = await Promise.all([getSiteBranding(), getCampaignSlug()]);
 
   return (
     <div className="flex min-h-screen flex-col bg-[var(--color-paper)] text-[var(--color-ink)]" style={themeStyle(branding.theme)}>
@@ -36,7 +38,7 @@ export async function LegalPage({
         </article>
       </main>
       <footer className="border-t-4 border-[var(--color-ink)] px-4 py-6">
-        <LegalLinks />
+        <LegalLinks rulesHref={slug ? `${campaignBase(slug)}/reglas` : undefined} />
       </footer>
     </div>
   );
@@ -63,12 +65,12 @@ export function OrganizerBadge() {
   );
 }
 
-export function LegalLinks() {
+export function LegalLinks({ rulesHref = "/reglas" }: { rulesHref?: string }) {
   return (
     <div className="flex flex-col items-center gap-4">
       <OrganizerBadge />
       <nav aria-label="Información legal" className="flex flex-wrap justify-center gap-x-5 text-sm">
-        <Link className={footerLink} href="/reglas">
+        <Link className={footerLink} href={rulesHref}>
           Reglas de participación
         </Link>
         <Link className={footerLink} href="/privacidad">

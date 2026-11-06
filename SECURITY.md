@@ -18,6 +18,15 @@
   canje por persona y misión (código o QR), límite de 10 fallos / 10 min, y un enlace de QR nunca canjea por sí solo.
 - **Auditoría** `private.audit_log` de solo inserción (triggers bloquean UPDATE/DELETE/TRUNCATE).
 
+## Campañas privadas
+
+- La cabecera `x-campaign` es una petición, no un permiso: `private.requested_campaign_id()` la ignora si quien llama no es
+  miembro ni staff, y entonces responde la campaña principal. El proxy descarta la que envíe el navegador.
+- Fuera de una campaña, `/c/<slug>` responde 404. Sin sesión, redirige al inicio de sesión.
+- El token de invitación tiene 122 bits aleatorios, no se incluye en la auditoría y solo el staff puede leerlo. Se puede
+  pausar o reemplazar. Quien tenga el enlace puede unirse: es un enlace compartible, no una credencial personal.
+- `get_campaign_invite` solo devuelve datos con un token válido, activo y de una campaña publicada.
+
 ## Superficie pública
 
 Funciones ejecutables sin sesión: `get_public_landing`, `get_current_rules`, `get_public_quizzes`, `get_ranking`,

@@ -5,7 +5,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { LegalLinks } from "@/components/legal/legal-page";
 import { SafeMarkdown } from "@/components/markdown/safe-markdown";
 import { RankingTable } from "@/components/points/ranking-table";
-import { SiteHeaderView, type SiteNavLink } from "@/components/site/site-header";
+import { DEFAULT_SITE_ACTIONS, SiteHeaderView, type SiteActions, type SiteNavLink } from "@/components/site/site-header";
 import { readableDigits } from "@/components/ui/readable-digits";
 import { getAvatar } from "@/lib/avatars";
 import type { PublicCampaign } from "@/lib/campaign/queries";
@@ -19,10 +19,12 @@ import { OPERATIONAL_TIME_ZONE } from "@/lib/time-zone";
 import { Countdown } from "./countdown";
 
 interface RenderContext {
+  actions: SiteActions;
   campaign: PublicCampaign;
   dark: boolean;
   primaryLabel: string;
   quizzes: readonly PublicQuiz[];
+  rulesHref: string;
   ranking: readonly RankingRow[];
   signedIn: boolean;
 }
@@ -37,12 +39,12 @@ const SECTION_ANCHORS: Partial<Record<LandingSection["type"], { anchor: string; 
   steps: { anchor: "como-participar", label: "Cómo participar" },
 };
 
-function ctaHref(target: CtaTarget, signedIn: boolean): string {
+function ctaHref(target: CtaTarget, context: RenderContext): string {
   if (target === "reglas") {
-    return "/reglas";
+    return context.rulesHref;
   }
 
-  return signedIn ? "/app" : target === "login" ? "/login" : "/registro";
+  return context.signedIn ? context.actions.member : target === "login" ? context.actions.login : context.actions.register;
 }
 
 function formatInstant(value: string | null): string | null {
@@ -180,11 +182,11 @@ function HeroSection({ context, section }: { context: RenderContext; section: Se
         </ul>
       ) : null}
       <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-        <PrimaryLink href={ctaHref("registro", context.signedIn)}>
-          {context.signedIn ? "Ir a mi pasaporte" : section.primaryCtaLabel}
+        <PrimaryLink href={ctaHref("registro", context)}>
+          {context.signedIn ? signedInLabel(context) : section.primaryCtaLabel}
         </PrimaryLink>
         {section.secondaryCtaLabel && !context.signedIn ? (
-          <SecondaryLink href="/login">{section.secondaryCtaLabel}</SecondaryLink>
+          <SecondaryLink href={context.actions.login}>{section.secondaryCtaLabel}</SecondaryLink>
         ) : null}
       </div>
       {section.showCountdown ? (
@@ -264,7 +266,7 @@ function PrizeSection({ context, section }: { context: RenderContext; section: S
             <p className="relative mt-5 border-l-4 border-[var(--accent)] pl-4 text-sm leading-6 opacity-80">{section.note}</p>
           ) : null}
           {!context.signedIn ? (
-            <PrimaryLink className="relative mt-6 w-full sm:w-auto" href="/registro">
+            <PrimaryLink className="relative mt-6 w-full sm:w-auto" href={context.actions.register}>
               {context.primaryLabel}
             </PrimaryLink>
           ) : null}
@@ -396,8 +398,8 @@ function CtaSection({ context, section }: { context: RenderContext; section: Sec
           {section.body ? <p className="mt-3 max-w-xl text-lg opacity-90">{section.body}</p> : null}
         </div>
         <div className="relative w-full sm:w-auto [&>a]:w-full">
-          <SecondaryLink href={ctaHref(section.target, context.signedIn)}>
-            {context.signedIn && section.target !== "reglas" ? "Ir a mi pasaporte" : section.ctaLabel}
+          <SecondaryLink href={ctaHref(section.target, context)}>
+            {context.signedIn && section.target !== "reglas" ? signedInLabel(context) : section.ctaLabel}
           </SecondaryLink>
         </div>
       </div>
@@ -470,7 +472,7 @@ function RankingPreviewSection({ context, section }: { context: RenderContext; s
               : "Responde la próxima trivia o completa una misión para aparecer en el Top."}
           </p>
           {!context.signedIn ? (
-            <PrimaryLink className="relative mt-6" href="/registro">
+            <PrimaryLink className="relative mt-6" href={context.actions.register}>
               {context.primaryLabel}
             </PrimaryLink>
           ) : null}
@@ -585,24 +587,32 @@ function renderSection(section: LandingSection, context: RenderContext) {
   }
 }
 
+function signedInLabel(context: RenderContext): string {
+  return context.actions === DEFAULT_SITE_ACTIONS ? "Ir a mi pasaporte" : context.actions.memberLabel;
+}
+
 export function LandingPage({
+  actions = DEFAULT_SITE_ACTIONS,
   campaign,
   content,
   quizzes = [],
   ranking = [],
+  rulesHref = "/reglas",
   signedIn,
 }: {
+  actions?: SiteActions;
   campaign: PublicCampaign;
   content: LandingContent;
   quizzes?: readonly PublicQuiz[];
   ranking?: readonly RankingRow[];
+  rulesHref?: string;
   signedIn: boolean;
 }) {
   const dark = content.theme.surface === "oscuro";
   const sections = content.sections.filter((section) => section.visible);
   const hero = sections.find((section) => section.type === "hero");
   const primaryLabel = hero?.type === "hero" ? hero.primaryCtaLabel : "Crear mi pasaporte";
-  const context: RenderContext = { campaign, dark, primaryLabel, quizzes, ranking, signedIn };
+  const context: RenderContext = { actions, campaign, dark, primaryLabel, quizzes, ranking, rulesHref, signedIn };
   const logoUrl = landingAssetUrl(content.theme.logo?.path);
   // In-page anchors for the menu: the first visible section of each kind.
   const anchors = new Map<string, string>();
@@ -618,7 +628,7 @@ export function LandingPage({
     }
   }
 
-  navLinks.push({ href: "/reglas", label: "Reglas" });
+  navLinks.push({ href: rulesHref, label: "Reglas" });
   const surface = dark
     ? {
         // On dark surfaces the darker "strong" shade lacks contrast; use the light tint.
@@ -635,6 +645,7 @@ export function LandingPage({
       style={{ ...themeStyle(content.theme), ...surface } as CSSProperties}
     >
       <SiteHeaderView
+        actions={actions}
         campaignName={campaign.name}
         dark={dark}
         links={navLinks}
@@ -653,13 +664,13 @@ export function LandingPage({
       <footer
         className={`border-t-2 border-[var(--frame)] px-4 pt-8 ${signedIn ? "pb-8" : "pb-28 sm:pb-8"}`}
       >
-        <LegalLinks />
+        <LegalLinks rulesHref={rulesHref} />
       </footer>
 
       {/* Persistent call to action on phones: the page's main conversion goal. */}
       {!signedIn ? (
         <div className="fixed inset-x-0 bottom-0 z-40 border-t-2 border-[var(--frame)] bg-[var(--landing-page)]/95 px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur sm:hidden">
-          <PrimaryLink className="w-full" href="/registro">
+          <PrimaryLink className="w-full" href={actions.register}>
             {primaryLabel}
           </PrimaryLink>
         </div>

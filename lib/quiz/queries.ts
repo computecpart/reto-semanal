@@ -62,11 +62,12 @@ export interface AdminQuizSummary {
   title: string;
 }
 
-export async function getAdminQuizzes(): Promise<AdminQuizSummary[]> {
+export async function getAdminQuizzes(campaignId: string): Promise<AdminQuizSummary[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("quizzes")
     .select("id, title, status, opens_at, closes_at, locked_at")
+    .eq("campaign_id", campaignId)
     .order("opens_at", { ascending: false })
     .returns<AdminQuizSummary[]>();
 

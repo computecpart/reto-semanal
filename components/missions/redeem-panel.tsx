@@ -61,8 +61,10 @@ export function RedeemPanel({ initialCode, origin }: { initialCode: string | nul
   // A QR link (?c=) only pre-loads the mission; redeeming still needs a click.
   useEffect(() => {
     if (initialCode && !loadedInitial.current) {
-      loadedInitial.current = true;
-      const timer = window.setTimeout(() => check(initialCode, "qr"), 0);
+      const timer = window.setTimeout(() => {
+        loadedInitial.current = true;
+        check(initialCode, "qr");
+      }, 0);
       return () => window.clearTimeout(timer);
     }
   });

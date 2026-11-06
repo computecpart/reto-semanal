@@ -20,12 +20,12 @@ export function formatCode(value: string): string {
   return code.length === 8 ? `${code.slice(0, 4)}-${code.slice(4)}` : code;
 }
 
-export function redeemUrl(origin: string, code: string): string {
-  return `${origin.replace(/\/$/, "")}/app/canjear?c=${formatCode(code)}`;
+export function redeemUrl(origin: string, code: string, base = "/app"): string {
+  return `${origin.replace(/\/$/, "")}${base}/canjear?c=${formatCode(code)}`;
 }
 
 /**
- * Accepts only links to this site's /app/canjear with a well-formed code.
+ * Accepts only links to this site's redeem page with a well-formed code.
  * Anything else read by the scanner is rejected and never opened.
  */
 export function parseScannedRedeemUrl(origin: string, scanned: string): string | null {
@@ -37,7 +37,7 @@ export function parseScannedRedeemUrl(origin: string, scanned: string): string |
     return null;
   }
 
-  if (url.origin !== origin || url.pathname !== "/app/canjear") {
+  if (url.origin !== origin || !/^\/(?:app|c\/[a-z0-9-]+)\/canjear$/.test(url.pathname)) {
     return null;
   }
 

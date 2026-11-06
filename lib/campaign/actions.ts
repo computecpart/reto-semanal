@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { getAuthContext } from "@/lib/auth/get-auth-context";
@@ -11,6 +12,8 @@ import { collectFieldErrors, type ProfileFormState } from "@/lib/profile/form-st
 import { createClient } from "@/lib/supabase/server";
 
 import { getCampaignRpcErrorMessage } from "./rpc-errors";
+import { ADMIN_CAMPAIGN_COOKIE, campaignBase, isCampaignSlug } from "./scope";
+import { getCampaignBase } from "./scope-server";
 import {
   campaignDetailsSchema,
   campaignIdentitySchema,
@@ -76,8 +79,144 @@ export async function createCampaignAction(
     return failure(getCampaignRpcErrorMessage(error ?? {}));
   }
 
+  if (formData.get("isPrivate") === "on") {
+    const { error: typeError } = await supabase.rpc("admin_set_campaign_private", {
+      p_campaign_id: data,
+      p_private: true,
+    });
+
+    if (typeError) {
+      return failure(getCampaignRpcErrorMessage(typeError));
+    }
+  }
+
   revalidatePath("/admin", "layout");
   redirect(`/admin/campana/${data}`);
+}
+
+export async function setCampaignPrivateAction(
+  _previous: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const campaignId = text(formData, "campaignId");
+
+  if (!UUID_PATTERN.test(campaignId) || !(await isAdminSession())) {
+    return failure("No tienes permiso para esta operación.");
+  }
+
+  const isPrivate = text(formData, "isPrivate") === "true";
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_set_campaign_private", {
+    p_campaign_id: campaignId,
+    p_private: isPrivate,
+  });
+
+  if (error) {
+    return failure(getCampaignRpcErrorMessage(error));
+  }
+
+  revalidateCampaign(campaignId);
+  return success(isPrivate ? "La campaña ahora es privada." : "La campaña ahora es pública.");
+}
+
+export async function regenerateCampaignInviteAction(
+  _previous: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const campaignId = text(formData, "campaignId");
+
+  if (!UUID_PATTERN.test(campaignId) || !(await isAdminSession())) {
+    return failure("No tienes permiso para esta operación.");
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_regenerate_campaign_invite", { p_campaign_id: campaignId });
+
+  if (error) {
+    return failure(getCampaignRpcErrorMessage(error));
+  }
+
+  revalidateCampaign(campaignId);
+  return success("Enlace nuevo creado. El anterior ya no funciona.");
+}
+
+export async function setCampaignInviteAction(
+  _previous: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const campaignId = text(formData, "campaignId");
+
+  if (!UUID_PATTERN.test(campaignId) || !(await isAdminSession())) {
+    return failure("No tienes permiso para esta operación.");
+  }
+
+  const enabled = text(formData, "enabled") === "true";
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_set_campaign_invite", {
+    p_campaign_id: campaignId,
+    p_enabled: enabled,
+  });
+
+  if (error) {
+    return failure(getCampaignRpcErrorMessage(error));
+  }
+
+  revalidateCampaign(campaignId);
+  return success(enabled ? "El enlace vuelve a aceptar personas." : "Enlace pausado: nadie nuevo puede unirse.");
+}
+
+/** Chooses the campaign the console works on. Empty means the main campaign. */
+export async function selectAdminCampaignAction(slug: string): Promise<void> {
+  if (!(await isAdminSession())) {
+    return;
+  }
+
+  const store = await cookies();
+
+  if (isCampaignSlug(slug)) {
+    store.set(ADMIN_CAMPAIGN_COOKIE, slug, {
+      httpOnly: true,
+      path: "/",
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+    });
+  } else {
+    store.delete(ADMIN_CAMPAIGN_COOKIE);
+  }
+
+  revalidatePath("/admin", "layout");
+}
+
+export async function joinCampaignAction(
+  _previous: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  if (!(await getAuthContext())) {
+    return failure("Tu sesión expiró. Vuelve a iniciar sesión.");
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("join_campaign", { p_token: text(formData, "token") });
+
+  if (error || typeof data !== "string") {
+    return failure(getCampaignRpcErrorMessage(error ?? {}));
+  }
+
+  revalidatePath("/app", "layout");
+  redirect(campaignBase(data));
+}
+
+/** Invited accounts stay out of the main campaign until they choose to join. */
+export async function joinPrimaryCampaignAction(): Promise<void> {
+  if (!(await getAuthContext())) {
+    redirect("/login");
+  }
+
+  const supabase = await createClient();
+  await supabase.rpc("join_primary_campaign");
+
+  revalidatePath("/app", "layout");
+  redirect("/app");
 }
 
 export async function updateCampaignAction(
@@ -296,5 +435,5 @@ export async function acceptRulesAction(_previous: ActionState): Promise<ActionS
   }
 
   revalidatePath("/app", "layout");
-  redirect("/app");
+  redirect(await getCampaignBase());
 }
