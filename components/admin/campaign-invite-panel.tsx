@@ -61,7 +61,7 @@ export function CampaignInvitePanel({
         <p className="rounded-lg bg-amber-50 p-3 font-semibold text-amber-900">
           {campaign.status === "published"
             ? "El enlace está pausado: nadie nuevo puede unirse."
-            : "El enlace funcionará cuando publiques la campaña."}
+            : "El enlace funcionará cuando publiques la campaña: en «Estado», más abajo, elige «Publicada»."}
         </p>
       ) : null}
 
@@ -106,7 +106,11 @@ export function CampaignInvitePanel({
           <Hidden name="campaignId" value={campaign.id} />
         </ActionForm>
         {draft ? (
-          <ActionForm action={setCampaignPrivateAction} submitLabel="Convertir en pública">
+          <ActionForm
+            action={setCampaignPrivateAction}
+            confirm="Una campaña pública ocupa la portada principal y no se puede publicar mientras otra pública siga publicada. Para que funcione junto a la principal debe seguir siendo privada. ¿Cambiarla a pública de todos modos?"
+            submitLabel="Cambiar a campaña pública"
+          >
             <Hidden name="campaignId" value={campaign.id} />
             <Hidden name="isPrivate" value="false" />
           </ActionForm>

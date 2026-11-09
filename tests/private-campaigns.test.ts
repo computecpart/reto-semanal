@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 import { getSafePostLoginPath } from "@/lib/auth/safe-redirect";
+import { getCampaignRpcErrorMessage } from "@/lib/campaign/rpc-errors";
 import { campaignBase, isCampaignSlug, parseCampaignPath } from "@/lib/campaign/scope";
 import { parseScannedRedeemUrl, redeemUrl } from "@/lib/missions/schema";
 
@@ -47,6 +48,14 @@ describe("URL de una campaña privada", () => {
     expect(isCampaignSlug(null)).toBe(false);
     expect(campaignBase(null)).toBe("/app");
     expect(campaignBase("interna")).toBe("/c/interna");
+  });
+});
+
+describe("publicar una segunda campaña", () => {
+  it("si choca con la principal, explica cómo tener las dos activas", () => {
+    const message = getCampaignRpcErrorMessage({ code: "55000", message: "Ya existe otra campaña publicada." });
+
+    expect(message).toContain("conviértela en campaña privada");
   });
 });
 

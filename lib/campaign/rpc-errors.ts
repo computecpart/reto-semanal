@@ -29,6 +29,10 @@ export function getCampaignRpcErrorMessage(error: DatabaseErrorLike): string {
     return "Algún dato no cumple el formato permitido. Revisa nombre, slug y fechas.";
   }
 
+  if (error.message === "Ya existe otra campaña publicada.") {
+    return "Ya hay una campaña pública publicada y solo puede haber una. Para tener las dos activas, conviértela en campaña privada en «Tipo de campaña e invitación» y vuelve a publicarla.";
+  }
+
   if (error.message && DATABASE_MESSAGES.has(error.message)) {
     return error.message;
   }

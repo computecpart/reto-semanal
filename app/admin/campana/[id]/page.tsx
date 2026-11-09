@@ -44,7 +44,7 @@ export default async function CampaignPage({ params }: { params: Promise<{ id: s
 
       <section className={cardClassName}>
         <h2 className="mb-5 text-lg font-bold">Estado</h2>
-        <CampaignStatusForm campaignId={campaign.id} status={campaign.status} />
+        <CampaignStatusForm campaignId={campaign.id} isPrivate={campaign.is_private} status={campaign.status} />
       </section>
     </div>
   );

@@ -205,7 +205,15 @@ export function CampaignDetailsForm({ campaign }: { campaign: CampaignFormValues
   );
 }
 
-export function CampaignStatusForm({ campaignId, status }: { campaignId: string; status: CampaignStatus }) {
+export function CampaignStatusForm({
+  campaignId,
+  isPrivate,
+  status,
+}: {
+  campaignId: string;
+  isPrivate: boolean;
+  status: CampaignStatus;
+}) {
   const { onSubmit, pending, state } = useTransitionForm(setCampaignStatusAction);
   const transitions = getAllowedTransitions(status);
 
@@ -238,7 +246,10 @@ export function CampaignStatusForm({ campaignId, status }: { campaignId: string;
         </div>
       </div>
       <p className="text-sm text-slate-600">
-        Publicar exige fechas, reglas publicadas y la portada publicada.
+        Publicar exige fechas, reglas publicadas y la portada publicada.{" "}
+        {isPrivate
+          ? "Al ser privada, puede estar publicada al mismo tiempo que la campaña principal."
+          : "Solo puede haber una campaña pública publicada: para tener otra activa a la vez, márcala como privada en «Tipo de campaña e invitación»."}
       </p>
       <SubmitButton className="sm:w-auto" pending={pending} pendingLabel="Aplicando…" type="submit">
         Cambiar estado
