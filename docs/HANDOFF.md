@@ -130,7 +130,9 @@ de tocar código.
     Elegir una tarjeta (`chooseCampaignAction`) guarda la cookie `campaign_choice` 6 h: con la sesión ya abierta, entrar a
     `/app` sin esa cookie vuelve a preguntar; los enlaces directos (`/c/<slug>/…`, `/app/canjear?c=…`) nunca preguntan.
     Abrir la invitación siendo miembro (`/unirse/<token>` y `/aceptar`) lleva a la elección. Cerrar sesión borra la cookie.
-    Recorrido local 48/48 (`pw/e2e.mjs` en scratchpad).
+    Recorrido local 48/48 (`pw/e2e.mjs` en scratchpad). **Desplegado el 09/11/2026 a las 12:16 SV** (`01e8abe`), junto
+    con títulos sin ligaduras fi/fl, el aviso de verificación para cuentas existentes y las aclaraciones del panel de
+    campañas; 0 errores en Supabase y Vercel tras el despliegue.
   - **Pendiente de comprobar con la primera campaña privada real** (no se pudo sin una cuenta de staff): que la cabecera
     `x-campaign` atraviese el gateway de Supabase (con «Trabajando en» = la privada, `/admin/participantes` no debe
     listar a los participantes de MSI) y que llegue el código por correo al registrarse desde una invitación.
