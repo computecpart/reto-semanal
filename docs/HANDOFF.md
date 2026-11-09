@@ -69,7 +69,8 @@ de tocar código.
   300×227; reemplazable por una versión en mayor resolución con el mismo nombre).
 - **Avatares 25–36 (09/11):** Slime, Mono, Ninja, Caballero, Mago, Alien, Unicornio, León, Conejo, Perro, Ajolote y
   Mapache (diseños propios, mismo generador). Migración `20261109180000_avatars_36` amplía la restricción a
-  `avatar-01..36`. Orden obligatorio al publicar: migración primero, web después (si no, elegir uno nuevo falla).
+  `avatar-01..36`. **Publicado el 09/11/2026 (~14:35 SV):** migración primero y web después; 36 avatares en `/registro`, 0 errores.
+  Nota: si el CLI falla con «Connection terminated unexpectedly», la red local bloquea la salida al puerto 5432 (cambiar de red).
 - **Fase 8 entregada:** auditoría de solo lectura y `docs/CHECKLIST_LANZAMIENTO.md` (listo, pendientes, manual,
   riesgos y orden). Todas las fases 0–8 completas. Supabase local (Docker) solo se usa para pruebas; está detenido.
 - **Repaso UX móvil (21/10):** auditoría con Playwright a 360 y 1280 px de todas las rutas (0 desbordes). Participante:
