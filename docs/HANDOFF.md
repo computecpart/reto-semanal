@@ -116,6 +116,14 @@ de tocar código.
   - **Verificado en local:** foto de ranking, puntos, intentos, portada, reglas y rifa idéntica antes y después de migrar sobre
     datos existentes; `npm run test:db` (14) y recorrido en navegador (36 pasos, en scratchpad).
   - **Para publicar:** ver «Campañas privadas» en `README_PRODUCTION.md`. Orden obligatorio: migración primero, web después.
+  - **Publicado el 09/11/2026 (08:05 SV, lunes sin actividad en vivo):** respaldo del día; `db push --remote` solo con
+    `20261106000000`; foto de MSI idéntica antes y después (ranking, rifa, puntos, intentos, canjes, campañas, perfiles,
+    estados, roles, aceptaciones, trivias, misiones, portada, reglas y 6 RPC públicas); web desde `main` (`c726177`);
+    19 rutas, navegador a 360/1280 sin errores ni desbordes; advisors sin ERROR (solo los INFO/WARN esperados de las
+    tablas y RPC nuevas); 0 errores en Supabase y Vercel tras publicar.
+  - **Pendiente de comprobar con la primera campaña privada real** (no se pudo sin una cuenta de staff): que la cabecera
+    `x-campaign` atraviese el gateway de Supabase (con «Trabajando en» = la privada, `/admin/participantes` no debe
+    listar a los participantes de MSI) y que llegue el código por correo al registrarse desde una invitación.
 - Los usuarios existentes deben aceptar las reglas v3 al entrar a `/app` (comportamiento esperado).
 
 ## 1. Qué es y calendario
