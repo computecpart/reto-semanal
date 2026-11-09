@@ -23,6 +23,18 @@ export const AVATAR_IDS = [
   "avatar-22",
   "avatar-23",
   "avatar-24",
+  "avatar-25",
+  "avatar-26",
+  "avatar-27",
+  "avatar-28",
+  "avatar-29",
+  "avatar-30",
+  "avatar-31",
+  "avatar-32",
+  "avatar-33",
+  "avatar-34",
+  "avatar-35",
+  "avatar-36",
 ] as const;
 
 export type AvatarId = (typeof AVATAR_IDS)[number];
@@ -58,6 +70,18 @@ const AVATAR_LABELS: Readonly<Record<AvatarId, string>> = {
   "avatar-22": "Ballena",
   "avatar-23": "Control",
   "avatar-24": "Pollito",
+  "avatar-25": "Slime",
+  "avatar-26": "Mono",
+  "avatar-27": "Ninja",
+  "avatar-28": "Caballero",
+  "avatar-29": "Mago",
+  "avatar-30": "Alien",
+  "avatar-31": "Unicornio",
+  "avatar-32": "León",
+  "avatar-33": "Conejo",
+  "avatar-34": "Perro",
+  "avatar-35": "Ajolote",
+  "avatar-36": "Mapache",
 };
 
 export const AVATARS: readonly AvatarOption[] = AVATAR_IDS.map((id) => ({

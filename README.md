@@ -69,7 +69,7 @@ solo admite versiones menores que 6.1.
   `America/El_Salvador`, con la misma semántica en TypeScript y PostgreSQL.
 - `/admin` se protege en tres capas: redirección optimista en `proxy.ts`,
   guarda en el layout y guarda en cada página.
-- Avatares: catálogo cerrado de 12 SVG pixel-art originales en
+- Avatares: catálogo cerrado de 36 SVG pixel-art originales en
   `public/avatars/`, regenerables con `npm run avatars:generate`. No hay subida
   de fotografías.
 

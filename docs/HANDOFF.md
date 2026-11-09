@@ -67,6 +67,9 @@ de tocar código.
   `20261022050000_more_avatars` amplía la restricción a `avatar-01..24`; generador `scripts/generate-avatars.mjs`
   con dibujos 16×16 en ASCII). El logo de Digit@l Solutions es el **original** (`public/brand/digital-solutions.png`,
   300×227; reemplazable por una versión en mayor resolución con el mismo nombre).
+- **Avatares 25–36 (09/11):** Slime, Mono, Ninja, Caballero, Mago, Alien, Unicornio, León, Conejo, Perro, Ajolote y
+  Mapache (diseños propios, mismo generador). Migración `20261109180000_avatars_36` amplía la restricción a
+  `avatar-01..36`. Orden obligatorio al publicar: migración primero, web después (si no, elegir uno nuevo falla).
 - **Fase 8 entregada:** auditoría de solo lectura y `docs/CHECKLIST_LANZAMIENTO.md` (listo, pendientes, manual,
   riesgos y orden). Todas las fases 0–8 completas. Supabase local (Docker) solo se usa para pruebas; está detenido.
 - **Repaso UX móvil (21/10):** auditoría con Playwright a 360 y 1280 px de todas las rutas (0 desbordes). Participante:
@@ -347,8 +350,8 @@ una API de Next, leer su guía en `node_modules/next/dist/docs/`.
     `--accent-contrast`.
   - El participante ve el estilo pixel; el admin es sobrio (slate/sky).
   - Respeta `prefers-reduced-motion`. Sin emojis.
-- **Avatares:** 12 SVG generados por `scripts/generate-avatars.mjs`. Restricción
-  SQL `^avatar-(0[1-9]|1[0-2])$`.
+- **Avatares:** 36 SVG generados por `scripts/generate-avatars.mjs`. Restricción
+  SQL `^avatar-(0[1-9]|[12][0-9]|3[0-6])$` (última: `20261109180000_avatars_36`).
 - **Tests:** `tests/*.test.ts`.
   - `tests/migrations.test.ts` verifica invariantes estáticas del SQL: RLS en
     toda tabla creada, ningún grant de escritura, RPC admin con `require_role`

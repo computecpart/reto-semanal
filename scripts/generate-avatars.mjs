@@ -226,6 +226,115 @@ export const AVATAR_SPECS = [
     ],
     bg: "#a7f3d0", id: "avatar-24", label: "Pollito", palette: { o: "#f97316", y: "#fde047" },
   },
+  {
+    art: [
+      "................", "........b.......", ".......bb.......", "......bbbb......",
+      ".....bbbbbb.....", "....bblbbbbb....", "...bblbbbbbbb...", "..bblbbbbbbbbb..",
+      "..bbbkbbbbkbbb..", ".bbbbkbbbbkbbbb.", ".bbpbbbkkbbbpbb.", ".dbbbbbbbbbbbbd.",
+      "..dddddddddddd..", "................", "................", "................",
+    ],
+    bg: "#fef3c7", id: "avatar-25", label: "Slime", palette: { b: "#38bdf8", d: "#0369a1", l: "#e0f2fe", p: "#f9a8d4" },
+  },
+  {
+    art: [
+      "................", "......mmmm......", ".....mmmmmm.....", "....mmmmmmmm....",
+      "...mmffmmffmm...", ".ccmffffffffmcc.", ".cfmfkffffkfmfc.", ".ccmffffffffmcc.",
+      "...mmffffffmm...", "...mfffkkfffm...", "...mfkffffkfm...", "....mffkkffm....",
+      ".....mmmmmm.....", "................", "................", "................",
+    ],
+    bg: "#86efac", id: "avatar-26", label: "Mono", palette: { c: "#6b3e1a", f: "#fcd9b6", m: "#8b5a2b" },
+  },
+  {
+    art: [
+      "................", ".....nnnnnn.....", "....nnnnnnnn....", "...rrrrrrrrrrrr.",
+      "...nnnnnnnnnnrr.", "...nkkffffkkn.r.", "...nfkffffkfn...", "...nnnnnnnnnn...",
+      "...nnnnnnnnnn...", "...nnnnnnnnnn...", "....nnnnnnnn....", ".....nnnnnn.....",
+      "................", "................", "................", "................",
+    ],
+    bg: "#fde68a", id: "avatar-27", label: "Ninja", palette: { f: "#fcd9b6", n: "#334155", r: "#e4002b" },
+  },
+  {
+    art: [
+      ".......rrr......", "......rr........", ".....ssssss.....", "....slssssss....",
+      "...sllsssssss...", "...slssssssss...", "...skykkkkyks...", "...ssssssssss...",
+      "...ssskssksss...", "...ssssssssss...", "..dssssssssssd..", "..dddddddddddd..",
+      "................", "................", "................", "................",
+    ],
+    bg: "#1e3a8a", id: "avatar-28", label: "Caballero", palette: { d: "#64748b", l: "#f8fafc", r: "#e4002b", s: "#cbd5e1", y: "#fde047" },
+  },
+  {
+    art: [
+      "........pp......", ".......ppp......", "......ppyp......", ".....pppppp.....",
+      "....ppppppyp....", "..hhhhhhhhhhhh..", "....ffffffff....", "....fkffffkf....",
+      "...wwffnnffww...", "...wwwwwwwwww...", "...wwwwwwwwww...", "....wwwwwwww....",
+      ".....wwwwww.....", "......wwww......", "................", "................",
+    ],
+    bg: "#99f6e4", id: "avatar-29", label: "Mago", palette: { f: "#fcd9b6", h: "#4c1d95", n: "#f4a28c", p: "#7c3aed", w: "#f1f5f9", y: "#fde047" },
+  },
+  {
+    art: [
+      "..y..........y..", "...g........g...", "....g......g....", ".....gggggg.....",
+      "...gggggggggg...", "..gggggggggggg..", "..gkkggggggkkg..", "..gkwkkggkkwkg..",
+      "..gggkkggkkggg..", "...gggggggggg...", "....gggkkggg....", ".....gggggg.....",
+      "......gggg......", "................", "................", "................",
+    ],
+    bg: "#312e81", id: "avatar-30", label: "Alien", palette: { g: "#84cc16", y: "#f472b6" },
+  },
+  {
+    art: [
+      "........y.......", ".......oy.......", ".......yo.......", "...w...yy...w...",
+      "...ww.wwww.ww...", "..rrwwwwwwww....", ".ooowkwwwwkw....", ".yyywwwwwwww....",
+      ".gggwpwwwwpw....", "..bbwwwwwwww....", "...vwwnwwnww....", "....wwwwwwww....",
+      ".....wwwwww.....", "................", "................", "................",
+    ],
+    bg: "#c4b5fd", id: "avatar-31", label: "Unicornio",
+    palette: { b: "#60a5fa", g: "#4ade80", n: "#f472b6", o: "#fb923c", p: "#fbcfe8", r: "#f87171", v: "#a78bfa", w: "#fdf4ff", y: "#facc15" },
+  },
+  {
+    art: [
+      "................", "....mmmmmmmm....", "..mmyymmmmyymm..", ".mmmyyyyyyyymmm.",
+      ".mmyyyyyyyyyymm.", ".mmyykyyyykyymm.", ".mmyyyyyyyyyymm.", ".mmyyyckkcyyymm.",
+      ".mmyyckcckcyymm.", ".mmmyyyyyyyymmm.", "..mmmyyyyyymmm..", "...mmmmmmmmmm...",
+      ".....mmmmmm.....", "................", "................", "................",
+    ],
+    bg: "#fecdd3", id: "avatar-32", label: "León", palette: { c: "#fef3c7", m: "#c2410c", y: "#fbbf24" },
+  },
+  {
+    art: [
+      "....www..www....", "....wpw..wpw....", "....wpw..wpw....", "....wpw..wpw....",
+      "....www..www....", "...wwwwwwwwww...", "..wwwwwwwwwwww..", "..wwkwwwwwwkww..",
+      "..wwwwwwwwwwww..", "..wbwwwnnwwwbw..", "..wwwwwkkwwwww..", "...wwwwwwwwww...",
+      "....wwwwwwww....", "................", "................", "................",
+    ],
+    bg: "#fda4af", id: "avatar-33", label: "Conejo", palette: { b: "#fbcfe8", n: "#ec4899", p: "#f9a8d4", w: "#f5f5f4" },
+  },
+  {
+    art: [
+      "................", "....bbbbbbbb....", "..eebbbbbbbbee..", ".eeebbbbbbbbeee.",
+      ".eeebkbbbbkbeee.", ".eeebbbbbbbbeee.", ".eeebcckkccbeee.", "..eebccccccbee..",
+      "....bckcckcb....", "....bcckkccb....", ".....bcppcb.....", ".......pp.......",
+      "................", "................", "................", "................",
+    ],
+    bg: "#bfdbfe", id: "avatar-34", label: "Perro", palette: { b: "#d97706", c: "#fef3c7", e: "#78350f", p: "#f472b6" },
+  },
+  {
+    art: [
+      "................", "................", ".g............g.", "..g.pppppppp.g..",
+      ".ggppppppppppgg.", ".g.ppkppppkpp.g.", ".ggpbppppppbpgg.", "...pkppppppkp...",
+      "..ggpkkkkkkpgg..", "....pppppppp....", ".....pppppp.....", "................",
+      "................", "................", "................", "................",
+    ],
+    bg: "#67e8f9", id: "avatar-35", label: "Ajolote", palette: { b: "#f472b6", g: "#db2777", p: "#f9a8d4" },
+  },
+  {
+    art: [
+      "................", "..gg........gg..", "..gng......gng..", "..gggggggggggg..",
+      ".gwwwggggggwwwg.", ".nnnnnwggwnnnnn.", ".nnwknwggwnkwnn.", ".gnnnnwwwwnnnng.",
+      "..ggwwwkkwwwgg..", "...ggwwwwwwgg...", "....gggggggg....", "................",
+      "................", "................", "................", "................",
+    ],
+    bg: "#fed7aa", id: "avatar-36", label: "Mapache", palette: { g: "#94a3b8", n: "#1f2937", w: "#f1f5f9" },
+  },
 ];
 
 export function renderAvatarPixels(spec) {

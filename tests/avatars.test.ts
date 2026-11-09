@@ -7,8 +7,8 @@ import { AVATAR_IDS, AVATARS, isAvatarId } from "@/lib/avatars";
 import { AVATAR_SPECS, renderAvatarSvg } from "@/scripts/generate-avatars.mjs";
 
 describe("avatares", () => {
-  it("ofrece 24 avatares variados con nombre único", () => {
-    expect(AVATARS).toHaveLength(24);
+  it("ofrece 36 avatares variados con nombre único", () => {
+    expect(AVATARS).toHaveLength(36);
     expect(new Set(AVATARS.map((avatar) => avatar.label)).size).toBe(AVATARS.length);
   });
 
@@ -35,7 +35,7 @@ describe("avatares", () => {
 
   it("coincide con la restricción SQL del catálogo", () => {
     const migration = readFileSync(
-      resolve(process.cwd(), "supabase", "migrations", "20261022050000_more_avatars.sql"),
+      resolve(process.cwd(), "supabase", "migrations", "20261109180000_avatars_36.sql"),
       "utf8",
     );
     const sqlPattern = /avatar_id ~ '(\^avatar-[^']+\$)'/.exec(migration)?.[1];
@@ -48,9 +48,9 @@ describe("avatares", () => {
       expect(allowed.test(id)).toBe(true);
     }
 
-    expect(allowed.test("avatar-25")).toBe(false);
+    expect(allowed.test("avatar-37")).toBe(false);
     expect(allowed.test("avatar-00")).toBe(false);
-    expect(isAvatarId("avatar-25")).toBe(false);
+    expect(isAvatarId("avatar-37")).toBe(false);
   });
 });
 
