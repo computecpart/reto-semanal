@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 import { getSafePostLoginPath } from "@/lib/auth/safe-redirect";
+import { campaignChoices, CHOOSER_PATH } from "@/lib/campaign/choices";
 import { getCampaignRpcErrorMessage } from "@/lib/campaign/rpc-errors";
 import { campaignBase, isCampaignSlug, parseCampaignPath } from "@/lib/campaign/scope";
 import { parseScannedRedeemUrl, redeemUrl } from "@/lib/missions/schema";
@@ -48,6 +49,41 @@ describe("URL de una campaña privada", () => {
     expect(isCampaignSlug(null)).toBe(false);
     expect(campaignBase(null)).toBe("/app");
     expect(campaignBase("interna")).toBe("/c/interna");
+  });
+});
+
+describe("elegir campaña al iniciar sesión", () => {
+  const interna = { name: "Dinámica interna", slug: "interna", status: "published" as const };
+
+  it("quien solo está en la principal entra directo, sin elegir", () => {
+    const choices = campaignChoices({ campaigns: [], primaryName: "MSI Passport", privateOnly: false });
+
+    expect(choices.mustChoose).toBe(false);
+    expect(choices.options.map((option) => option.href)).toEqual(["/app"]);
+  });
+
+  it("quien se unió con el enlace y está en la principal elige entre las dos", () => {
+    const choices = campaignChoices({ campaigns: [interna], primaryName: "MSI Passport", privateOnly: false });
+
+    expect(choices.mustChoose).toBe(true);
+    expect(choices.options.map((option) => option.href)).toEqual(["/app", "/c/interna"]);
+    expect(choices.joinableMain).toBeNull();
+  });
+
+  it("quien solo entró por el enlace ve su campaña y la opción de unirse a la principal", () => {
+    const choices = campaignChoices({ campaigns: [interna], primaryName: "MSI Passport", privateOnly: true });
+
+    expect(choices.options.map((option) => option.href)).toEqual(["/c/interna"]);
+    expect(choices.joinableMain).toBe("MSI Passport");
+    expect(choices.mustChoose).toBe(true);
+  });
+
+  it("sin campañas a la vista no hay nada que elegir", () => {
+    expect(campaignChoices({ campaigns: [], primaryName: null, privateOnly: false }).mustChoose).toBe(false);
+  });
+
+  it("la pantalla de elección es un destino válido tras iniciar sesión", () => {
+    expect(getSafePostLoginPath(CHOOSER_PATH)).toBe(CHOOSER_PATH);
   });
 });
 

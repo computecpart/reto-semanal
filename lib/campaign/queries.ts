@@ -30,8 +30,8 @@ export interface PublicLanding {
   rulesVersion: number | null;
 }
 
-async function loadPublicLanding(): Promise<PublicLanding | null> {
-  const supabase = await createClient();
+async function loadPublicLanding(campaign?: string): Promise<PublicLanding | null> {
+  const supabase = await createClient({ campaign });
   const { data, error } = await supabase.rpc("get_public_landing");
 
   if (error) {
@@ -56,7 +56,21 @@ async function loadPublicLanding(): Promise<PublicLanding | null> {
 }
 
 // Deduplicated per request: the header, page and metadata share one RPC call.
-export const getPublicLanding = cache(loadPublicLanding);
+export const getPublicLanding = cache(() => loadPublicLanding());
+
+/**
+ * Name and colors of one campaign the session belongs to (null = the main one),
+ * for the campaign chooser. Falls back to neutral colors if it is not reachable.
+ */
+export async function getCampaignBranding(slug: string | null, fallbackName: string): Promise<SiteBranding> {
+  const data = await loadPublicLanding(slug ?? undefined).catch(() => null);
+  const matches = data && (slug === null || data.campaign.slug === slug);
+
+  return {
+    name: matches ? data.campaign.name : fallbackName,
+    theme: (matches ? data.landing?.theme : null) ?? DEFAULT_THEME,
+  };
+}
 
 export interface SiteBranding {
   name: string;

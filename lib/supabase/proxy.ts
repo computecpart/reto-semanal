@@ -112,6 +112,6 @@ function forward(request: NextRequest, scope: RequestScope) {
   return NextResponse.rewrite(url, { request: { headers } });
 }
 
-const PROTECTED_PATH = /^\/(?:app|admin|vista-previa|aceptar-reglas|c\/[^/]+|unirse\/[^/]+\/aceptar)(?:\/|$)/;
+const PROTECTED_PATH = /^\/(?:app|admin|vista-previa|aceptar-reglas|elegir-campana|c\/[^/]+|unirse\/[^/]+\/aceptar)(?:\/|$)/;
 const ADMIN_PATH = /^\/(?:admin|vista-previa)(?:\/|$)/;
 const REDEEM_PATH = /^\/(?:app|c\/[^/]+)\/canjear$/;

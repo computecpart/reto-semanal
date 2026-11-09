@@ -26,12 +26,15 @@ export function AppHeader({
   avatarId,
   base,
   campaignName,
+  canSwitch = false,
   role,
 }: {
   alias: string | null;
   avatarId: string | null;
   base: string;
   campaignName: string;
+  /** The account belongs to more than one campaign. */
+  canSwitch?: boolean;
   role: AppRole;
 }) {
   const avatar = getAvatar(avatarId);
@@ -47,7 +50,13 @@ export function AppHeader({
             <span className="line-clamp-2">{campaignName}</span>
           </Link>
 
-          <AccountMenu alias={alias} avatarSrc={avatar?.src ?? null} base={base} isAdmin={isAdministrativeRole(role)} />
+          <AccountMenu
+            alias={alias}
+            avatarSrc={avatar?.src ?? null}
+            base={base}
+            canSwitch={canSwitch}
+            isAdmin={isAdministrativeRole(role)}
+          />
         </div>
 
         <nav aria-label="Secciones" className="mx-auto hidden w-full max-w-5xl flex-wrap gap-2 px-6 pb-4 sm:flex">

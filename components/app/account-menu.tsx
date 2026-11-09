@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useId, useState } from "react";
 
 import { signOutAction } from "@/lib/auth/actions";
+import { CHOOSER_PATH } from "@/lib/campaign/choices";
 
 function menuLinks(base: string) {
   const main = base === "/app";
@@ -24,11 +25,13 @@ export function AccountMenu({
   alias,
   avatarSrc,
   base,
+  canSwitch = false,
   isAdmin,
 }: {
   alias: string | null;
   avatarSrc: string | null;
   base: string;
+  canSwitch?: boolean;
   isAdmin: boolean;
 }) {
   const [open, setOpen] = useState(false);
@@ -79,6 +82,11 @@ export function AccountMenu({
             id={menuId}
           >
             {alias ? <p className="truncate px-4 pb-2 text-xs font-bold uppercase tracking-wide text-slate-500">@{alias}</p> : null}
+            {canSwitch ? (
+              <Link className={item} href={CHOOSER_PATH} onClick={close}>
+                Cambiar de campaña
+              </Link>
+            ) : null}
             {isAdmin ? (
               <Link className={item} href="/admin" onClick={close}>
                 Consola de administración

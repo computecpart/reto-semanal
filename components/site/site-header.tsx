@@ -37,7 +37,8 @@ export interface SiteActions {
 export const DEFAULT_SITE_ACTIONS: SiteActions = {
   home: "/",
   login: "/login",
-  member: "/app",
+  // The chooser sends anyone with a single campaign straight to its panel.
+  member: "/elegir-campana",
   memberLabel: "Mi panel",
   register: "/registro",
 };

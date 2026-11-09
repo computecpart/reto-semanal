@@ -30,6 +30,8 @@ Funcionan al mismo tiempo que la campaña principal, en `/c/<slug>`, sin costo a
 
 - **Pausar enlace:** nadie nuevo entra. **Crear enlace nuevo:** el anterior deja de funcionar. Quien ya entró sigue dentro.
 - Quien se registra desde el enlace no aparece en la campaña principal, salvo que elija unirse.
+- Al iniciar sesión, solo quien pertenece a más de una campaña ve la pantalla «¿A qué campaña quieres entrar?»; el
+  resto entra directo a la principal. Se puede cambiar desde el menú de cuenta.
 - Suspender o descalificar a alguien aplica en todas sus campañas.
 
 ### Publicar esta función por primera vez (hecho el 09/11/2026)

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { LoginForm } from "@/components/auth/login-form";
 import { getSafePostLoginPath } from "@/lib/auth/safe-redirect";
+import { CHOOSER_PATH } from "@/lib/campaign/choices";
 
 export const metadata: Metadata = {
   title: "Iniciar sesión | Reto Semanal",
@@ -20,7 +21,10 @@ interface LoginPageProps {
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const params = await searchParams;
-  const nextPath = getSafePostLoginPath(params.next);
+  // Signing in without a specific destination goes through the campaign chooser,
+  // which forwards anyone with a single campaign straight to its panel.
+  const nextPath =
+    params.next === undefined || params.next === "/app" ? CHOOSER_PATH : getSafePostLoginPath(params.next);
   const initialNotice =
     params.password === "updated"
       ? "Tu contraseña fue actualizada. Ya puedes iniciar sesión."

@@ -3,6 +3,7 @@
 const ALLOWED_POST_LOGIN_PATHS = new Set([
   "/admin",
   "/app",
+  "/elegir-campana",
   "/app/perfil",
   "/app/puntos",
   "/app/ranking",

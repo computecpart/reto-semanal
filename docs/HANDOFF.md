@@ -121,6 +121,13 @@ de tocar código.
     estados, roles, aceptaciones, trivias, misiones, portada, reglas y 6 RPC públicas); web desde `main` (`c726177`);
     19 rutas, navegador a 360/1280 sin errores ni desbordes; advisors sin ERROR (solo los INFO/WARN esperados de las
     tablas y RPC nuevas); 0 errores en Supabase y Vercel tras publicar.
+  - **Elección de campaña (09/11):** cada campaña tiene su propio panel y colores; ya no hay barra «Mis campañas» dentro
+    del panel. Tras iniciar sesión sin destino (o con `next=/app`) se pasa por `/elegir-campana`
+    (`lib/campaign/choices.ts`): quien solo está en una campaña sigue directo a su panel; quien se unió con el enlace y
+    está en MSI elige con tarjetas en los colores de cada campaña; las cuentas solo invitadas ven su campaña y la opción
+    «Unirme también». El menú de cuenta muestra «Cambiar de campaña» solo si hay algo que elegir. El botón «Mi panel» de
+    la portada también pasa por ahí. `createClient({ campaign })` pide la marca de una campaña concreta. Recorrido local
+    43/43 (`pw/e2e.mjs` en scratchpad).
   - **Pendiente de comprobar con la primera campaña privada real** (no se pudo sin una cuenta de staff): que la cabecera
     `x-campaign` atraviese el gateway de Supabase (con «Trabajando en» = la privada, `/admin/participantes` no debe
     listar a los participantes de MSI) y que llegue el código por correo al registrarse desde una invitación.

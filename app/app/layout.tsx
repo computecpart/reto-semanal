@@ -2,9 +2,9 @@ import { notFound, redirect } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { AppHeader } from "@/components/app/app-header";
-import { CampaignSwitcher } from "@/components/app/campaign-switcher";
 import { LegalLinks } from "@/components/legal/legal-page";
 import { requireSessionPage } from "@/lib/auth/guards";
+import { campaignChoices } from "@/lib/campaign/choices";
 import { getMyCampaigns, getMyRulesStatus, getSiteBranding } from "@/lib/campaign/queries";
 import { campaignBase } from "@/lib/campaign/scope";
 import { getCampaignSlug } from "@/lib/campaign/scope-server";
@@ -47,14 +47,8 @@ export default async function ParticipantLayout({ children }: { children: ReactN
     redirect(slug ? `${base}/aceptar-reglas` : "/aceptar-reglas");
   }
 
-  const campaignLinks = [
-    ...(mine.privateOnly || !mine.primaryName ? [] : [{ active: !slug, href: "/app", name: mine.primaryName }]),
-    ...mine.campaigns.map((campaign) => ({
-      active: campaign.slug === slug,
-      href: campaignBase(campaign.slug),
-      name: campaign.name,
-    })),
-  ];
+  // Each campaign keeps its own panel and colors; switching goes through the chooser.
+  const canSwitch = campaignChoices(mine).mustChoose;
 
   return (
     <div
@@ -66,9 +60,9 @@ export default async function ParticipantLayout({ children }: { children: ReactN
         avatarId={profile?.avatar_id ?? null}
         base={base}
         campaignName={branding.name}
+        canSwitch={canSwitch}
         role={role}
       />
-      <CampaignSwitcher campaigns={campaignLinks} joinableMain={mine.privateOnly ? mine.primaryName : null} />
       {banner ? (
         <p className="border-b-4 border-[var(--color-ink)] bg-amber-200 px-4 py-3 text-center text-sm font-bold" role="status">
           {banner}
