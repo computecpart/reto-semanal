@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 import { getSafePostLoginPath } from "@/lib/auth/safe-redirect";
-import { campaignChoices, CHOOSER_PATH } from "@/lib/campaign/choices";
+import { campaignChoices, CHOOSER_PATH, chosenDestination } from "@/lib/campaign/choices";
 import { getCampaignRpcErrorMessage } from "@/lib/campaign/rpc-errors";
 import { campaignBase, isCampaignSlug, parseCampaignPath } from "@/lib/campaign/scope";
 import { parseScannedRedeemUrl, redeemUrl } from "@/lib/missions/schema";
@@ -80,6 +80,15 @@ describe("elegir campaña al iniciar sesión", () => {
 
   it("sin campañas a la vista no hay nada que elegir", () => {
     expect(campaignChoices({ campaigns: [], primaryName: null, privateOnly: false }).mustChoose).toBe(false);
+  });
+
+  it("solo acepta como destino el panel de una campaña", () => {
+    expect(chosenDestination("/app")).toBe("/app");
+    expect(chosenDestination("/c/interna")).toBe("/c/interna");
+
+    for (const value of ["/admin", "/c/interna/ranking", "/c/../admin", "https://evil.example", "//evil.example", "/c/", null, 3]) {
+      expect(chosenDestination(value)).toBeNull();
+    }
   });
 
   it("la pantalla de elección es un destino válido tras iniciar sesión", () => {

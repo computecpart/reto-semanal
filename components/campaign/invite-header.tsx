@@ -1,6 +1,6 @@
 import { SiteHeaderView, DEFAULT_SITE_ACTIONS, type SiteActions } from "@/components/site/site-header";
+import { CHOOSER_PATH } from "@/lib/campaign/choices";
 import type { CampaignInvite } from "@/lib/campaign/queries";
-import { campaignBase } from "@/lib/campaign/scope";
 import { landingAssetUrl } from "@/lib/landing/assets";
 import { DEFAULT_THEME } from "@/lib/landing/schema";
 import { themeStyle } from "@/lib/landing/theme";
@@ -13,7 +13,8 @@ export function inviteActions(token: string, invite: CampaignInvite): SiteAction
     ...DEFAULT_SITE_ACTIONS,
     home: `/unirse/${token}`,
     login: `/login?next=${encodeURIComponent(accept)}`,
-    member: invite.isMember ? campaignBase(invite.campaign.slug) : accept,
+    // Members of more than one campaign choose where to go; the rest go straight in.
+    member: invite.isMember ? CHOOSER_PATH : accept,
     memberLabel: invite.isMember ? "Entrar a la campaña" : "Unirme a la campaña",
     register: `/registro?invitacion=${token}`,
   };

@@ -1,6 +1,23 @@
-import { campaignBase } from "./scope";
+import { campaignBase, isCampaignSlug } from "./scope";
 
 export const CHOOSER_PATH = "/elegir-campana";
+
+/** Remembers the campaign picked in the chooser, so entering again asks again only after a while. */
+export const CHOICE_COOKIE = "campaign_choice";
+export const CHOICE_MAX_AGE_SECONDS = 6 * 60 * 60;
+
+/** Only the panel of the main campaign or of one campaign slug; anything else is rejected. */
+export function chosenDestination(value: unknown): string | null {
+  if (value === "/app") {
+    return value;
+  }
+
+  if (typeof value === "string" && value.startsWith("/c/") && isCampaignSlug(value.slice(3))) {
+    return value;
+  }
+
+  return null;
+}
 
 export interface CampaignChoice {
   href: string;

@@ -1,7 +1,9 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { CHOICE_COOKIE } from "@/lib/campaign/choices";
 import { createClient } from "@/lib/supabase/server";
 
 import { isRecoveryTokenHash } from "./recovery-token";
@@ -11,6 +13,8 @@ export async function signOutAction(): Promise<never> {
 
   // "local" closes this device only; other devices keep their own sessions.
   await supabase.auth.signOut({ scope: "local" });
+  // The next person to sign in on this device picks a campaign afresh.
+  (await cookies()).delete(CHOICE_COOKIE);
 
   redirect("/login?sesion=cerrada");
 }

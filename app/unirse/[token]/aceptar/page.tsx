@@ -7,7 +7,7 @@ import { JoinCampaignForm } from "@/components/campaign/join-campaign-form";
 import { SafeMarkdown } from "@/components/markdown/safe-markdown";
 import { requireSessionPage } from "@/lib/auth/guards";
 import { getCampaignInvite } from "@/lib/campaign/queries";
-import { campaignBase } from "@/lib/campaign/scope";
+import { CHOOSER_PATH } from "@/lib/campaign/choices";
 import { isAdministrativeRole } from "@/lib/permissions/roles";
 
 export const dynamic = "force-dynamic";
@@ -26,8 +26,9 @@ export default async function AcceptInvitationPage({ params }: { params: Promise
     notFound();
   }
 
+  // Already inside: entering with the link asks where to go, like signing in does.
   if (invite.isMember) {
-    redirect(campaignBase(invite.campaign.slug));
+    redirect(CHOOSER_PATH);
   }
 
   return (

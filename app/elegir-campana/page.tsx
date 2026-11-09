@@ -6,7 +6,7 @@ import type { CSSProperties } from "react";
 import { readableDigits } from "@/components/ui/readable-digits";
 import { signOutAction } from "@/lib/auth/actions";
 import { requireSessionPage } from "@/lib/auth/guards";
-import { joinPrimaryCampaignAction } from "@/lib/campaign/actions";
+import { chooseCampaignAction, joinPrimaryCampaignAction } from "@/lib/campaign/actions";
 import { campaignChoices, CHOOSER_PATH } from "@/lib/campaign/choices";
 import { getCampaignBranding, getMyCampaigns } from "@/lib/campaign/queries";
 import { DARK_SURFACE, themeStyle } from "@/lib/landing/theme";
@@ -60,25 +60,28 @@ export default async function ChooseCampaignPage() {
 
               return (
                 <li key={option.href}>
-                  <Link
-                    className={`pixel-frame group flex h-full flex-col bg-white ${focusRing}`}
-                    href={option.href}
-                    style={branding.theme ? themeStyle(branding.theme) : undefined}
-                  >
-                    <span className="block border-b-4 border-[var(--color-ink)] px-5 py-6" style={band}>
-                      <span className="block text-[11px] font-bold uppercase tracking-[0.2em] opacity-85">
-                        {option.slug ? "Por invitación" : "Campaña principal"}
+                  <form action={chooseCampaignAction} className="h-full">
+                    <input name="destino" type="hidden" value={option.href} />
+                    <button
+                      className={`pixel-frame group flex h-full w-full cursor-pointer flex-col bg-white text-left ${focusRing}`}
+                      style={branding.theme ? themeStyle(branding.theme) : undefined}
+                      type="submit"
+                    >
+                      <span className="block w-full border-b-4 border-[var(--color-ink)] px-5 py-6" style={band}>
+                        <span className="block text-[11px] font-bold uppercase tracking-[0.2em] opacity-85">
+                          {option.slug ? "Por invitación" : "Campaña principal"}
+                        </span>
+                        <span className="mt-2 block font-display text-2xl leading-tight">
+                          {readableDigits(branding.name)}
+                        </span>
                       </span>
-                      <span className="mt-2 block font-display text-2xl leading-tight">
-                        {readableDigits(branding.name)}
+                      <span className="flex w-full flex-1 items-end px-5 py-5">
+                        <span className="pixel-button inline-flex min-h-11 w-full items-center justify-center bg-[var(--accent)] px-4 text-sm font-bold uppercase tracking-wide text-[var(--accent-contrast)]">
+                          Entrar
+                        </span>
                       </span>
-                    </span>
-                    <span className="flex flex-1 items-end px-5 py-5">
-                      <span className="pixel-button inline-flex min-h-11 w-full items-center justify-center bg-[var(--accent)] px-4 text-sm font-bold uppercase tracking-wide text-[var(--accent-contrast)]">
-                        Entrar
-                      </span>
-                    </span>
-                  </Link>
+                    </button>
+                  </form>
                 </li>
               );
             })}

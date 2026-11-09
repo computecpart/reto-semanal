@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 
@@ -9,7 +10,8 @@ import { PixelBarChart, PixelMeter, SegmentProgress } from "@/components/dashboa
 import { readableDigits } from "@/components/ui/readable-digits";
 import { requireSessionPage } from "@/lib/auth/guards";
 import { getAvatar } from "@/lib/avatars";
-import { getPublicLanding } from "@/lib/campaign/queries";
+import { CHOICE_COOKIE, CHOOSER_PATH, campaignChoices } from "@/lib/campaign/choices";
+import { getMyCampaigns, getPublicLanding } from "@/lib/campaign/queries";
 import { getCampaignBase } from "@/lib/campaign/scope-server";
 import { campaignProgress, nextGoal, pointsBreakdown, pointsByWeek, type NextGoal } from "@/lib/dashboard/stats";
 import { isAdministrativeRole } from "@/lib/permissions/roles";
@@ -89,6 +91,16 @@ function quickActions(base: string): readonly { description: string; href: strin
 export default async function DashboardPage() {
   const base = await getCampaignBase();
   const { role, user } = await requireSessionPage(base);
+
+  // Entering the main panel without a recent pick: people in more than one campaign choose first.
+  if (base === "/app" && !(await cookies()).has(CHOICE_COOKIE)) {
+    const mine = await getMyCampaigns();
+
+    if (!mine.privateOnly && campaignChoices(mine).mustChoose) {
+      redirect(CHOOSER_PATH);
+    }
+  }
+
   const [profile, points, ranking, quizzes, landing] = await Promise.all([
     getMyProfile(user.id),
     getMyPoints().catch(() => null),

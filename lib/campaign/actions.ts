@@ -11,6 +11,7 @@ import { isAdministrativeRole } from "@/lib/permissions/roles";
 import { collectFieldErrors, type ProfileFormState } from "@/lib/profile/form-state";
 import { createClient } from "@/lib/supabase/server";
 
+import { CHOICE_COOKIE, CHOICE_MAX_AGE_SECONDS, chosenDestination } from "./choices";
 import { getCampaignRpcErrorMessage } from "./rpc-errors";
 import { ADMIN_CAMPAIGN_COOKIE, campaignBase, isCampaignSlug } from "./scope";
 import { getCampaignBase } from "./scope-server";
@@ -207,6 +208,26 @@ export async function joinCampaignAction(
 }
 
 /** Invited accounts stay out of the main campaign until they choose to join. */
+/** A card of the campaign chooser: remember the pick for a while and open that panel. */
+export async function chooseCampaignAction(formData: FormData): Promise<void> {
+  if (!(await getAuthContext())) {
+    redirect("/login");
+  }
+
+  // Membership is enforced by each panel: a campaign the person is not in answers 404.
+  const destination = chosenDestination(formData.get("destino")) ?? "/app";
+
+  (await cookies()).set(CHOICE_COOKIE, "1", {
+    httpOnly: true,
+    maxAge: CHOICE_MAX_AGE_SECONDS,
+    path: "/",
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  });
+
+  redirect(destination);
+}
+
 export async function joinPrimaryCampaignAction(): Promise<void> {
   if (!(await getAuthContext())) {
     redirect("/login");

@@ -126,8 +126,11 @@ de tocar código.
     (`lib/campaign/choices.ts`): quien solo está en una campaña sigue directo a su panel; quien se unió con el enlace y
     está en MSI elige con tarjetas en los colores de cada campaña; las cuentas solo invitadas ven su campaña y la opción
     «Unirme también». El menú de cuenta muestra «Cambiar de campaña» solo si hay algo que elegir. El botón «Mi panel» de
-    la portada también pasa por ahí. `createClient({ campaign })` pide la marca de una campaña concreta. Recorrido local
-    43/43 (`pw/e2e.mjs` en scratchpad).
+    la portada también pasa por ahí. `createClient({ campaign })` pide la marca de una campaña concreta.
+    Elegir una tarjeta (`chooseCampaignAction`) guarda la cookie `campaign_choice` 6 h: con la sesión ya abierta, entrar a
+    `/app` sin esa cookie vuelve a preguntar; los enlaces directos (`/c/<slug>/…`, `/app/canjear?c=…`) nunca preguntan.
+    Abrir la invitación siendo miembro (`/unirse/<token>` y `/aceptar`) lleva a la elección. Cerrar sesión borra la cookie.
+    Recorrido local 48/48 (`pw/e2e.mjs` en scratchpad).
   - **Pendiente de comprobar con la primera campaña privada real** (no se pudo sin una cuenta de staff): que la cabecera
     `x-campaign` atraviese el gateway de Supabase (con «Trabajando en» = la privada, `/admin/participantes` no debe
     listar a los participantes de MSI) y que llegue el código por correo al registrarse desde una invitación.
