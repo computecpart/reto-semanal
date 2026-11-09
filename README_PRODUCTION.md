@@ -32,13 +32,13 @@ Funcionan al mismo tiempo que la campaña principal, en `/c/<slug>`, sin costo a
 - Quien se registra desde el enlace no aparece en la campaña principal, salvo que elija unirse.
 - Suspender o descalificar a alguien aplica en todas sus campañas.
 
-### Publicar esta función por primera vez
+### Publicar esta función por primera vez (hecho el 09/11/2026)
 
 Requiere tokens vigentes de Supabase y Vercel en `.env.seed.local`. **El orden importa:** la web actual funciona con la
 migración aplicada, pero la web nueva no funciona sin ella.
 
-1. Confirma que hay un respaldo reciente y haz `npx supabase db push --dry-run`: solo debe listar `20261106000000`.
-2. `npx supabase db push`.
+1. Confirma que hay un respaldo reciente y haz `npx supabase db push --remote --dry-run`: solo debe listar `20261106000000`.
+2. `npx supabase db push --remote`.
 3. Comprueba que `/`, `/reglas` y el ranking de la campaña principal siguen iguales.
 4. Fusiona la rama en `main` y despliega con `vercel deploy --prod`.
 5. Crea una campaña privada de prueba y confirma que un miembro entra a `/c/<slug>` y que quien no tiene el enlace ve 404.
@@ -58,8 +58,9 @@ migración aplicada, pero la web nueva no funciona sin ella.
 
 ```bash
 npm run check                                   # lint, typecheck, tests, build
-npx supabase db push --dry-run                  # revisar migraciones pendientes
-npx supabase db push                            # aplicar (aditivas; nunca editar una aplicada)
+npx supabase db push --remote --dry-run         # revisar migraciones pendientes
+npx supabase db push --remote                   # aplicar (aditivas; nunca editar una aplicada)
+# Supabase CLI 3: sin --remote apunta al entorno local. No pide la clave de la base: usa SUPABASE_ACCESS_TOKEN.
 VT=$(node -e 'process.loadEnvFile(".env.seed.local");process.stdout.write(process.env.VERCEL_TOKEN)')
 npx vercel@latest deploy --prod --yes --scope computecpart --token "$VT"
 git push                                        # cuenta GitHub computecpart

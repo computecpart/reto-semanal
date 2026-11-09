@@ -98,7 +98,7 @@ de tocar código.
   sáb 24/10 08:00 al vie 30/10 23:59 SV. Auditoría `maintenance.reset_test_data`. Copia local de las filas borradas en el
   scratchpad de la sesión. Con todos en 0 la app no muestra posición (todos empatan en #1).
   21:52 SV: eliminadas las 3 misiones de prueba y sus códigos (`mission.delete_all` en Auditoría); no hay misiones creadas.
-- **Campañas privadas (06/11, rama `feature/campanas-privadas`, AÚN NO en producción):** migración
+- **Campañas privadas (06/11; en producción desde el 09/11/2026, migración y web):** migración
   `20261106000000_private_campaigns`. Varias campañas privadas pueden estar publicadas junto a la principal (pública), con
   sus propias trivias, misiones, puntos, ranking, reglas y portada, y las mismas cuentas.
   - **Cómo funciona:** `/c/<slug>/…` reutiliza las pantallas de `/app`: `lib/supabase/proxy.ts` reescribe la ruta y añade
@@ -407,8 +407,8 @@ npm run check                     # lint + typecheck + tests + build
 node scripts/supabase-mgmt.mjs query "select ..."   # solo lectura
 node scripts/supabase-mgmt.mjs auth:get [claves]
 node scripts/supabase-mgmt.mjs auth:patch cambios.json
-npx supabase db push --dry-run    # SIEMPRE antes de aplicar
-npx supabase db push              # solo con autorización explícita
+npx supabase db push --remote --dry-run    # SIEMPRE antes de aplicar (sin --remote, CLI 3 usa el entorno local)
+npx supabase db push --remote              # solo con autorización explícita
 # Desplegar (token desde .env.seed.local, nunca impreso):
 VT=$(node -e 'process.loadEnvFile(".env.seed.local");process.stdout.write(process.env.VERCEL_TOKEN)')
 npx vercel@latest deploy --prod --yes --scope computecpart --token "$VT"
