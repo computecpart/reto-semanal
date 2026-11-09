@@ -84,6 +84,12 @@ body {
   }
 }
 
+/* Pixelify Sans joins "fi" and "fl" into ligatures that read like an "A"
+   ("VeriAca"); titles keep each letter separate. */
+.font-display {
+  font-variant-ligatures: none;
+}
+
 /* Pixelify Sans renders 5 and 7 ambiguously at small sizes; scores and
    positions use the body face with tabular figures instead. */
 @utility font-score {

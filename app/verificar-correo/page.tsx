@@ -33,7 +33,12 @@ export default async function VerifyEmailPage({ searchParams }: VerifyEmailPageP
       subtitle="Revisa tu bandeja de entrada e ingresa el código de un solo uso (o abre el enlace) para confirmar la dirección."
       title="Verifica tu correo"
     >
-      <VerifyEmailForm linkError={params.error === "enlace"} />
+      <VerifyEmailForm
+        linkError={params.error === "enlace"}
+        loginHref={
+          invite && token ? `/login?next=${encodeURIComponent(`/unirse/${token}/aceptar`)}` : "/login"
+        }
+      />
     </AuthShell>
   );
 }

@@ -37,7 +37,13 @@ function secondsUntil(timestamp: number, now: number): number {
   return Math.max(0, Math.ceil((timestamp - now) / 1_000));
 }
 
-export function VerifyEmailForm({ linkError = false }: { linkError?: boolean }) {
+export function VerifyEmailForm({
+  linkError = false,
+  loginHref = "/login",
+}: {
+  linkError?: boolean;
+  loginHref?: string;
+}) {
   const router = useRouter();
   const storedEmail = useSyncExternalStore(subscribeToNothing, readVerificationEmail, () => "");
   const storedResendAt = useSyncExternalStore(subscribeToNothing, readOtpResendAt, () => 0);
@@ -244,10 +250,17 @@ export function VerifyEmailForm({ linkError = false }: { linkError?: boolean }) 
               ? `Podrás reenviar en ${remainingSeconds} s`
               : "Reenviar código"}
         </button>
+        <p className="mt-3 border-t border-slate-300 pt-3 text-xs leading-5">
+          ¿Ya tenías una cuenta con este correo? No te llegará un código nuevo:{" "}
+          <Link className="font-bold text-[var(--accent-strong)] underline-offset-4 hover:underline" href={loginHref}>
+            inicia sesión con tu contraseña
+          </Link>
+          .
+        </p>
       </div>
 
       <p className="text-center text-sm text-slate-600">
-        <Link className="font-bold text-[var(--accent-strong)] underline-offset-4 hover:underline" href="/login">
+        <Link className="font-bold text-[var(--accent-strong)] underline-offset-4 hover:underline" href={loginHref}>
           Volver al inicio de sesión
         </Link>
       </p>
